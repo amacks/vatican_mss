@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>${title}</title>
+<link href="${url_prefix}/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
+</head>
+<body>
+
+[% content -%]
+
+<div class="copyright">
+Copyright Aaron Macks, 2019-[% date.format(mytime, '%Y') %]
+</div>
+</body>
+</html>

@@ -1,10 +1,8 @@
-<html>
-<head>
-<title>Recently Digitized Manuscripts of the BAV</title>
-<link href="${url_prefix}/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
-</head>
-<body>
-<h2>Recently Digitized Manuscripts of the BAV</h2>
+[%- WRAPPER "wrapper.tt"
+ title="Recently Digitized Manuscripts from the BAV"
+ -%]
+
+<h2>Recently Digitized Manuscripts from the BAV</h2>
 <div class="index-intro">
 (Disclaimer: This project is not an official project the <a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.)<br />
 Welcome! This project is a continuation of the work started by <a href="https://macrotypography.blogspot.com/" target="_blank">Jean-Baptiste Piggin</a> tracking new manuscripts added to the digitized manuscripts of the Vatican Libraries. Each week we add a new page with the manuscripts from the previous week, with title, author, date and incipt where possible.  Announcements of the weekly update will be posted to <a href="https://twitter.com/gundormr" target="_blank">Twitter</a>, anyone with additions, corrections or information about any manuscripts is invited to contact me there and I'll add it here.
@@ -16,6 +14,5 @@ Welcome! This project is a continuation of the work started by <a href="https://
 ${week.header_text_html}</li>
 [%- END -%]
 </ul>
-Copyright Aaron Macks, 2019-[% date.format(mytime, '%Y') %]
-</body>
-</html>
+	
+[%- END -%]
