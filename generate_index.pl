@@ -106,6 +106,21 @@ sub format_page{
 	}
 }
 
-print format_page(get_notes());
+## real code, first get a filepath if desired
+my $week_offset=0;
+my $filepath = undef; ## if defined, the root path where to output the file
+GetOptions(
+		'filepath=s' => \$filepath);
 
+
+my $index_html= format_page(get_notes());
+if (defined($filepath)){
+	my $filename = $filepath . "/index.html" ;
+	warn "writing to $filename";
+	open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
+	print OUTPUT_FILE $index_html;
+	close(OUTPUT_FILE);
+} else {
+	print $index_html;
+}
 
