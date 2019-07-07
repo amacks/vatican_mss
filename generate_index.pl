@@ -27,16 +27,6 @@ sub get_time
     my $format = $_[0] || '%Y%m%d %I:%M:%S %p'; #default format: 20160801 10:48:03 AM
     return strftime($format, localtime);
 }
-
-sub get_week_and_year($){
-	my $week_offset = shift;
-	my $offset_date = DateTime->now->subtract(days => 7*$week_offset);
-	my ($week_year, $week_number) = $offset_date->week;
-	return {
-		'year' => $week_year,
-		'week' => $week_number
-	};
-}
 ## constants
 my $today_timestamp = get_time('%Y_%m_%d');
 

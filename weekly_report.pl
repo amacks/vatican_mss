@@ -34,7 +34,7 @@ sub get_week_and_year($){
 	my ($week_year, $week_number) = $offset_date->week;
 	return {
 		'year' => $week_year,
-		'week' => $week_number
+		'week' => $week_number+1
 	};
 }
 ## constants
@@ -184,7 +184,7 @@ if (!defined($filepath)){
 	print $formatted_html;
 } else {
 	my $date_parts = get_week_and_year($week_offset);
-	my $filename = $filepath . "/" . $date_parts->{'year'} . '/' . "week" . $date_parts->{'week'}+1 . ".html";
+	my $filename = $filepath . "/" . $date_parts->{'year'} . '/' . "week" . $date_parts->{'week'}. ".html";
 	warn "writing to $filename";
 	open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
 	print OUTPUT_FILE $formatted_html;
