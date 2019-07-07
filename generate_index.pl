@@ -52,14 +52,14 @@ my $db_stmt = "select year, week_number, header_text, image_filename from __TABL
 sub get_notes(){
 	## do some config reading
 	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $db_table = $config->param("WEEKLY_DATABASE.TABLE");
+	my $db_table = $config->param("GENERATE_DATABASE.NOTES_TABLE");
 	## connect to a DB
 
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("WEEKLY_DATABASE.DATABASE") .
-		":host=" . $config->param("WEEKLY_DATABASE.HOST"). ":port=3306'",
-		$config->param("WEEKLY_DATABASE.USERNAME"), $config->param("WEEKLY_DATABASE.PASSWORD"), 
+	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GENERATE_DATABASE.DATABASE") .
+		":host=" . $config->param("GENERATE_DATABASE.HOST"). ":port=3306'",
+		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
 		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("WEEKLY_DATABASE.HOST") . '-' . $config->param("WEEKLY_DATABASE.DATABASE") .": $DBI::errstr\n";
+	or die "Can't connect to the MySQL " . $config->param("GENERATE_DATABASE.HOST") . '-' . $config->param("GENERATE_DATABASE.DATABASE") .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
     $dbh->do('SET NAMES utf8');

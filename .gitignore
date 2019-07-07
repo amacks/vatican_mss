@@ -36,3 +36,6 @@ inc/
 
 ## emacs
 *~
+
+## app specific
+config/*ini
