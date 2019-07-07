@@ -1,0 +1,33 @@
+<head>
+<title>Vatican Manuscripts Added Week: ${datestamp_parts.week} of ${datestamp_parts.year}</title>
+<link href="${url_prefix}/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
+</head>
+<body>
+<h2>Vatican Manuscripts Added Week: ${datestamp_parts.week} of ${datestamp_parts.year}</h2>
+<div class="right-image" >
+<img src="${header_data.image_filename}">
+</div>
+<div class="intro">
+${header_data.header_text_html}
+</div>
+<div>
+<ul>
+[% FOREACH ms IN mss_list %]
+	<li><a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
+	[%- " (Low Quality)" IF ms.high_quality == 0 -%]
+	[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
+,
+[%- " $ms.author" IF ms.author.defined -%]
+[%- " <i>$ms.title</i>" IF ms.title.defined -%]
+[%- IF ms.notes.defined OR ms.incipit.defined -%]
+<div class="notes_block">
+[%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
+[%- "<div class=\"notes\"> $ms.notes_html</div>" IF ms.notes_html.defined -%]
+</div>
+[%- END -%]
+   
+</li>
+[% END %]
+</ul>
+</div>
+</body>

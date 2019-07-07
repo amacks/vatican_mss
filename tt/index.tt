@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>Recently Digitized Manuscripts of the BAV</title>
+<link href="${url_prefix}/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
+</head>
+<body>
+<h2>Recently Digitized Manuscripts of the BAV</h2>
+<div class="index-intro">
+
+</div>
+<ul class="index-list">
+[%- FOREACH week IN weeks_notes -%]
+<li><a href="${url_prefix}/${week.year}/week${week.week_number}.html"><img class="index-list-pics" alt="MS Image" src="${url_prefix}/${week.year}/${week.image_filename}" />
+<div>${week.year}, Week ${week.week_number}</a></div>
+${week.header_text_html}</li>
+[%- END -%]
+</ul>
+
+</body>
+</html>
