@@ -9,6 +9,7 @@ use IO::Socket::SSL;
 use Mozilla::CA;
 use LWP::UserAgent;
 use LWP::Simple;
+use Config::Simple;
 
 use HTML::TreeBuilder::XPath;
 use Data::Dumper;
