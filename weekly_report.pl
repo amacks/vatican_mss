@@ -89,13 +89,13 @@ sub get_mss_interval{
 	my $week_offset = shift;
 	## get the DB configs
 	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $ms_table = $config->param("GENERATE_DATABASE.MS_TABLE");
+	my $ms_table = $config->param("GLOBAL.MS_TABLE");
 	## connect to a DB
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GENERATE_DATABASE.DATABASE") .
-		":host=" . $config->param("GENERATE_DATABASE.HOST"). ":port=3306'",
+	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
+		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
 		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
 		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GENERATE_DATABASE.HOST") . '-' . $config->param("GENERATE_DATABASE.DATABASE") .": $DBI::errstr\n";
+	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
     $dbh->do('SET NAMES utf8');
@@ -125,12 +125,12 @@ sub get_header_data{
 	my $week_offset = shift;
 	## get the DB configs
 	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $notes_table = $config->param("GENERATE_DATABASE.NOTES_TABLE");
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GENERATE_DATABASE.DATABASE") .
-		":host=" . $config->param("GENERATE_DATABASE.HOST"). ":port=3306'",
+	my $notes_table = $config->param("GLOBAL.NOTES_TABLE");
+	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
+		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
 		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
 		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GENERATE_DATABASE.HOST") . '-' . $config->param("GENERATE_DATABASE.DATABASE") .": $DBI::errstr\n";
+	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
     $dbh->do('SET NAMES utf8');

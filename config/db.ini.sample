@@ -1,0 +1,13 @@
+[GLOBAL]
+NOTES_TABLE=weekly_notes
+MS_TABLE=manuscripts
+HOST=<vatican_mss>
+DATABASE=<>
+
+[GENERATE_DATABASE]
+USERNAME=<>
+PASSWORD=<>
+
+[INSERT_DATABASE]
+USERNAME=<>
+PASSWORD=<>

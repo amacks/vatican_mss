@@ -90,13 +90,13 @@ sub update_database{
 	} else {
 		## connect to a DB
 		my $config = new Config::Simple($config_file) or die "Cannot read config file";
-		my $ms_table = $config->param("INSERT_DATABASE.MS_TABLE");
+		my $ms_table = $config->param("GLOBAL.MS_TABLE");
 
-		my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("INSERT_DATABASE.DATABASE") .
-			":host=" . $config->param("INSERT_DATABASE.HOST"). ":port=3306'",
+		my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
+			":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
 			$config->param("INSERT_DATABASE.USERNAME"), $config->param("INSERT_DATABASE.PASSWORD"), 
 			{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-		or die "Can't connect to the MySQL " . $config->param("INSERT_DATABASE.HOST") . '-' . $config->param("INSERT_DATABASE.DATABASE") .": $DBI::errstr\n";
+		or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
 	    $dbh->{LongTruncOk} = 0;
 	    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
 	    $dbh->do('SET NAMES utf8');
