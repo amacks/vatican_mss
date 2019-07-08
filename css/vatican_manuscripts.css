@@ -30,8 +30,34 @@ img.index-list-pics {
 	font-size: 115%;
 	padding-top: 1.5rem;
 	text-align: center;
+    font-family: 'Raleway', sans-serif;
 }
 
 div.index-list {
 	margin-top: 1.5rem;
+}
+
+/* global styles */
+
+.normal-text {
+    font-family: 'Gentium Book Basic', serif;
+}
+
+.normal-text p {
+	margin-bottom: .3rem;
+}
+.normal-text p+p {
+	text-indent: 2rem;
+}
+.normal-text p:first-child:first-letter {
+	font-size: 72;
+	line-height: 20px;
+	float: left;
+	padding-top: 3px;
+	padding-right: 2px;
+	padding-left: 2px;
+}
+
+h1, h2, h3 {
+	font-family: 'Raleway', sans-serif !important;
 }
