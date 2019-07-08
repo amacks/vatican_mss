@@ -62,7 +62,7 @@ div.index-list {
 	text-indent: 2rem;
 }
 .normal-text p:first-child:first-letter {
-	font-size: 72;
+	font-size: 44px;
 	line-height: 20px;
 	float: left;
 	padding-top: 3px;
