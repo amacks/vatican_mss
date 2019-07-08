@@ -47,7 +47,7 @@ my $inital_load_end = '2018-01-21 21:06:15';
 
 my $header = "";
 my $footer = "";
-my $url_prefix="/aaronm/vatican";
+my $url_prefix="/vatican";
 
 ## for the database
 my $config_file = "config/db.ini";
