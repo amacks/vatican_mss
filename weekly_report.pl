@@ -33,8 +33,8 @@ sub get_week_and_year($){
 	my $offset_date = DateTime->now->subtract(days => 7*$week_offset);
 	my ($week_year, $week_number) = $offset_date->week;
 	return {
-		'year' => $week_year,
-		'week' => $week_number+1
+		'year' => $offset_date->strftime("%Y"),
+		'week' => $offset_date->strftime("%V"),
 	};
 }
 ## constants
