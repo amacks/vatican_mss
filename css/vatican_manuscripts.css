@@ -43,6 +43,11 @@ div.index-list {
     font-family: 'Gentium Book Basic', serif;
 }
 
+p.normal-text {
+	text-indent: 2rem;
+	margin-bottom: .3rem;
+}
+
 h1, h2, h3 {
 	font-family: 'Raleway', sans-serif;
 }
