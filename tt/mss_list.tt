@@ -1,16 +1,20 @@
-<head>
-<title>Vatican Manuscripts Added Week: ${datestamp_parts.week} of ${datestamp_parts.year}</title>
-<link href="${url_prefix}/css/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
-</head>
-<body>
-<h2>Vatican Manuscripts Added Week: ${datestamp_parts.week} of ${datestamp_parts.year}</h2>
-<div class="right-image" >
-<img src="${header_data.image_filename}">
-</div>
-<div class="intro">
-${header_data.header_text_html}
-</div>
-<div>
+
+[%- WRAPPER "wrapper.tt"
+ title="Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}"
+ -%]
+
+<div class="grid-container fluid">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h2>Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}</h2>
+		</div>
+	</div>
+	<div class="grid-x grid-margin-x">
+		<div class="cell small-8"><!--Start of Text Area-->
+		<div class="cell normal-text">
+			${header_data.header_text_html}
+		</div>
+		<div class="cell">
 <ul>
 [% FOREACH ms IN mss_list %]
 	<li><a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
@@ -29,5 +33,15 @@ ${header_data.header_text_html}
 </li>
 [% END %]
 </ul>
+		</div>
+
+		</div><!--end of text area-->
+		<div class="cell small-4">
+			<div class="right-image" >
+				<img src="${header_data.image_filename}">
+			</div>
+		</div>
+	</div>
 </div>
-</body>
+
+[%- END -%]
