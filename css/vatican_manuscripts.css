@@ -44,8 +44,10 @@ div.index-list {
 }
 
 .normal-text p {
-	text-indent: 2rem;
 	margin-bottom: .3rem;
+}
+.normal-text p+p {
+	text-indent: 2rem;
 }
 
 h1, h2, h3 {
