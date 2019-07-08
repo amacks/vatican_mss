@@ -43,7 +43,7 @@ div.index-list {
     font-family: 'Gentium Book Basic', serif;
 }
 
-p.normal-text {
+.normal-text p {
 	text-indent: 2rem;
 	margin-bottom: .3rem;
 }
