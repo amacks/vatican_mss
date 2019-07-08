@@ -50,7 +50,8 @@ div.index-list {
 	text-indent: 2rem;
 }
 .normal-text p:first-child:first-letter {
-	font-size: 175%;
+	font-size: 200%;
+	line-height: 140%;
 	float: left;
 }
 
