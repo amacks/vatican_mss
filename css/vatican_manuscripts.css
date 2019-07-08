@@ -28,4 +28,9 @@ img.index-list-pics {
 	transform: rotate(45deg);
 	font-weight: bold;
 	font-size: 115%;
+	padding-top: 1rem;
+}
+
+div.index-list {
+	margin-top: 1.5rem;
 }
