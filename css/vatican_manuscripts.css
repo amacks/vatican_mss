@@ -28,7 +28,8 @@ img.index-list-pics {
 	transform: rotate(45deg);
 	font-weight: bold;
 	font-size: 115%;
-	padding-top: 1rem;
+	padding-top: 1.5rem;
+	text-align: center;
 }
 
 div.index-list {
