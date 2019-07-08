@@ -35,3 +35,9 @@ img.index-list-pics {
 div.index-list {
 	margin-top: 1.5rem;
 }
+
+/* global styles */
+
+body {
+    font-family: 'Gentium Book Basic', serif;
+}
