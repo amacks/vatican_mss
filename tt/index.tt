@@ -3,10 +3,12 @@
  -%]
 <div class="grid-container fluid">
 	<div class="grid-x grid-margin-x">
-		<h2>Recently Digitized Manuscripts from the BAV</h2>
-	</div>
-	<div class="grid-x grid-margin-x index-intro">
+		<div class="header cell">
+			<h2>Recently Digitized Manuscripts from the BAV</h2>
+		</div>
+		<div class="cell">
 Welcome! This project is a continuation of the work started by <a href="https://macrotypography.blogspot.com/" target="_blank">Jean-Baptiste Piggin</a> tracking new manuscripts added to the digitized manuscripts of the Vatican Libraries. Each week we add a new page with the manuscripts from the previous week, with title, author, date and incipt where possible.  Announcements of the weekly update will be posted to <a href="https://twitter.com/gundormr" target="_blank">Twitter</a>, anyone with additions, corrections or information about any manuscripts is invited to contact me there and I'll add it here.
+		</div>
 	</div>
 <div class="index-list">
 [%- FOREACH week IN weeks_notes -%]
