@@ -50,14 +50,14 @@ div.index-list {
 	text-indent: 2rem;
 }
 .normal-text p:first-child:first-letter {
-	font-size: 24px;
+	font-size: 72;
 	line-height: 20px;
 	float: left;
 	padding-top: 3px;
-	padding-right: 6px;
+	padding-right: 2px;
 	padding-left: 2px;
 }
 
 h1, h2, h3 {
-	font-family: 'Raleway', sans-serif;
+	font-family: 'Raleway', sans-serif !important;
 }
