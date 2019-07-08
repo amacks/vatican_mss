@@ -16,7 +16,7 @@
 [% content -%]
 
 <div class="copyright">
-Copyright Aaron Macks, 2019-[%- date.format(mytime, '%Y') -%]. This project is not an official project the <a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.
+Copyright Aaron Macks, 2019-[%- date.format(mytime, '%Y') -%]. This project is <em>not</em> an official project of the <a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.
 </div>
 <script>
   \$(document).foundation();
