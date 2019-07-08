@@ -35,8 +35,8 @@ ul.index-list>li::after {
 }
 
 img.index-list-pics {
-	max-height: 4rem;
-	width: auto;
+	max-height: auto;
+	width: 4rem;
 	vertical-align:middle;
 	float:right;
 
