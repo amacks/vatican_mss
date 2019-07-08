@@ -1,6 +1,6 @@
 <head>
 <title>Vatican Manuscripts Added Week: ${datestamp_parts.week} of ${datestamp_parts.year}</title>
-<link href="${url_prefix}/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
+<link href="${url_prefix}/css/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
 </head>
 <body>
 <h2>Vatican Manuscripts Added Week: ${datestamp_parts.week} of ${datestamp_parts.year}</h2>

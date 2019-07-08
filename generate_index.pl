@@ -33,7 +33,7 @@ my $today_timestamp = get_time('%Y_%m_%d');
 my $header = "";
 my $footer = "";
 my $template_filename = "index.tt";
-my $url_prefix = "/aaronm/vatican";
+my $url_prefix = "/vatican";
 
 ## for the database
 my $config_file = "config/db.ini";
