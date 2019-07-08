@@ -16,34 +16,15 @@ div.incipit {
 	font-style: oblique;
 }
 
-ul.index-list {
-	list-style-type: none;
-}
-ul.index-list>li{
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	border-bottom-color: gray;
-	overflow:hidden;
-}
-ul.index-list>li:last-child {
-	border-bottom-style: none;
-}
-
-ul.index-list>li::after {
-  content: "";
-  clear: both;
-}
-
+/* CSS for the index page */
 img.index-list-pics {
-	max-height: 4rem;
-	width: auto;
+	max-height: auto;
+	width: 100%;
 	vertical-align:middle;
-	float:right;
-
 }
 
-ul.index-list>li>p {
-	display: inline;
-	vertical-align: middle;
-	padding-bottom: .1rem;
+.index-date {
+	transform: rotate(45deg);
+	font-weight: bold;
+	font-size: 115%;
 }
