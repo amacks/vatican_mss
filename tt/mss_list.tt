@@ -10,7 +10,7 @@
 		</div>
 	</div>
 	<div class="grid-x grid-margin-x">
-		<div class="cell small-8"><!--Start of Text Area-->
+		<div class="cell medium-8 small-12"><!--Start of Text Area-->
 		<div class="cell normal-text">
 			${header_data.header_text_html}
 		</div>
@@ -36,7 +36,7 @@
 		</div>
 
 		</div><!--end of text area-->
-		<div class="cell small-4">
+		<div class="cell medium-4 small-12">
 			<div class="right-image" >
 				<img src="${header_data.image_filename}">
 			</div>
