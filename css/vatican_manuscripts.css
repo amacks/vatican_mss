@@ -24,6 +24,7 @@ img.index-list-pics {
 }
 
 .index-date {
+	display: block;
 	transform: rotate(45deg);
 	font-weight: bold;
 	font-size: 115%;

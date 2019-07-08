@@ -20,8 +20,8 @@ Welcome! This project is a continuation of the work started by <a href="https://
   <div class="cell small-1">
     <a href="${url_prefix}/${week.year}/week${week.week_number}.html"><img class="index-list-pics" alt="MS Image" src="${url_prefix}/${week.year}/${week.image_filename}" /></a>
   </div>
-  [% "<hr>" UNLESS loop.last %]
 </div>
+[% "<hr>" UNLESS loop.last %]
 [%- END -%]
 </div>
 	
