@@ -49,6 +49,10 @@ div.index-list {
 .normal-text p+p {
 	text-indent: 2rem;
 }
+.normal-text p:first-child:first-letter {
+	font-size: 175%;
+	float: left;
+}
 
 h1, h2, h3 {
 	font-family: 'Raleway', sans-serif;
