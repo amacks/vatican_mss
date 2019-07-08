@@ -1,3 +1,15 @@
+/* Define Font Faces */
+@font-face {
+    font-family: 'zainerinitials_45_mm';
+    src: url('zainer-initials45mm-webfont.woff2') format('woff2'),
+         url('zainer-initials45mm-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+/* Done defining */
+
+
 .right-image {
     float: right;
     max-width: 40%;
@@ -56,6 +68,7 @@ div.index-list {
 	padding-top: 3px;
 	padding-right: 2px;
 	padding-left: 2px;
+	font-family: 'zainerinitials_45_mm', 'Gentium Book Basic', serif;
 }
 
 h1, h2, h3 {
