@@ -23,7 +23,7 @@
 ,
 [%- " $ms.author" IF ms.author.defined -%]
 [%- " <i>$ms.title</i>" IF ms.title.defined -%]
-[%- "($ms.date)" IN ms.date.defined -%]
+[%- "($ms.date)" IF ms.date.defined -%]
 [%- IF ms.notes.defined OR ms.incipit.defined -%]
 <div class="notes_block">
 [%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
