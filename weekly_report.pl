@@ -30,11 +30,13 @@ sub get_time
 
 sub get_week_and_year($){
 	my $week_offset = shift;
-	my $offset_date = DateTime->now->subtract(days => 7*$week_offset);
+	warn "Offset: $week_offset";
+	my $offset_date = DateTime->now();
+	$offset_date->subtract(days => 7*$week_offset);
 	my ($week_year, $week_number) = $offset_date->week;
 	return {
-		'year' => $offset_date->strftime("%Y"),
-		'week' => $offset_date->strftime("%V"),
+		'year' => $week_year,
+		'week' => $week_number,
 	};
 }
 ## constants
@@ -65,20 +67,22 @@ my $report_stmt = "select
 __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
 on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id 
  where
-(year(ms1.date_added) = year(date_sub(now(), interval ? week))) AND
-(week(ms1.date_added,0) = week(date_sub(now(), interval ? week), 0))
+(year(ms1.date_added) = ?) AND
+(week(ms1.date_added,0)+1 = ?)
 ORDER by shelfmark asc";
 
 my $header_stmt = "select header_text, image_filename from __NOTES_TABLE__ 
-where week_number=1+week(date_sub(now(), interval ? week), 0) and year=year(date_sub(now(), interval ? week)) ";
+where  year=? and week_number=?  ";
 
 
 
 ### handle arguments to set the offset values and decide if we're output to console or note
-my $week_offset=0;
+my $week_number;
+my $year;
 my $filepath = undef; ## if defined, the root path where to output the file
 GetOptions(
-		'offset=i' => \$week_offset,
+		'week=i' => \$week_number,
+		'year=i' => \$year,
 		'filepath=s' => \$filepath);
 
 
@@ -86,7 +90,8 @@ GetOptions(
 warn $today_timestamp;
 
 sub get_mss_interval{
-	my $week_offset = shift;
+	my $week_number = shift;
+	my $year = shift;
 	## get the DB configs
 	my $config = new Config::Simple($config_file) or die "Cannot read config file";
 	my $ms_table = $config->param("GLOBAL.MS_TABLE");
@@ -102,8 +107,8 @@ sub get_mss_interval{
 ## now prepare a handle for the statement
 	$report_stmt =~ s/__MS_TABLE__/$ms_table/g;
 	my $sth = $dbh->prepare($report_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
-	$sth->bind_param(1, $week_offset, SQL_INTEGER);
-	$sth->bind_param(2, $week_offset, SQL_INTEGER);
+	$sth->bind_param(1,$year, SQL_INTEGER);
+	$sth->bind_param(2,$week_number, SQL_INTEGER);
 	## now do the query
 	$sth->execute() or die "cannot run report: " . $sth->errstr();
 	my $manuscripts = [];
@@ -122,7 +127,8 @@ sub get_mss_interval{
 }
 
 sub get_header_data{
-	my $week_offset = shift;
+	my $week_number = shift;
+	my $year = shift;
 	## get the DB configs
 	my $config = new Config::Simple($config_file) or die "Cannot read config file";
 	my $notes_table = $config->param("GLOBAL.NOTES_TABLE");
@@ -136,9 +142,10 @@ sub get_header_data{
     $dbh->do('SET NAMES utf8');
 ## now prepare a handle for the statement
 	$header_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
+
 	my $sth = $dbh->prepare($header_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
-	$sth->bind_param(1, $week_offset, SQL_INTEGER);
-	$sth->bind_param(2, $week_offset, SQL_INTEGER);
+	$sth->bind_param(1,$year, SQL_INTEGER);
+	$sth->bind_param(2,$week_number, SQL_INTEGER);
 	## now do the query
 	$sth->execute() or die "cannot run report: " . $sth->errstr();
 	my $header_data= $sth->fetchrow_hashref();
@@ -156,11 +163,10 @@ sub format_mss_list{
 		warn " format_mss_list requires an argument of an arrayref to a list of MS";
 		return undef;
 	} else {
-		my $datestamp_parts = get_week_and_year($week_offset);
 		## setup the template system
 		my %data = (
 				'mss_list' => $mss_list,
-				'datestamp_parts' => $datestamp_parts,
+				'datestamp_parts' => { 'week' => $week_number, 'year' => $year},
 				'ms_base_url' => $ms_base_url,
 				'header_data' => $header_data,
 				'url_prefix' => $url_prefix,
@@ -179,12 +185,11 @@ sub format_mss_list{
 }
 
 ## now actually run things!
-my $formatted_html = format_mss_list(get_mss_interval($week_offset),get_header_data($week_offset));
+my $formatted_html = format_mss_list(get_mss_interval($week_number, $year),get_header_data($week_number, $year));
 if (!defined($filepath)){
 	print $formatted_html;
 } else {
-	my $date_parts = get_week_and_year($week_offset);
-	my $filename = $filepath . "/" . $date_parts->{'year'} . '/' . "week" . $date_parts->{'week'}. ".html";
+	my $filename = $filepath . "/" . $year . '/' . "week" . $week_number. ".html";
 	warn "writing to $filename";
 	open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
 	print OUTPUT_FILE $formatted_html;
