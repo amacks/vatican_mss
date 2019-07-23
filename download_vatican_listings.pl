@@ -82,6 +82,22 @@ sub get_items{
 	};
 }
 
+## connect to the DB, return a handle
+sub get_dbh(){
+	my $config = new Config::Simple($config_file) or die "Cannot read config file";
+	my $ms_table = $config->param("GLOBAL.MS_TABLE");
+
+	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
+		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
+		$config->param("INSERT_DATABASE.USERNAME"), $config->param("INSERT_DATABASE.PASSWORD"), 
+		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
+	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
+    $dbh->{LongTruncOk} = 0;
+    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
+    $dbh->do('SET NAMES utf8');
+    return $dbh;
+}
+
 ## takes an argument, a hashref of the data
 sub update_database{
 	my $data = shift;
@@ -90,17 +106,7 @@ sub update_database{
 		return undef;
 	} else {
 		## connect to a DB
-		my $config = new Config::Simple($config_file) or die "Cannot read config file";
-		my $ms_table = $config->param("GLOBAL.MS_TABLE");
-
-		my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-			":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-			$config->param("INSERT_DATABASE.USERNAME"), $config->param("INSERT_DATABASE.PASSWORD"), 
-			{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-		or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-	    $dbh->{LongTruncOk} = 0;
-	    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-	    $dbh->do('SET NAMES utf8');
+		my $dbh = get_dbh();
 ## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
@@ -147,6 +153,15 @@ sub post_import_update(){
 	bav.author= pal.author, bav.title=pal.title, bav.notes=pal.notes
 	where bav.author is null and bav.title is null and bav.notes is null',
 	);
+	## now loop through the SQL and execute it
+	my $dbh = get_dbh();
+	for my $stm_key (sort keys %update_stmts){
+		warn " Doing $stm_key update";
+		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
+		if (defined($sth)){
+			$sth->execute();
+		}
+	}
 }
 
 ## Main body
@@ -167,4 +182,6 @@ for my $collection (@collections){
 		warn "Failure downloading HTML for $collection";
 	}
 }
-print "Dome with $total_count inserted \n";
+print "Done with $total_count inserted \n";
+post_import_update();
+
