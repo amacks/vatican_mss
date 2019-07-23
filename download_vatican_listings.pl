@@ -83,9 +83,8 @@ sub get_items{
 }
 
 ## connect to the DB, return a handle
-sub get_dbh(){
-	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $ms_table = $config->param("GLOBAL.MS_TABLE");
+sub get_dbh($){
+	my $config= shift;
 
 	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
 		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
@@ -105,8 +104,11 @@ sub update_database{
 		warn "update_database needs an argument of a hashref";
 		return undef;
 	} else {
+		## get configs
+		my $config = new Config::Simple($config_file) or die "Cannot read config file";
+		my $ms_table = $config->param("GLOBAL.MS_TABLE");
 		## connect to a DB
-		my $dbh = get_dbh();
+		my $dbh = get_dbh($config);
 ## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
@@ -154,7 +156,8 @@ sub post_import_update(){
 	where bav.author is null and bav.title is null and bav.notes is null',
 	);
 	## now loop through the SQL and execute it
-	my $dbh = get_dbh();
+	my $config = new Config::Simple($config_file) or die "Cannot read config file";
+	my $dbh = get_dbh($config);
 	for my $stm_key (sort keys %update_stmts){
 		warn " Doing $stm_key update";
 		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
