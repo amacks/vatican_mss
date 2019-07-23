@@ -135,6 +135,20 @@ sub update_database{
 	}
 }
 
+## run some post-load updates to get linked data from other tables
+sub post_import_update(){
+	my %update_stmts = (
+	ptolmey => 'update manuscripts as bav join
+		(select shelfmark, group_concat(author SEPARATOR ", ") as author, group_concat(title SEPARATOR ", ") as title, 
+		group_concat(concat("See [PAL](", url, ") for siglum ", siglum) SEPARATOR ", ") as notes 
+		from ptolemy_sources group by shelfmark) as pal 
+	on bav.shelfmark=pal.shelfmark
+	set 
+	bav.author= pal.author, bav.title=pal.title, bav.notes=pal.notes
+	where bav.author is null and bav.title is null and bav.notes is null',
+	);
+}
+
 ## Main body
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
 my $total_count = 0;
