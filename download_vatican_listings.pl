@@ -82,6 +82,21 @@ sub get_items{
 	};
 }
 
+## connect to the DB, return a handle
+sub get_dbh($){
+	my $config= shift;
+
+	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
+		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
+		$config->param("INSERT_DATABASE.USERNAME"), $config->param("INSERT_DATABASE.PASSWORD"), 
+		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
+	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
+    $dbh->{LongTruncOk} = 0;
+    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
+    $dbh->do('SET NAMES utf8');
+    return $dbh;
+}
+
 ## takes an argument, a hashref of the data
 sub update_database{
 	my $data = shift;
@@ -89,18 +104,11 @@ sub update_database{
 		warn "update_database needs an argument of a hashref";
 		return undef;
 	} else {
-		## connect to a DB
+		## get configs
 		my $config = new Config::Simple($config_file) or die "Cannot read config file";
 		my $ms_table = $config->param("GLOBAL.MS_TABLE");
-
-		my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-			":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-			$config->param("INSERT_DATABASE.USERNAME"), $config->param("INSERT_DATABASE.PASSWORD"), 
-			{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-		or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-	    $dbh->{LongTruncOk} = 0;
-	    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-	    $dbh->do('SET NAMES utf8');
+		## connect to a DB
+		my $dbh = get_dbh($config);
 ## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
@@ -135,6 +143,30 @@ sub update_database{
 	}
 }
 
+## run some post-load updates to get linked data from other tables
+sub post_import_update(){
+	my %update_stmts = (
+	ptolmey => 'update manuscripts as bav join
+		(select shelfmark, group_concat(author SEPARATOR ", ") as author, group_concat(title SEPARATOR ", ") as title, 
+		group_concat(concat("See [PAL](", url, ") for siglum ", siglum) SEPARATOR ", ") as notes 
+		from ptolemy_sources group by shelfmark) as pal 
+	on bav.shelfmark=pal.shelfmark
+	set 
+	bav.author= pal.author, bav.title=pal.title, bav.notes=pal.notes
+	where bav.author is null and bav.title is null and bav.notes is null',
+	);
+	## now loop through the SQL and execute it
+	my $config = new Config::Simple($config_file) or die "Cannot read config file";
+	my $dbh = get_dbh($config);
+	for my $stm_key (sort keys %update_stmts){
+		warn " Doing $stm_key update";
+		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
+		if (defined($sth)){
+			$sth->execute();
+		}
+	}
+}
+
 ## Main body
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
 my $total_count = 0;
@@ -153,4 +185,6 @@ for my $collection (@collections){
 		warn "Failure downloading HTML for $collection";
 	}
 }
-print "Dome with $total_count inserted \n";
+print "Done with $total_count inserted \n";
+post_import_update();
+
