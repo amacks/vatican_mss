@@ -28,16 +28,13 @@ sub get_time
     return strftime($format, localtime);
 }
 
-sub get_week_and_year($){
-	my $week_offset = shift;
-	warn "Offset: $week_offset";
+sub get_week_and_year(){
 	my $offset_date = DateTime->now();
-	$offset_date->subtract(days => 7*$week_offset);
 	my ($week_year, $week_number) = $offset_date->week;
-	return {
-		'year' => $week_year,
-		'week' => $week_number,
-	};
+	return (
+		$week_year,
+		$week_number,
+	);
 }
 ## constants
 my $today_timestamp = get_time('%Y_%m_%d');
@@ -79,15 +76,21 @@ where  year=? and week_number=?  ";
 ### handle arguments to set the offset values and decide if we're output to console or note
 my $week_number;
 my $year;
+my $today;
 my $filepath = undef; ## if defined, the root path where to output the file
 GetOptions(
 		'week=i' => \$week_number,
 		'year=i' => \$year,
+		'today' => \$today,
 		'filepath=s' => \$filepath);
 
 
+## handle today flag
+if (defined($today)){
+	($year, $week_number) = get_week_and_year();
+}
 
-warn $today_timestamp;
+warn "Processing Week: ". $week_number . " of year ". $year;
 
 sub get_mss_interval{
 	my $week_number = shift;
