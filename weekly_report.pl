@@ -68,7 +68,7 @@ on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id
 (week(ms1.date_added,0)+1 = ?)
 ORDER by shelfmark asc";
 
-my $header_stmt = "select header_text, image_filename from __NOTES_TABLE__ 
+my $header_stmt = "select header_text, image_filename, boundry_image_filename from __NOTES_TABLE__ 
 where  year=? and week_number=?  ";
 
 
