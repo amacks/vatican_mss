@@ -14,9 +14,9 @@
 		<div class="cell normal-text">
 			${header_data.header_text_html}
 		</div>
-		[%- IF boundry_image_filename.defined() -%]
+		[%- IF header_data.boundry_image_filename.defined() -%]
 		<div class="cell boundry-image">
-		<img alt="${boundry_image_filename}" src="${boundry_image_filename">
+		<img alt="${header_data.boundry_image_filename}" src="${header_data.boundry_image_filename">
 		</div> 
 		[%- END -%]
 		<!--div>There were ${ms_count} manuscripts added this week</div-->
