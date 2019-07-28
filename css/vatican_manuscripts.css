@@ -73,3 +73,11 @@ div.index-list {
 h1, h2, h3 {
 	font-family: 'Raleway', sans-serif !important;
 }
+
+.boundry-image img {
+	max-height: 5rem;
+	width: auto;
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
