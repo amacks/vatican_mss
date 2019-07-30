@@ -154,6 +154,12 @@ sub post_import_update(){
 	set 
 	bav.author= pal.author, bav.title=pal.title, bav.notes=pal.notes
 	where bav.author is null and bav.title is null and bav.notes is null',
+	jordanus => 'update vatican_mss_jordanus as j
+		join manuscripts as v 
+		on j.shelfmark=v.shelfmark 
+		set v.author=j.author,v.title=j.title, v.date=j.date, 
+		v.notes=concat("See [Jordanus #", j.ms_id, "](https://ptolemaeus.badw.de/jordanus/ms/", j.ms_id, ")")
+		where date(v.date_added)=date(now())'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Config::Simple($config_file) or die "Cannot read config file";
