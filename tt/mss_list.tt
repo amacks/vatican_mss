@@ -45,7 +45,7 @@
 		</div><!--end of text area-->
 		<div class="cell medium-4 small-12">
 			<div class="right-image" >
-				<img src="${header_data.image_filename}">
+				<a href="${header_data.image_filename}"><img src="${header_data.image_filename}"></a>
 			</div>
 		</div>
 	</div>
