@@ -48,7 +48,7 @@ sub get_notes(){
 	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
 		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
 		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
+		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
 	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
