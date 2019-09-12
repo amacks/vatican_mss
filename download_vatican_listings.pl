@@ -159,7 +159,12 @@ sub post_import_update(){
 		on j.shelfmark=v.shelfmark 
 		set v.author=j.author,v.title=j.title, v.date=j.date, 
 		v.notes=concat("See [Jordanus #", j.ms_id, "](https://ptolemaeus.badw.de/jordanus/ms/", j.ms_id, ")")
-		where date(v.date_added)=date(now())'
+		where date(v.date_added)=date(now())',
+	iter => 'update manuscripts as m 
+		join iter_italicum_sources as ii 
+		on m.shelfmark=ii.shelfmark
+		set m.notes = concat("See [Iter liturgicum italicum](", url, ")")
+		where notes is null'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Config::Simple($config_file) or die "Cannot read config file";
