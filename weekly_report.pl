@@ -12,6 +12,11 @@ use Data::Dumper;
 use Encode;
 use utf8;
 
+use File::Basename;
+use lib dirname($0) . "/lib/";
+use Vatican::Config;
+use Vatican::DB;
+
 ## for the storage engine
 use DBD::mysql;
 use DBI qw(:sql_types);
@@ -48,8 +53,6 @@ my $footer = "";
 my $url_prefix="/vatican";
 
 ## for the database
-my $config_file = "config/db.ini";
-
 my $report_stmt = "select 
  ms1.shelfmark as shelfmark, 
  ms1.high_quality as high_quality, 
@@ -95,17 +98,11 @@ sub get_mss_interval{
 	my $week_number = shift;
 	my $year = shift;
 	## get the DB configs
-	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $ms_table = $config->param("GLOBAL.MS_TABLE");
+	my $config = new Vatican::Config();
+	my $ms_table = $config->ms_table();
 	## connect to a DB
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-    $dbh->{LongTruncOk} = 0;
-    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
+	my $vatican_db = new Vatican::DB();
+	my $dbh=$vatican_db->get_generate_dbh();
 ## now prepare a handle for the statement
 	$report_stmt =~ s/__MS_TABLE__/$ms_table/g;
 	my $sth = $dbh->prepare($report_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
@@ -132,16 +129,11 @@ sub get_header_data{
 	my $week_number = shift;
 	my $year = shift;
 	## get the DB configs
-	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $notes_table = $config->param("GLOBAL.NOTES_TABLE");
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-    $dbh->{LongTruncOk} = 0;
-    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
+	my $config = new Vatican::Config();
+	my $notes_table = $config->notes_table();
+	## connect to a DB
+	my $vatican_db = new Vatican::DB();
+	my $dbh=$vatican_db->get_generate_dbh();
 ## now prepare a handle for the statement
 	$header_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
 

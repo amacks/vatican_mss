@@ -1,0 +1,16 @@
+<div class="index-list">
+[%- FOREACH week IN weeks_notes -%]
+<div class="grid-x grid-margin-x index-list-item">
+  <div class="cell small-1 ">
+    <span class="index-date"><a href="${url_prefix}/${week.year}/week${week.week_number}.html">${week.year} <br /> Week ${week.week_number}</a></span>
+  </div>
+  <div class="cell auto normal-text">
+    ${week.header_text_html}
+  </div>
+  <div class="cell small-1">
+    <a href="${url_prefix}/${week.year}/week${week.week_number}.html"><img class="index-list-pics" alt="MS Image" src="${url_prefix}/${week.year}/${week.image_filename}" /></a>
+  </div>
+</div>
+[% "<hr>" UNLESS loop.last %]
+[%- END -%]
+</div>
