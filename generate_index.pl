@@ -20,6 +20,14 @@ use DBI qw(:sql_types);
 ## for formatting the output
 use Template;
 
+## local tools
+use File::Basename;
+use lib dirname($0) . "/lib";
+use Vatican::Config;
+use Vatican::DB;
+
+
+
 ## timestamp formatting from 
 ##https://stackoverflow.com/questions/2149532/how-can-i-format-a-timestamp-in-perl
 sub get_time 
@@ -36,7 +44,6 @@ my $template_filename = "index.tt";
 my $url_prefix = "/vatican";
 
 ## for the database
-my $config_file = "config/db.ini";
 my $db_stmt_master = "select year, week_number, header_text, image_filename from __TABLE__ __WHERE__ order by year desc, week_number desc __LIMIT__";
 my $years_stmt = "select distinct year from __TABLE__";
 
@@ -58,18 +65,11 @@ sub sql_cleanup($){
 
 ##returns an arrayref to a list of the years known in the DB
 sub get_years(){
-	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $db_table = $config->param("GLOBAL.NOTES_TABLE");
+	my $config = new Vatican::Config();
+	my $db_table = $config->notes_table();
 	## connect to a DB
 
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-    $dbh->{LongTruncOk} = 0;
-    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
+	my $dbh=Vatican::DB->new()->get_generate_dbh();
     my $stmt = sql_replace($years_stmt, 'table', $db_table);
     my $sth = $dbh->prepare($stmt) or die "cannot prepare report statement: ". $dbh->errstr();
 	## now do the query
@@ -99,18 +99,11 @@ sub get_notes{
 	}
 	my $db_stmt = $db_stmt_master;
 	## do some config reading
-	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $db_table = $config->param("GLOBAL.NOTES_TABLE");
+	my $config = new Vatican::Config();
+	my $db_table = $config->notes_table();
 	## connect to a DB
 
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-		$config->param("GENERATE_DATABASE.USERNAME"), $config->param("GENERATE_DATABASE.PASSWORD"), 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-    $dbh->{LongTruncOk} = 0;
-    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
+	my $dbh=Vatican::DB->new()->get_generate_dbh();
     ## regex to swap in the table name
     $db_stmt = sql_replace($db_stmt, 'table', $db_table);
     if ($options->{'mode'} eq 'year') {
