@@ -50,7 +50,9 @@
 		</div>
 	</div>
 </div>
-<div class="breadcrumbs">
-<a href="/vatican/">Vatican Manuscripts</a>><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a>><a href="/vatican/${datestamp_parts.year}/week${datestamp_parts.week}.html">Week ${datestamp_parts.week}</a>
-</div>
+<ul class="breadcrumbs">
+<li><a href="/vatican/">Vatican Manuscripts</a></li>
+<li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
+<li>Week ${datestamp_parts.week}</li>
+</ul>
 [%- END -%]
