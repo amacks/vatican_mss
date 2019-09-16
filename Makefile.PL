@@ -18,5 +18,5 @@ WriteMakefile(
 	'Config::Simple' => 0,
 	'Getopt::Long' => 0,
     },
-
+    test => {TESTS => 't/*.t'}
 );
