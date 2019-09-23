@@ -81,3 +81,8 @@ h1, h2, h3 {
     margin-left: auto;
     margin-right: auto;
 }
+
+img.ms_thumbnail {
+	height:3rem;
+	width:auto
+}
