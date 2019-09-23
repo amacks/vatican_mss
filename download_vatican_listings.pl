@@ -117,7 +117,7 @@ sub update_database{
 		$sth->bind_param(2, 1, SQL_INTEGER);
 		for my $shelfmark (@{$data->{'high-quality'}}){
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
-			$sth->bind_param(3,"https://digi.vatlib.it/pub/digit/". $shelfmark . "/cover/cover.jpg", SQL_VARCHAR);
+			$sth->bind_param(3,"https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg", SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
 				$rows_inserted++;
