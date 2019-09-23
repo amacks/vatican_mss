@@ -23,7 +23,7 @@
 		<div class="cell">
 <ul>
 [% FOREACH ms IN mss_list %]
-	<li><img src="${ms.thumbnail_url}">
+	<li><img src="${ms.thumbnail_url}" style="height:3rem; width:auto">
 	<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
 	[%- " (Low Quality)" IF ms.high_quality == 0 -%]
 	[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
