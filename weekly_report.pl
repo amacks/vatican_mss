@@ -62,6 +62,7 @@ my $report_stmt = "select
  ms1.author as author,
  ms1.incipit as incipit,
  ms1.notes as notes,
+ ms1.thumbnail_url as thumbnail_url,
  ms1.date as date from 
 __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
 on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id 
