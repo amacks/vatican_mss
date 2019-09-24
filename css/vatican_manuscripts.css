@@ -84,5 +84,6 @@ h1, h2, h3 {
 
 img.ms_thumbnail {
 	height:5rem;
-	width:auto
+	width:auto;
+	padding-right: 1rem;
 }
