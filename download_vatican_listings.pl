@@ -38,11 +38,12 @@ my $today_timestamp = get_time("%Y_%m_%d");
 my $base_url="https://digi.vatlib.it/mss";
 my $ms_base_url = "https://digi.vatlib.it/view/MSS_";
 my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
+#my @collections=('Ross');
 my $DEBUG=1;
 my $inital_load_end = '2018-01-21 21:06:15';
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, now())";
-my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/__SHELFMARK__.jpg\" where shelfmark=?";
+my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
 
@@ -99,8 +100,6 @@ sub update_database{
 		my $vatican_db = new Vatican::DB();
 		my $dbh=$vatican_db->get_insert_dbh();## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
-		$update_tn_stmt =~ s/__MS_TABLE__/$ms_table/g;
-		$update_tn_stmt =~ s/__YEAR__/$year/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
 		my $rows_inserted = 0;
@@ -114,14 +113,12 @@ sub update_database{
 				$rows_inserted++;
 				## if we have a filepath, download the thumbnail to local
 				if (defined($data->{'filepath'})){
-					my $http_response = getstore($image_url, $data->{'filepath'} . "/" . $year . '/thumbnails/' . "${shelfmark}_tn.jpg");
+					my $http_response = getstore($image_url, $data->{'filepath'} . "/" . $year . '/thumbnails/' . "${shelfmark}.jpg");
 					if (!is_error($http_response)){
-						## now do the nested SQL to update the thumbnail url
-						my $ms_update_stmt = $update_tn_stmt;
-						$ms_update_stmt =~ s/__SHELFMARK__/$shelfmark/g;
-						my $update_sth = $dbh->prepare($ms_update_stmt) or warn "Cannot prepare statement: " . $dbh->errstr();
-						$update_sth->bind_param(1, $shelfmark, SQL_VARCHAR);
-						$update_sth->execute();
+						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark);
+						if (!defined($local_thumbnail_code)){
+							warn "Some sort of error setting the local thumbnail";
+						}
 					} else {
 						warn "Some sort of error in downloading the image for " . $shelfmark;
 						warn $http_response;
