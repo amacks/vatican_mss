@@ -29,10 +29,10 @@
 		<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
 		[%- " (Low Quality)" IF ms.high_quality == 0 -%]
 		[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
-,
+		[%- "," IF ms.author.defined OR ms.title.defined OR ms.date.defined -%]
 		[%- " $ms.author" IF ms.author.defined -%]
 		[%- " <i>$ms.title</i>" IF ms.title.defined -%]
-		[%- "($ms.date)" IF ms.date.defined -%]
+		[%- " ($ms.date)" IF ms.date.defined -%]
 	</div>
 	<div class="notes_block small-5">
 		[%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
