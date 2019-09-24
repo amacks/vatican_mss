@@ -21,26 +21,27 @@
 		[%- END -%]
 		<!--div>There were ${ms_count} manuscripts added this week</div-->
 		<div class="cell">
-<ul>
+<div class="mss_list">
 [% FOREACH ms IN mss_list %]
-	<li><!--img src="${ms.thumbnail_url}" class="ms_thumbnail"-->
-	<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
-	[%- " (Low Quality)" IF ms.high_quality == 0 -%]
-	[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
+	<div class="mss_row grid-x">
+	<div class="cell small-2"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></div>
+	<div class="cell small-5">
+		<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
+		[%- " (Low Quality)" IF ms.high_quality == 0 -%]
+		[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
 ,
-[%- " $ms.author" IF ms.author.defined -%]
-[%- " <i>$ms.title</i>" IF ms.title.defined -%]
-[%- "($ms.date)" IF ms.date.defined -%]
-[%- IF ms.notes.defined OR ms.incipit.defined -%]
-<div class="notes_block">
-[%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
-[%- "<div class=\"notes\"> $ms.notes_html</div>" IF ms.notes_html.defined -%]
-</div>
-[%- END -%]
-   
-</li>
+		[%- " $ms.author" IF ms.author.defined -%]
+		[%- " <i>$ms.title</i>" IF ms.title.defined -%]
+		[%- "($ms.date)" IF ms.date.defined -%]
+	</div>
+	<div class="notes_block small-5">
+		[%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
+		[%- "<div class=\"notes\"> $ms.notes_html</div>" IF ms.notes_html.defined -%]
+	</div>
+</div><!-- close the row-->
+[% "<hr>" UNLESS loop.last %]
 [% END %]
-</ul>
+</div>
 		</div>
 
 		</div><!--end of text area-->
