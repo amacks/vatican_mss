@@ -9,6 +9,7 @@ use IO::Socket::SSL;
 use Mozilla::CA;
 use LWP::UserAgent;
 use LWP::Simple;
+use Getopt::Long;
 
 use HTML::TreeBuilder::XPath;
 use Data::Dumper;
@@ -41,7 +42,7 @@ my $DEBUG=1;
 my $inital_load_end = '2018-01-21 21:06:15';
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, now())";
-
+my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/__SHELFMARK___tn.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
 
@@ -93,10 +94,13 @@ sub update_database{
 		## get configs
 		my $config = new Vatican::Config();
 		my $ms_table = $config->ms_table();
+		my $year = get_time("%Y");
 		## connect to a DB
 		my $vatican_db = new Vatican::DB();
 		my $dbh=$vatican_db->get_insert_dbh();## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
+		$update_tn_stmt =~ s/__MS_TABLE__/$ms_table/g;
+		$update_tn_stmt =~ s/__YEAR__/$year/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
 		my $rows_inserted = 0;
@@ -108,10 +112,24 @@ sub update_database{
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
 				$rows_inserted++;
+				## if we have a filepath, download the thumbnail to local
+				if (defined($data->{'filepath'})){
+					my $http_response = getstore($image_url, $data->{'filepath'} . "/" . $year . '/thumbnails/' . "${shelfmark}_tn.jpg");
+					if (!is_error($http_response)){
+						## now do the nested SQL to update the thumbnail url
+						my $ms_update_stmt = $update_tn_stmt;
+						$ms_update_stmt =~ s/__SHELFMARK__/$shelfmark/g;
+						my $update_sth = $dbh->prepare($ms_update_stmt) or warn "Cannot prepare statement: " . $dbh->errstr();
+						$update_sth->bind_param(1, $shelfmark, SQL_VARCHAR);
+						$update_sth->execute();
+					} else {
+						warn "Some sort of error in downloading the image for " . $shelfmark;
+						warn $http_response;
+					}
+				}
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
-			##getstore($image_url, $config->);
 		}
 		# do the low-quality ones
 		$sth->bind_param(2, 0, SQL_INTEGER);
@@ -170,6 +188,13 @@ sub post_import_update(){
 }
 
 ## Main body
+## Options
+### handle arguments to set the offset values and decide if we're output to console or note
+my $filepath = undef; ## if defined, the root path where to output the file
+GetOptions(
+		'filepath=s' => \$filepath);
+
+
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
 my $total_count = 0;
 for my $collection (@collections){
@@ -177,6 +202,8 @@ for my $collection (@collections){
 	if (defined($html)){
 		my $item_hash = get_items($html);
 		if (defined($item_hash)){
+			## add in the filepath
+			$item_hash->{'filepath'} = $filepath;
 			my $row_count = update_database($item_hash);
 			print " $row_count inserted for $collection \n";
 			$total_count+=$row_count;
