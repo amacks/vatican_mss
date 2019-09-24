@@ -24,7 +24,7 @@
 <div class="mss_list">
 [% FOREACH ms IN mss_list %]
 	<div class="mss_row grid-x">
-	<div class="cell small-3 medium-1"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></div>
+	<div class="cell small-3 medium-1"><a target="_blank" href="${ms_base_url}${ms.shelfmark}"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></a></div>
 	<div class="cell small-9 medium-5">
 		<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
 		[%- " (Low Quality)" IF ms.high_quality == 0 -%]
