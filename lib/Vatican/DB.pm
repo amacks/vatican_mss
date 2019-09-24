@@ -49,7 +49,7 @@ sub get_insert_dbh(){
 
 	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->db_name() .
 		":host=" . $config->db_host(). ":port=3306'",
-		$config->generate_database()->{'username'}, $config->generate_database()->{'password'}, 
+		$config->insert_database()->{'username'}, $config->insert_database()->{'password'}, 
 		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
 	or die "Can't connect to the MySQL " . $config->db_host() . '-' . $config->db_name() .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
