@@ -25,7 +25,7 @@
 [% FOREACH ms IN mss_list %]
 	<div class="mss_row grid-x">
 	<div class="cell small-1"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></div>
-	<div class="cell small-6">
+	<div class="cell small-5">
 		<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
 		[%- " (Low Quality)" IF ms.high_quality == 0 -%]
 		[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
@@ -34,7 +34,7 @@
 		[%- " <i>$ms.title</i>" IF ms.title.defined -%]
 		[%- " ($ms.date)" IF ms.date.defined -%]
 	</div>
-	<div class="notes_block small-5">
+	<div class="notes_block small-6">
 		[%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
 		[%- "<div class=\"notes\"> $ms.notes_html</div>" IF ms.notes_html.defined -%]
 	</div>
