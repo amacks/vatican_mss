@@ -71,19 +71,18 @@ sub set_local_thumbnail {
 	my $this = shift;
 	my $shelfmark = shift;
 	my $local_filename= shift;
-	
+
 	my $config = $this->config();
 	my $year = get_time("%Y");
 	my $ms_table = $config->ms_table();
 	## update the master statement, this is per class 
 	$update_tn_stmt =~ s/__MS_TABLE__/$ms_table/g;
 	$update_tn_stmt =~ s/__YEAR__/$year/g;
-	## update the specific to include the shelfmark, this is limited to this call
-	my $ms_update_stmt = $update_tn_stmt;
-	$ms_update_stmt =~ s/__SHELFMARK__/$shelfmark/g;
+	## set the full thumbnail_url
+	my $thumbnail_uri = "/vatican/" . $year . "/thumbnails/" . $local_filename;
 	my $dbh = $this->get_insert_dbh();
-	my $update_sth = $dbh->prepare($ms_update_stmt) or warn "Cannot prepare statement: " . $dbh->errstr();
-	$update_sth->bind_param(1, $local_filename, SQL_VARCHAR);
+	my $update_sth = $dbh->prepare($update_tn_stmt) or warn "Cannot prepare statement: " . $dbh->errstr();
+	$update_sth->bind_param(1, $thumbnail_uri, SQL_VARCHAR);
 	$update_sth->bind_param(2, $shelfmark, SQL_VARCHAR);
 	return $update_sth->execute();
 }
