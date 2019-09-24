@@ -9,7 +9,6 @@ use IO::Socket::SSL;
 use Mozilla::CA;
 use LWP::UserAgent;
 use LWP::Simple;
-use Config::Simple;
 
 use HTML::TreeBuilder::XPath;
 use Data::Dumper;
@@ -18,7 +17,12 @@ use utf8;
 
 ## for the storage engine
 use DBD::mysql;
-  use DBI qw(:sql_types);
+use DBI qw(:sql_types);
+
+use File::Basename;
+use lib dirname($0) . "/lib/";
+use Vatican::Config;
+use Vatican::DB;
 
 ## timestamp formatting from 
 ##https://stackoverflow.com/questions/2149532/how-can-i-format-a-timestamp-in-perl
@@ -35,9 +39,6 @@ my $ms_base_url = "https://digi.vatlib.it/view/MSS_";
 my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
 my $DEBUG=1;
 my $inital_load_end = '2018-01-21 21:06:15';
-
-## for the database
-my $config_file = "config/db.ini";
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, now())";
 
@@ -82,21 +83,6 @@ sub get_items{
 	};
 }
 
-## connect to the DB, return a handle
-sub get_dbh($){
-	my $config= shift;
-
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-		$config->param("INSERT_DATABASE.USERNAME"), $config->param("INSERT_DATABASE.PASSWORD"), 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-    $dbh->{LongTruncOk} = 0;
-    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
-    return $dbh;
-}
-
 ## takes an argument, a hashref of the data
 sub update_database{
 	my $data = shift;
@@ -105,25 +91,27 @@ sub update_database{
 		return undef;
 	} else {
 		## get configs
-		my $config = new Config::Simple($config_file) or die "Cannot read config file";
-		my $ms_table = $config->param("GLOBAL.MS_TABLE");
+		my $config = new Vatican::Config();
+		my $ms_table = $config->ms_table();
 		## connect to a DB
-		my $dbh = get_dbh($config);
-## now prepare a handle for the statement
+		my $vatican_db = new Vatican::DB();
+		my $dbh=$vatican_db->get_insert_dbh();## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
 		my $rows_inserted = 0;
 		$sth->bind_param(2, 1, SQL_INTEGER);
 		for my $shelfmark (@{$data->{'high-quality'}}){
+			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
-			$sth->bind_param(3,"https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg", SQL_VARCHAR);
+			$sth->bind_param(3, $image_url, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
 				$rows_inserted++;
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
+			##getstore($image_url, $config->);
 		}
 		# do the low-quality ones
 		$sth->bind_param(2, 0, SQL_INTEGER);
@@ -167,8 +155,11 @@ sub post_import_update(){
 		where notes is null'
 	);
 	## now loop through the SQL and execute it
-	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $dbh = get_dbh($config);
+	my $config = new Vatican::Config();
+	my $ms_table = $config->ms_table();
+	## connect to a DB
+	my $vatican_db = new Vatican::DB();
+	my $dbh=$vatican_db->get_insert_dbh();
 	for my $stm_key (sort keys %update_stmts){
 		warn " Doing $stm_key update";
 		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
