@@ -42,7 +42,7 @@ my $DEBUG=1;
 my $inital_load_end = '2018-01-21 21:06:15';
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, now())";
-my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/__SHELFMARK___tn.jpg\" where shelfmark=?";
+my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/__SHELFMARK__.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
 
