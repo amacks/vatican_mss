@@ -113,9 +113,10 @@ sub update_database{
 				$rows_inserted++;
 				## if we have a filepath, download the thumbnail to local
 				if (defined($data->{'filepath'})){
-					my $http_response = getstore($image_url, $data->{'filepath'} . "/" . $year . '/thumbnails/' . "${shelfmark}.jpg");
+					my $local_filename = $data->{'filepath'} . "/" . $year . '/thumbnails/' . "${shelfmark}.jpg";
+					my $http_response = getstore($image_url, $local_filename);
 					if (!is_error($http_response)){
-						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark);
+						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark, $local_filename);
 						if (!defined($local_thumbnail_code)){
 							warn "Some sort of error setting the local thumbnail";
 						}

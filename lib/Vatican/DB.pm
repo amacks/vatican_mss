@@ -70,7 +70,8 @@ sub get_insert_dbh{
 sub set_local_thumbnail {
 	my $this = shift;
 	my $shelfmark = shift;
-	my $url= shift;
+	my $local_filename= shift;
+	
 	my $config = $this->config();
 	my $year = get_time("%Y");
 	my $ms_table = $config->ms_table();
@@ -82,6 +83,7 @@ sub set_local_thumbnail {
 	$ms_update_stmt =~ s/__SHELFMARK__/$shelfmark/g;
 	my $dbh = $this->get_insert_dbh();
 	my $update_sth = $dbh->prepare($ms_update_stmt) or warn "Cannot prepare statement: " . $dbh->errstr();
+	$update_sth->bind_param(1, $local_filename, SQL_VARCHAR);
 	$update_sth->bind_param(2, $shelfmark, SQL_VARCHAR);
 	return $update_sth->execute();
 }
