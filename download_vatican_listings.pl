@@ -9,6 +9,7 @@ use IO::Socket::SSL;
 use Mozilla::CA;
 use LWP::UserAgent;
 use LWP::Simple;
+use Getopt::Long;
 
 use HTML::TreeBuilder::XPath;
 use Data::Dumper;
@@ -37,11 +38,12 @@ my $today_timestamp = get_time("%Y_%m_%d");
 my $base_url="https://digi.vatlib.it/mss";
 my $ms_base_url = "https://digi.vatlib.it/view/MSS_";
 my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
+#my @collections=('Ross');
 my $DEBUG=1;
 my $inital_load_end = '2018-01-21 21:06:15';
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, now())";
-
+my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
 
@@ -93,6 +95,7 @@ sub update_database{
 		## get configs
 		my $config = new Vatican::Config();
 		my $ms_table = $config->ms_table();
+		my $year = get_time("%Y");
 		## connect to a DB
 		my $vatican_db = new Vatican::DB();
 		my $dbh=$vatican_db->get_insert_dbh();## now prepare a handle for the statement
@@ -108,10 +111,22 @@ sub update_database{
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
 				$rows_inserted++;
+				## if we have a filepath, download the thumbnail to local
+				if (defined($data->{'filepath'})){
+					my $http_response = getstore($image_url, $data->{'filepath'} . "/" . $year . '/thumbnails/' . "${shelfmark}.jpg");
+					if (!is_error($http_response)){
+						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark);
+						if (!defined($local_thumbnail_code)){
+							warn "Some sort of error setting the local thumbnail";
+						}
+					} else {
+						warn "Some sort of error in downloading the image for " . $shelfmark;
+						warn $http_response;
+					}
+				}
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
-			##getstore($image_url, $config->);
 		}
 		# do the low-quality ones
 		$sth->bind_param(2, 0, SQL_INTEGER);
@@ -170,6 +185,13 @@ sub post_import_update(){
 }
 
 ## Main body
+## Options
+### handle arguments to set the offset values and decide if we're output to console or note
+my $filepath = undef; ## if defined, the root path where to output the file
+GetOptions(
+		'filepath=s' => \$filepath);
+
+
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
 my $total_count = 0;
 for my $collection (@collections){
@@ -177,6 +199,8 @@ for my $collection (@collections){
 	if (defined($html)){
 		my $item_hash = get_items($html);
 		if (defined($item_hash)){
+			## add in the filepath
+			$item_hash->{'filepath'} = $filepath;
 			my $row_count = update_database($item_hash);
 			print " $row_count inserted for $collection \n";
 			$total_count+=$row_count;
