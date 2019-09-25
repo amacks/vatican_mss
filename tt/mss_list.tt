@@ -21,34 +21,45 @@
 		[%- END -%]
 		<!--div>There were ${ms_count} manuscripts added this week</div-->
 		<div class="cell">
-<ul>
+<div class="mss_list">
 [% FOREACH ms IN mss_list %]
-	<li><a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
-	[%- " (Low Quality)" IF ms.high_quality == 0 -%]
-	[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
-,
-[%- " $ms.author" IF ms.author.defined -%]
-[%- " <i>$ms.title</i>" IF ms.title.defined -%]
-[%- "($ms.date)" IF ms.date.defined -%]
-[%- IF ms.notes.defined OR ms.incipit.defined -%]
-<div class="notes_block">
-[%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
-[%- "<div class=\"notes\"> $ms.notes_html</div>" IF ms.notes_html.defined -%]
-</div>
-[%- END -%]
-   
-</li>
+	<div class="mss_row grid-x">
+	<div class="cell small-3 medium-1"><a target="_blank" href="${ms_base_url}${ms.shelfmark}"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></a></div>
+	<div class="cell small-9 medium-5">
+		<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
+		[%- " (Low Quality)" IF ms.high_quality == 0 -%]
+		[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
+		[%- "," IF ms.author.defined OR ms.title.defined OR ms.date.defined -%]
+		[%- " $ms.author" IF ms.author.defined -%]
+		[%- " <i>$ms.title</i>" IF ms.title.defined -%]
+		[%- " ($ms.date)" IF ms.date.defined -%]
+	</div>
+	<div class="notes_block small-12 medium-6">
+		[%- "<div class=\"incipit\"> Incipit: $ms.incipit</div>" IF ms.incipit.defined -%]
+		[%- "<div class=\"notes\"> $ms.notes_html</div>" IF ms.notes_html.defined -%]
+	</div>
+</div><!-- close the row-->
+[% "<hr>" UNLESS loop.last %]
 [% END %]
-</ul>
+</div>
 		</div>
 
 		</div><!--end of text area-->
 		<div class="cell medium-4 small-12">
 			<div class="right-image" >
-				<img src="${header_data.image_filename}">
+				<a href="${header_data.image_filename}"><img src="${header_data.image_filename}"></a>
 			</div>
 		</div>
 	</div>
+<div class="grid-container grid-x grid-margin-x cell small-12">
+<nav aria-label="You are here:" role="navigation">
+<ul class="breadcrumbs">
+  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
+  <li>Week ${datestamp_parts.week}</li>
+</ul>
+</div>
+</nav>
 </div>
 
 [%- END -%]

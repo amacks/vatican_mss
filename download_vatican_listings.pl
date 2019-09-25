@@ -9,7 +9,7 @@ use IO::Socket::SSL;
 use Mozilla::CA;
 use LWP::UserAgent;
 use LWP::Simple;
-use Config::Simple;
+use Getopt::Long;
 
 use HTML::TreeBuilder::XPath;
 use Data::Dumper;
@@ -18,7 +18,12 @@ use utf8;
 
 ## for the storage engine
 use DBD::mysql;
-  use DBI qw(:sql_types);
+use DBI qw(:sql_types);
+
+use File::Basename;
+use lib dirname($0) . "/lib/";
+use Vatican::Config;
+use Vatican::DB;
 
 ## timestamp formatting from 
 ##https://stackoverflow.com/questions/2149532/how-can-i-format-a-timestamp-in-perl
@@ -32,15 +37,13 @@ sub get_time
 my $today_timestamp = get_time("%Y_%m_%d");
 my $base_url="https://digi.vatlib.it/mss";
 my $ms_base_url = "https://digi.vatlib.it/view/MSS_";
-my @collections=("Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
+my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
+#@collections=('Ross');
 my $DEBUG=1;
 my $inital_load_end = '2018-01-21 21:06:15';
 
-## for the database
-my $config_file = "config/db.ini";
-
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, now())";
-
+my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
 
@@ -82,21 +85,6 @@ sub get_items{
 	};
 }
 
-## connect to the DB, return a handle
-sub get_dbh($){
-	my $config= shift;
-
-	my $dbh=DBI->connect ("dbi:mysql:database=" . $config->param("GLOBAL.DATABASE") .
-		":host=" . $config->param("GLOBAL.HOST"). ":port=3306'",
-		$config->param("INSERT_DATABASE.USERNAME"), $config->param("INSERT_DATABASE.PASSWORD"), 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1 }) 
-	or die "Can't connect to the MySQL " . $config->param("GLOBAL.HOST") . '-' . $config->param("GLOBAL.DATABASE") .": $DBI::errstr\n";
-    $dbh->{LongTruncOk} = 0;
-    $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
-    return $dbh;
-}
-
 ## takes an argument, a hashref of the data
 sub update_database{
 	my $data = shift;
@@ -105,22 +93,39 @@ sub update_database{
 		return undef;
 	} else {
 		## get configs
-		my $config = new Config::Simple($config_file) or die "Cannot read config file";
-		my $ms_table = $config->param("GLOBAL.MS_TABLE");
+		my $config = new Vatican::Config();
+		my $ms_table = $config->ms_table();
+		my $year = get_time("%Y");
 		## connect to a DB
-		my $dbh = get_dbh($config);
-## now prepare a handle for the statement
+		my $vatican_db = new Vatican::DB();
+		my $dbh=$vatican_db->get_insert_dbh();## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
 		my $rows_inserted = 0;
 		$sth->bind_param(2, 1, SQL_INTEGER);
 		for my $shelfmark (@{$data->{'high-quality'}}){
+			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
-			$sth->bind_param(3,"https://digi.vatlib.it/pub/digit/". $shelfmark . "/cover/cover.jpg", SQL_VARCHAR);
+			$sth->bind_param(3, $image_url, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
 				$rows_inserted++;
+				## if we have a filepath, download the thumbnail to local
+				if (defined($data->{'filepath'})){
+					my $local_filepath = $data->{'filepath'} . "/" . $year . '/thumbnails';
+					my $local_filename =  "${shelfmark}.jpg";
+					my $http_response = getstore($image_url, $local_filepath . '/' . $local_filename);
+					if (!is_error($http_response)){
+						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark, $local_filename);
+						if (!defined($local_thumbnail_code)){
+							warn "Some sort of error setting the local thumbnail";
+						}
+					} else {
+						warn "Some sort of error in downloading the image for " . $shelfmark;
+						warn $http_response;
+					}
+				}
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
@@ -154,10 +159,24 @@ sub post_import_update(){
 	set 
 	bav.author= pal.author, bav.title=pal.title, bav.notes=pal.notes
 	where bav.author is null and bav.title is null and bav.notes is null',
+	jordanus => 'update vatican_mss_jordanus as j
+		join manuscripts as v 
+		on j.shelfmark=v.shelfmark 
+		set v.author=j.author,v.title=j.title, v.date=j.date, 
+		v.notes=concat("See [Jordanus #", j.ms_id, "](https://ptolemaeus.badw.de/jordanus/ms/", j.ms_id, ")")
+		where date(v.date_added)=date(now())',
+	iter => 'update manuscripts as m 
+		join iter_italicum_sources as ii 
+		on m.shelfmark=ii.shelfmark
+		set m.notes = concat("See [Iter liturgicum italicum](", url, ")")
+		where notes is null'
 	);
 	## now loop through the SQL and execute it
-	my $config = new Config::Simple($config_file) or die "Cannot read config file";
-	my $dbh = get_dbh($config);
+	my $config = new Vatican::Config();
+	my $ms_table = $config->ms_table();
+	## connect to a DB
+	my $vatican_db = new Vatican::DB();
+	my $dbh=$vatican_db->get_insert_dbh();
 	for my $stm_key (sort keys %update_stmts){
 		warn " Doing $stm_key update";
 		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
@@ -168,6 +187,13 @@ sub post_import_update(){
 }
 
 ## Main body
+## Options
+### handle arguments to set the offset values and decide if we're output to console or note
+my $filepath = undef; ## if defined, the root path where to output the file
+GetOptions(
+		'filepath=s' => \$filepath);
+
+
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
 my $total_count = 0;
 for my $collection (@collections){
@@ -175,6 +201,8 @@ for my $collection (@collections){
 	if (defined($html)){
 		my $item_hash = get_items($html);
 		if (defined($item_hash)){
+			## add in the filepath
+			$item_hash->{'filepath'} = $filepath;
 			my $row_count = update_database($item_hash);
 			print " $row_count inserted for $collection \n";
 			$total_count+=$row_count;
