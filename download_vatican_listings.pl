@@ -181,7 +181,7 @@ sub post_import_update(){
 		warn " Doing $stm_key update";
 		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
 		if (defined($sth)){
-			$sth->execute();
+			$sth->execute() or warn "error executing $stm_key update " . $dbh->errstr();
 		}
 	}
 }
