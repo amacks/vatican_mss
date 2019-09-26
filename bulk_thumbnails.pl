@@ -47,7 +47,7 @@ if (defined($filepath)){
 		if ($ms_count % 100 == 0){
 			print $ms_count;
 		}
-		if ($ms_count % 800 == ){
+		if ($ms_count % 800 == 0){
 			print "\n";
 		}
 		#warn Dumper($row);
