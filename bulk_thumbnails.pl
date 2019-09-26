@@ -31,16 +31,26 @@ GetOptions(
 if (defined($filepath)){
 	my $config = new Vatican::Config();
 	my $ms_table = $config->ms_table();
+	my $ms_count=0;
 	## connect to a DB
 	my $vatican_db = new Vatican::DB();
 	my $dbh=$vatican_db->get_insert_dbh();
 ## now prepare a handle for the statement
-	my $report_stmt = " select shelfmark, year(date_added) as year, thumbnail_url from manuscripts where thumbnail_url like 'http%' and high_quality=1 limit 10";
+	my $report_stmt = " select shelfmark, year(date_added) as year, thumbnail_url from manuscripts where thumbnail_url like 'http%' and high_quality=1";
 	my $sth = $dbh->prepare($report_stmt) or die "cannot prepare thumbnail statement: ". $dbh->errstr();
 	## now do the query
 	$sth->execute() or die "cannot run report: " . $sth->errstr();
 	while (my $row = $sth->fetchrow_hashref()){
-		warn Dumper($row);
+		if ($ms_count % 10 == 0){
+			print ".";
+		}
+		if ($ms_count % 100 == 0){
+			print $ms_count;
+		}
+		if ($ms_count % 800 == ){
+			print "\n";
+		}
+		#warn Dumper($row);
 		my $local_filepath = $filepath . "/" . $row->{'year'} . '/thumbnails';
 		my $local_filename =  $row->{'shelfmark'} . ".jpg";
 		my $http_response = getstore($row->{'thumbnail_url'}, $local_filepath . '/' . $local_filename);
