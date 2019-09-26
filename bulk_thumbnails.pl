@@ -41,6 +41,7 @@ if (defined($filepath)){
 	## now do the query
 	$sth->execute() or die "cannot run report: " . $sth->errstr();
 	while (my $row = $sth->fetchrow_hashref()){
+		$ms_count++;
 		if ($ms_count % 10 == 0){
 			print ".";
 		}
