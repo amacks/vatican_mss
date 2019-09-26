@@ -45,7 +45,7 @@ if (defined($filepath)){
 		my $local_filename =  $row->{'shelfmark'} . ".jpg";
 		my $http_response = getstore($row->{'thumbnail_url'}, $local_filepath . '/' . $local_filename);
 		if (!is_error($http_response)){
-			my $local_thumbnail_code = $vatican_db->set_local_thumbnail($row->{'shelfmark'}, $local_filename);
+			my $local_thumbnail_code = $vatican_db->set_local_thumbnail($row->{'shelfmark'}, $local_filename, $row->{'year'});
 			if (!defined($local_thumbnail_code)){
 				warn "Some sort of error setting the local thumbnail";
 			}
