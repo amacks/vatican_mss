@@ -40,7 +40,8 @@ my $today_timestamp = get_time('%Y_%m_%d');
 
 my $header = "";
 my $footer = "";
-my $template_filename = "index.tt";
+my $main_template_filename = "index.tt";
+my $year_template_filename = "year_index.tt";
 my $url_prefix = "/vatican";
 
 ## for the database
@@ -132,7 +133,7 @@ sub get_notes{
 }
 
 sub format_page{
-	my ($weeks_notes) = @_;
+	my ($weeks_notes, $mode, $year) = @_;
 	if (!defined($weeks_notes) || (ref($weeks_notes) ne "ARRAY")){
 		warn " weeks_notes requires an argument of an arrayref to a list of notes";
 		return undef;
@@ -141,6 +142,7 @@ sub format_page{
 		my %data = (
 				'weeks_notes' => $weeks_notes,
 				'url_prefix' => $url_prefix,
+				'year' => $year,
 			);
 		my $output;
 		my $tt = Template->new({
@@ -148,6 +150,15 @@ sub format_page{
 		    INTERPOLATE  => 1,
 		    ENCODING     => 'utf8',
 		}) || die "$Template::ERROR\n";
+		## set the right template
+		my $template_filename = $main_template_filename; ## set this as default
+		if ($mode eq "top"){
+			$template_filename = $main_template_filename;
+		} elsif ($mode eq "year"){
+			$template_filename = $year_template_filename;
+		} else {
+			warn "mode unknown";
+		}
 		$tt->process($template_filename,
 			\%data, \$output, {binmode => ':utf8'}
 			)|| die $tt->error(), "\n";
@@ -164,7 +175,7 @@ GetOptions(
 
 if (defined($filepath)){
 	## top level index
-	my $index_html= format_page(get_notes({mode=>'top'}));
+	my $index_html= format_page(get_notes({mode=>'top'}), "top");
 
 	my $filename = $filepath . "/index.html" ;
 	warn "writing to $filename";
@@ -174,7 +185,7 @@ if (defined($filepath)){
 	## now genrate annual indexes
 	my $years = get_years();
 	for my $year (@$years){
-		my $year_html = format_page(get_notes({mode=>'year', year=>$year}));
+		my $year_html = format_page(get_notes({mode=>'year', year=>$year}), "year", $year);
 		my $filename = $filepath . "/" . $year . "/index.html" ;
 		warn "writing to $filename";
 		open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";

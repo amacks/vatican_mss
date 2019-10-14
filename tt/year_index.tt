@@ -1,0 +1,25 @@
+[%- WRAPPER "wrapper.tt"
+ title="Recently Digitized Manuscripts from the BAV: ${year}"
+ -%]
+<div class="grid-container fluid">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h2>Recently Digitized Manuscripts from the BAV: Annual Index ${year}</h2>
+		</div>
+		<div class="cell normal-text">
+<p>Welcome! This index contains all the weekly Vatican Library reports available from ${year}. </p>
+		</div>
+	</div>
+[%- PROCESS "entry_list.tt" -%]
+	
+<div class="grid-container grid-x grid-margin-x cell small-12">
+<nav aria-label="You are here:" role="navigation">
+<ul class="breadcrumbs">
+  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+  <li>${year}</li>
+</ul>
+</nav>
+</div>
+</div>
+
+[%- END -%]
