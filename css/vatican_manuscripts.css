@@ -85,7 +85,7 @@ h1, h2, h3 {
 img.ms_thumbnail {
 	max-height:5rem;
 	width:auto;
-	padding-right: 1rem;
+	margin-right: 1rem;
 }
 
 .mss_list {
