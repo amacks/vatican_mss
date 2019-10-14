@@ -23,7 +23,7 @@
 		<div class="cell">
 <div class="mss_list">
 [% FOREACH ms IN mss_list %]
-	<div class="mss_row grid-x small-collapse medium-uncollapse gutter-medium">
+	<div class="mss_row grid-x grid-margin-x">
 	<div class="cell small-2 medium-1"><a target="_blank" href="${ms_base_url}${ms.shelfmark}"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></a></div>
 	<div class="cell small-10 medium-5">
 		<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
