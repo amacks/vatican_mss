@@ -71,9 +71,12 @@ sub set_local_thumbnail {
 	my $this = shift;
 	my $shelfmark = shift;
 	my $local_filename= shift;
+	my $year = shift;
 
 	my $config = $this->config();
-	my $year = get_time("%Y");
+	if (!defined($year)){
+		$year = get_time("%Y");
+	}
 	my $ms_table = $config->ms_table();
 	## update the master statement, this is per class 
 	$update_tn_stmt =~ s/__MS_TABLE__/$ms_table/g;
