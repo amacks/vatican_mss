@@ -55,7 +55,7 @@ if (defined($filepath)){
 		my $local_filepath = $filepath . "/" . $row->{'year'} . '/thumbnails';
 		my $local_filename =  $row->{'shelfmark'} . ".jpg";
 		my $exists = undef;
-		if (-e $local_filename) {
+		if (-e $local_filepath . "/". $local_filename) {
 			warn "file $local_filename exists";
 			$exists=1;
 		}
