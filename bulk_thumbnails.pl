@@ -4,7 +4,7 @@ use strict;
 use POSIX;
 use POSIX qw(strftime);
 ## for all the HTTP work
-use IO::Socket::SSL;
+use Net::SSLeay;
 ## there's nothing to "use" but we need it installed for SSL to verify
 use Mozilla::CA;
 use LWP::UserAgent;
