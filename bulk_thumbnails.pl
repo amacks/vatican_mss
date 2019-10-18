@@ -54,8 +54,13 @@ if (defined($filepath)){
 		#warn Dumper($row);
 		my $local_filepath = $filepath . "/" . $row->{'year'} . '/thumbnails';
 		my $local_filename =  $row->{'shelfmark'} . ".jpg";
+		my $exists = undef;
+		if (-e $local_filename) {
+			warn "file $local_filename exists";
+			$exists=1;
+		}
 		my $http_response = getstore($row->{'thumbnail_url'}, $local_filepath . '/' . $local_filename);
-		if (!is_error($http_response)){
+		if (defined($exists) or !is_error($http_response)){
 			my $local_thumbnail_code = $vatican_db->set_local_thumbnail($row->{'shelfmark'}, $local_filename, $row->{'year'});
 			if (!defined($local_thumbnail_code)){
 				warn "Some sort of error setting the local thumbnail";
