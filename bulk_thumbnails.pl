@@ -36,7 +36,7 @@ if (defined($filepath)){
 	my $vatican_db = new Vatican::DB();
 	my $dbh=$vatican_db->get_insert_dbh();
 ## now prepare a handle for the statement
-	my $report_stmt = " select shelfmark, year(date_added) as year, thumbnail_url from manuscripts where thumbnail_url like 'http%' and high_quality=1";
+	my $report_stmt = " select shelfmark, year(date_added) as year, thumbnail_url from manuscripts where thumbnail_url like 'http%' and high_quality=1 limit 1000";
 	my $sth = $dbh->prepare($report_stmt) or die "cannot prepare thumbnail statement: ". $dbh->errstr();
 	## now do the query
 	$sth->execute() or die "cannot run report: " . $sth->errstr();
