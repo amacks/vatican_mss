@@ -1,5 +1,6 @@
 [%- WRAPPER "wrapper.tt"
  title="Recently Digitized Manuscripts Search"
+ url_prefix="/vatican"
  -%]
 <div class="grid-container fluid">
         <div class="grid-x grid-margin-x">
@@ -9,7 +10,7 @@
         </div>
 	<div class="grid-x row small-12">
 		<script async src="https://cse.google.com/cse.js?cx=014770322857876311153:poim5qx1saz"></script>
-		<div class="gcse-search"></div>    
+		<div class="gcse-searchresults-only"></div>    
 	</div> 
 </div>
 
