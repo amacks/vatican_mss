@@ -17,6 +17,7 @@
 
 [% content -%]
 
+<hr>
 <div class="wrapper-footer grid-container fluid">
 	    <form action="/vatican/search-results.html" method="GET">
         <div class="grid-x search-box">
