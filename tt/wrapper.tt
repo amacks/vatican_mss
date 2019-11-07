@@ -6,6 +6,7 @@
 <link href="${url_prefix}/css/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
 <!-- Compressed CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.3/dist/css/foundation.min.css" integrity="sha256-xpOKVlYXzQ3P03j397+jWFZLMBXLES3IiryeClgU5og= sha384-gP4DhqyoT9b1vaikoHi9XQ8If7UNLO73JFOOlQV1RATrA7D0O7TjJZifac6NwPps sha512-AKwIib1E+xDeXe0tCgbc9uSvPwVYl6Awj7xl0FoaPFostZHOuDQ1abnDNCYtxL/HWEnVOMrFyf91TDgLPi9pNg==" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" ></script>
 <!--Fonts-->
 <link href="https://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,700|Raleway:800|Spectral|Squada+One&display=swap" rel="stylesheet">
@@ -16,8 +17,25 @@
 
 [% content -%]
 
-<div class="copyright">
+<div class="wrapper-footer grid-container fluid">
+	    <form action="/vatican/search-results.html" method="GET">
+        <div class="grid-x search-box">
+	        	<div class="cell small-2 medium-1">
+	        		<!--label class="text-right middle" for="footer-search">Search  </label-->
+	        	</div>
+	        	<div class="cell small-8 medium-4">
+	        		<input type="text" name="q" id="footer-search">
+	        	</div>
+	        	<div class="cell small-2 medium-2">
+	        		<button type="submit" class="button" name="search_submit" value="Search">
+	        		<i class="fi-magnifying-glass"></i> Search</button>
+				</div>
+        	</div>
+	    </form>
+
+<div class="copyright grid-x">
 Copyright Aaron Macks, 2019-[%- date.format(mytime, '%Y') -%]. This project is <em>not</em> an official project of the <a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.
+</div>
 </div>
 <script>
   \$(document).foundation();
