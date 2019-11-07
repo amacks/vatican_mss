@@ -16,8 +16,19 @@
 
 [% content -%]
 
-<div class="copyright">
+<div class="wrapper-footer grid-container fluid">
+        <div class="grid-x grid-margin-x search-box">
+        	<div class="row">
+        	<form action="/vatican/search-results.html" method="GET">
+        	<label for="footer-search">Search</label>
+        	<input type="text" name="q" id="footer-search">
+        	<button class="button"><i class="fa fa-search"></i></button>
+        	</form>
+        </div>
+
+<div class="copyright grid-x">
 Copyright Aaron Macks, 2019-[%- date.format(mytime, '%Y') -%]. This project is <em>not</em> an official project of the <a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.
+</div>
 </div>
 <script>
   \$(document).foundation();
