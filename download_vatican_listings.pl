@@ -103,11 +103,11 @@ sub update_database{
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
 		my $rows_inserted = 0;
-		$sth->bind_param(2, 1, SQL_INTEGER);
+		$sth->bind_param(3, 1, SQL_INTEGER);
 		for my $shelfmark (@{$data->{'high-quality'}}){
 			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
-			$sth->bind_param(2, Vatican::DB::generate_sort_shelfmark($shelfmark));
+			$sth->bind_param(2, Vatican::DB::generate_sort_shelfmark($shelfmark), SQL_VARCHAR);
 			$sth->bind_param(4, $image_url, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
