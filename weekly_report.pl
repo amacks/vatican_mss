@@ -69,7 +69,7 @@ on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id
  where
 (year(ms1.date_added) = ?) AND
 (week(ms1.date_added,0)+1 = ?)
-ORDER by shelfmark asc";
+ORDER by ms1.sort_shelfmark asc";
 
 my $header_stmt = "select header_text, image_filename, boundry_image_filename from __NOTES_TABLE__ 
 where  year=? and week_number=?  ";
