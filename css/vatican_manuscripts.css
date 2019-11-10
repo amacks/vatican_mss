@@ -92,3 +92,8 @@ img.ms_thumbnail {
 	padding-bottom: 1rem;
 	padding-top: 1rem;
 }
+
+/* Format embedded tweets */
+blockquote.twitter-tweet {
+	font-size: smaller;
+}
