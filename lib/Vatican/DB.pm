@@ -12,6 +12,7 @@ use DBI;
 use DBI qw(:sql_types);
 use Encode;
 use Moose;
+use Roman;
 use utf8;
 
 use File::Basename;
@@ -105,9 +106,18 @@ sub generate_sort_shelfmark($){
 	my $sortable_shelmark = '';
 	my @sub_shelfmarks = split(/\./, $shelfmark); 
 	for (my $i=0; $i<=$#sub_shelfmarks; $i++){
+		if ($sub_shelfmarks[$i] =~ /^[ixvldm]+$/mi and 
+			(!defined($sub_shelfmarks[$i+1]) or $sub_shelfmarks[$i+1] !~ /^[ixvldm]+$/mi)){
+			## if we can be a roman numeral, convert it, it will get zero padded like all the rest
+			## we have to check that the NEXT token is not a roman as well to handle stupid ones like 
+			## Chig.I.I.17
+			## hack to fix `roman` since it cannot handle iiii
+			$sub_shelfmarks[$i] =~ s/iiii/iv/g;
+			$sub_shelfmarks[$i] = arabic($sub_shelfmarks[$i]);
+		}
 		if ($sub_shelfmarks[$i] =~ /^\d+$/m){
 			$sub_shelfmarks[$i] = sprintf("%05d", $sub_shelfmarks[$i]);
-		}
+		} 
 	}
 	return join('.',@sub_shelfmarks );
 }

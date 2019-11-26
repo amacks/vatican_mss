@@ -17,6 +17,7 @@ WriteMakefile(
 	'DateTime' => 0,
 	'Config::Simple' => 0,
 	'Getopt::Long' => 0,
+	"Roman" => 0,
     },
     test => {TESTS => 't/*.t'}
 );
