@@ -42,7 +42,7 @@ my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Ba
 my $DEBUG=1;
 my $inital_load_end = '2018-01-21 21:06:15';
 
-my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, now())";
+my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, ?, now())";
 my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
@@ -103,11 +103,12 @@ sub update_database{
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
 		my $rows_inserted = 0;
-		$sth->bind_param(2, 1, SQL_INTEGER);
+		$sth->bind_param(3, 1, SQL_INTEGER);
 		for my $shelfmark (@{$data->{'high-quality'}}){
 			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
-			$sth->bind_param(3, $image_url, SQL_VARCHAR);
+			$sth->bind_param(2, Vatican::DB::generate_sort_shelfmark($shelfmark), SQL_VARCHAR);
+			$sth->bind_param(4, $image_url, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
 				$rows_inserted++;
@@ -131,8 +132,8 @@ sub update_database{
 			}
 		}
 		# do the low-quality ones
-		$sth->bind_param(2, 0, SQL_INTEGER);
-		$sth->bind_param(3,undef, SQL_VARCHAR);
+		$sth->bind_param(3, 0, SQL_INTEGER);
+		$sth->bind_param(4,undef, SQL_VARCHAR);
 		for my $shelfmark (@{$data->{'low-quality'}}){
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
 			my $insert_success = $sth->execute();

@@ -99,5 +99,17 @@ sub get_time
     return strftime($format, localtime);
 }
 
+## generate a computer sortable shelfmark.  Currently 0-pads to 5 all integers
+sub generate_sort_shelfmark($){
+	my $shelfmark = shift;
+	my $sortable_shelmark = '';
+	my @sub_shelfmarks = split(/\./, $shelfmark); 
+	for (my $i=0; $i<=$#sub_shelfmarks; $i++){
+		if ($sub_shelfmarks[$i] =~ /^\d+$/m){
+			$sub_shelfmarks[$i] = sprintf("%05d", $sub_shelfmarks[$i]);
+		}
+	}
+	return join('.',@sub_shelfmarks );
+}
 
 1;
