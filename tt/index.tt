@@ -12,9 +12,14 @@ tracking new manuscripts added to the digitized manuscripts of the Vatican Libra
 manuscripts from the previous week, with title, author, date and incipt where possible.  Announcements of the weekly update 
 will be posted to <a href="https://twitter.com/gundormr" target="_blank">Twitter</a>, anyone with additions, corrections or 
 information about any manuscripts is invited to contact me there and I'll add it here.</p>
-<p>Please note that this page only lists the most recent seven entries.  For older entries, please look in the yearly archive files
-for <a href="2018">2018</a> and <a href="2019">2019</a>.
+<p>Please note that this page only lists the most recent seven entries.  For older entries, please look in the yearly archive files:
 </p>
+<ul>
+<li> <a href="2018">2018</a> </li>
+<li> <a href="2019">2019</a> </li>
+<li> 2020 (soon) </li>
+</ul>
+
 		</div>
 	</div>
 [%- PROCESS "entry_list.tt" -%]
