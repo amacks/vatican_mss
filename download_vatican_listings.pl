@@ -170,6 +170,16 @@ sub post_import_update(){
 		join iter_italicum_sources as ii 
 		on m.shelfmark=ii.shelfmark
 		set m.notes = concat("See [Iter liturgicum italicum](", url, ")")
+		where notes is null',
+	diamm => 'update manuscripts as m 
+		join diamm_sources as diamm 
+		on m.shelfmark=diamm.shelfmark
+		set m.notes = concat("See [DIAMM](", url, ")"), m.date=diamm.date, m.title=diamm.title
+		where notes is null',
+	dbbe => 'update manuscripts as m 
+		join dbbe_sources as dbbe 
+		on m.shelfmark=dbbe.shelfmark
+		set m.notes = concat("See [Database of Byzantine Book Epigrams](", url, ")"), m.date=dbbe.date, m.title=dbbe.title
 		where notes is null'
 	);
 	## now loop through the SQL and execute it
