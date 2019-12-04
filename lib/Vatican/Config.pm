@@ -23,6 +23,8 @@ has 'db_host' => (is => 'ro',
                   isa => 'String');
 has 'notes_table' => (is => 'ro', 
                   isa => 'String');
+has 'year_notes_table' => (is => 'ro', 
+                  isa => 'String');
 has 'ms_table' => (is => 'ro', 
                   isa => 'String');
 has 'generate_database' =>(traits    => ['Hash'],
@@ -58,7 +60,8 @@ sub BUILD {
 	## global parameters
 	$this->{'db_name'} = $config_file->param("GLOBAL.DATABASE");
 	$this->{'db_host'} = $config_file->param("GLOBAL.HOST");
-	$this->{'notes_table'} = $config_file->param("GLOBAL.NOTES_TABLE");
+  $this->{'notes_table'} = $config_file->param("GLOBAL.NOTES_TABLE");
+  $this->{'year_notes_table'} = $config_file->param("GLOBAL.YEAR_TABLE");
 	$this->{'ms_table'} = $config_file->param("GLOBAL.MS_TABLE");
 	## hashes for sub configs
 	my $generate = {

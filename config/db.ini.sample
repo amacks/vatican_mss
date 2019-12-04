@@ -1,6 +1,7 @@
 [GLOBAL]
 NOTES_TABLE=weekly_notes
 MS_TABLE=manuscripts
+YEAR_TABLE=yearly_notes
 HOST=<vatican_mss>
 DATABASE=<>
 
