@@ -40,12 +40,13 @@ my $today_timestamp = get_time('%Y_%m_%d');
 
 my $header = "";
 my $footer = "";
-my $template_filename = "index.tt";
+my $main_template_filename = "index.tt";
+my $year_template_filename = "year_index.tt";
 my $url_prefix = "/vatican";
 
 ## for the database
-my $db_stmt_master = "select year, week_number, header_text, image_filename from __TABLE__ __WHERE__ order by year desc, week_number desc __LIMIT__";
-my $years_stmt = "select distinct year from __TABLE__";
+my $db_stmt_master = "select year, week_number, header_text, image_filename from __WEEK_TABLE__ __WHERE__ order by year desc, week_number desc __LIMIT__";
+my $years_stmt = "select year, header_text from __YEAR_TABLE__";
 
 ## sql subroutines
 ## replace a single macro in the SQL statement
@@ -63,20 +64,24 @@ sub sql_cleanup($){
 	return $stmt;
 }
 
-##returns an arrayref to a list of the years known in the DB
+##returns an arrayref to a list of the year and year headers known in the DB
 sub get_years(){
 	my $config = new Vatican::Config();
-	my $db_table = $config->notes_table();
+	my $year_table = $config->year_notes_table();
 	## connect to a DB
 
 	my $dbh=Vatican::DB->new()->get_generate_dbh();
-    my $stmt = sql_replace($years_stmt, 'table', $db_table);
+    my $stmt = sql_replace($years_stmt, 'year_table', $year_table);
     my $sth = $dbh->prepare($stmt) or die "cannot prepare report statement: ". $dbh->errstr();
 	## now do the query
 	$sth->execute() or die "cannot run query: " . $sth->errstr();
 	my @years=();
+	my $m = Text::Markdown->new;
 	while (my $row = $sth->fetchrow_hashref()){
-	    push @years, $row->{'year'};
+	    for my $field ("header_text"){
+			$row->{$field . "_html"} = $m->markdown($row->{$field});
+	    }
+	    push @years, $row;
 	}
 	$sth->finish();
 	$dbh->disconnect();
@@ -105,7 +110,7 @@ sub get_notes{
 
 	my $dbh=Vatican::DB->new()->get_generate_dbh();
     ## regex to swap in the table name
-    $db_stmt = sql_replace($db_stmt, 'table', $db_table);
+    $db_stmt = sql_replace($db_stmt, 'week_table', $db_table);
     if ($options->{'mode'} eq 'year') {
     	$db_stmt = sql_replace($db_stmt, 'where', "where year=$options->{'year'}");
     }
@@ -132,7 +137,7 @@ sub get_notes{
 }
 
 sub format_page{
-	my ($weeks_notes) = @_;
+	my ($weeks_notes, $mode, $year, $year_notes_html) = @_;
 	if (!defined($weeks_notes) || (ref($weeks_notes) ne "ARRAY")){
 		warn " weeks_notes requires an argument of an arrayref to a list of notes";
 		return undef;
@@ -141,6 +146,7 @@ sub format_page{
 		my %data = (
 				'weeks_notes' => $weeks_notes,
 				'url_prefix' => $url_prefix,
+				'year' => $year,
 			);
 		my $output;
 		my $tt = Template->new({
@@ -148,6 +154,16 @@ sub format_page{
 		    INTERPOLATE  => 1,
 		    ENCODING     => 'utf8',
 		}) || die "$Template::ERROR\n";
+		## set the right template
+		my $template_filename = $main_template_filename; ## set this as default
+		if ($mode eq "top"){
+			$template_filename = $main_template_filename;
+		} elsif ($mode eq "year"){
+			$template_filename = $year_template_filename;
+			$data{'year_notes'} = $year_notes_html;
+		} else {
+			warn "mode unknown";
+		}
 		$tt->process($template_filename,
 			\%data, \$output, {binmode => ':utf8'}
 			)|| die $tt->error(), "\n";
@@ -164,7 +180,7 @@ GetOptions(
 
 if (defined($filepath)){
 	## top level index
-	my $index_html= format_page(get_notes({mode=>'top'}));
+	my $index_html= format_page(get_notes({mode=>'top'}), "top");
 
 	my $filename = $filepath . "/index.html" ;
 	warn "writing to $filename";
@@ -173,9 +189,11 @@ if (defined($filepath)){
 	close(OUTPUT_FILE);
 	## now genrate annual indexes
 	my $years = get_years();
-	for my $year (@$years){
-		my $year_html = format_page(get_notes({mode=>'year', year=>$year}));
-		my $filename = $filepath . "/" . $year . "/index.html" ;
+	for my $year_row (@$years){
+		my $year_html = format_page(
+				get_notes({mode=>'year', year=>$year_row->{'year'}}), 
+				"year", $year_row->{'year'}, $year_row->{'header_text_html'});
+		my $filename = $filepath . "/" . $year_row->{'year'} . "/index.html" ;
 		warn "writing to $filename";
 		open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
 		print OUTPUT_FILE $year_html;
