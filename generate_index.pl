@@ -81,7 +81,6 @@ sub get_years(){
 	    for my $field ("header_text"){
 			$row->{$field . "_html"} = $m->markdown($row->{$field});
 	    }
-	    warn Dumper($row);
 	    push @years, $row;
 	}
 	$sth->finish();
@@ -191,7 +190,6 @@ if (defined($filepath)){
 	## now genrate annual indexes
 	my $years = get_years();
 	for my $year_row (@$years){
-		warn Dumper($year_row);
 		my $year_html = format_page(
 				get_notes({mode=>'year', year=>$year_row->{'year'}}), 
 				"year", $year_row->{'year'}, $year_row->{'header_text_html'});
