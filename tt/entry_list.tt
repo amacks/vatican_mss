@@ -8,9 +8,11 @@
   <div class="cell auto normal-text">
    [%- week.header_text_html | remove("<[^>]*?>") | truncate(360) -%]
   </div>
-  <div class="cell show-for-medium medium-1">
-    <a href="${url_prefix}/${week.year}/week${week.week_number}.html"><img class="index-list-pics" alt="MS Image" src="${url_prefix}/${week.year}/${week.image_filename}" /></a>
-  </div>
+  [%- IF week.image_filename.defined() -%]
+    <div class="cell show-for-medium medium-1">
+      <a href="${url_prefix}/${week.year}/week${week.week_number}.html"><img class="index-list-pics" alt="MS Image" src="${url_prefix}/${week.year}/${week.image_filename}" /></a>
+    </div>
+  [%- END -%]
 </div>
 [% "<hr>" UNLESS loop.last %]
 [%- END -%]
