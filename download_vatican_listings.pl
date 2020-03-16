@@ -180,7 +180,13 @@ sub post_import_update(){
 		join dbbe_sources as dbbe 
 		on m.shelfmark=dbbe.shelfmark
 		set m.notes = concat("See [Database of Byzantine Book Epigrams](", url, ")"), m.date=dbbe.date, m.title=dbbe.title
-		where notes is null'
+		where notes is null',
+	cla => 'update manuscripts as m join
+		cla_sources as cla on cla.shelfmark like m.shelfmark
+		set m.date = concat(cla.date_start, '-', cla.date_end),
+		m.notes = concat("CLA# [", cla.cla_volume, ".", cla.cla_number, "](", cla.url, "), Script: ",cla.script, " ", cla.provenance, " ", cla.comments),
+		m.title = cla.contents
+	where m.author is null and m.title is null and m.notes is null'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Vatican::Config();
