@@ -28,24 +28,27 @@
 
 <hr>
 <div class="wrapper-footer grid-container fluid">
-	    <form action="/vatican/search-results.html" method="GET">
-        <div class="grid-x search-box">
-	        	<div class="cell small-2 medium-1">
-	        		<!--label class="text-right middle" for="footer-search">Search  </label-->
-	        	</div>
-	        	<div class="cell small-8 medium-4">
-	        		<input type="text" name="q" id="footer-search">
-	        	</div>
-	        	<div class="cell small-2 medium-2">
-	        		<button type="submit" class="button" name="search_submit" value="Search">
-	        		<i class="fi-magnifying-glass"></i> Search</button>
-				</div>
-        	</div>
-	    </form>
+	<form action="/vatican/search-results.html" method="GET">
+		<div class="grid-x search-box">
+	    	<div class="cell small-1 medium-1">
+	    		<!--label class="text-right middle" for="footer-search">Search  </label-->
+	    	</div>
+	    	<div class="cell small-8 medium-4">
+	    		<input type="text" name="q" id="footer-search">
+	    	</div>
+	    	<div class="cell small-3 medium-2">
+	    		<button type="submit" class="button submit" name="search_submit" value="Search">
+	    		<i class="fi-magnifying-glass"></i> Search</button>
+			</div>
+		</div>
+	</form>
 
-<div class="copyright grid-x">
-Copyright Aaron Macks, 2019-[%- date.format(mytime, '%Y') -%]. This project is <em>not</em> an official project of the <a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.
-</div>
+
+	<div class="copyright grid-x">
+		<p>Copyright Aaron Macks, 2019-[%- date.format(mytime, '%Y') -%]. 
+		This project is <em>not</em> an official project of the 
+		<a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.</p>
+	</div>
 </div>
 <script>
   \$(document).foundation();
