@@ -166,6 +166,7 @@ sub get_header_data{
 			$header_data->{'next_link'} = Vatican::Config::get_filename($filepath, $row->{'year'}, $row->{'week_number'});
 		}
 	}
+	$link_sth->finish();
 	$dbh->disconnect();
 	return $header_data;
 }
