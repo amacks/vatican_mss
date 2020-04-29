@@ -93,13 +93,13 @@ if (defined($today)){
 	($year, $week_number) = get_week_and_year();
 }
 
+my $config = new Vatican::Config();
 warn "Processing Week: ". $week_number . " of year ". $year;
 
 sub get_mss_interval{
 	my $week_number = shift;
 	my $year = shift;
 	## get the DB configs
-	my $config = new Vatican::Config();
 	my $ms_table = $config->ms_table();
 	## connect to a DB
 	my $vatican_db = new Vatican::DB();
@@ -130,7 +130,6 @@ sub get_header_data{
 	my $week_number = shift;
 	my $year = shift;
 	## get the DB configs
-	my $config = new Vatican::Config();
 	my $notes_table = $config->notes_linked_table();
 	## connect to a DB
 	my $vatican_db = new Vatican::DB();
@@ -156,14 +155,14 @@ sub get_header_data{
 		$link_sth->execute($header_data->{'previous_week_id'});
 		my $row = $link_sth->fetchrow_hashref();
 		if (defined($row)){
-			$header_data->{'previous_link'} = Vatican::Config::get_filename("/", $row->{'year'}, $row->{'week_number'});
+			$header_data->{'previous_link'} = $config->get_filename("/", $row->{'year'}, $row->{'week_number'});
 		}
 	}
 	if (defined($header_data->{'next_week_id'})){
 		$link_sth->execute($header_data->{'next_week_id'});
 		my $row = $link_sth->fetchrow_hashref();
 		if (defined($row)){
-			$header_data->{'next_link'} = Vatican::Config::get_filename("/", $row->{'year'}, $row->{'week_number'});
+			$header_data->{'next_link'} = $config->get_filename("/", $row->{'year'}, $row->{'week_number'});
 		}
 	}
 	$link_sth->finish();
@@ -203,7 +202,7 @@ my $formatted_html = format_mss_list(get_mss_interval($week_number, $year),get_h
 if (!defined($filepath)){
 	print $formatted_html;
 } else {
-	my $filename = Vatican::Config::get_filename($filepath,$year,$week_number);
+	my $filename = $config->get_filename($filepath,$year,$week_number);
 
 	warn "writing to $filename";
 	open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
