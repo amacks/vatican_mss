@@ -58,6 +58,7 @@
 			[% IF header_data.previous_link.defined() -%]
 			<nav aria-label="Previous link" role="navigation">
 			<a class="pagination-previous" href="${header_data.previous_link}">Previous Entry</a>
+			</nav>
 			[% END -%]
 		</div>
 		<div class="cell small-8 text-center">
@@ -67,11 +68,13 @@
 			  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
 			  <li>Week ${datestamp_parts.week}</li>
 			</ul>
+			</nav>
 		</div>
 		<div class="cell small-2">
 			[% IF header_data.next_link.defined() -%]
 			<nav aria-label="Next link" role="navigation">
 			<a class="pagination-next" href="${header_data.next_link}">Next Entry</a>
+			</nav>
 			[% END -%]
 		</div>
 	</div>
