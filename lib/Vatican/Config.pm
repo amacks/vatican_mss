@@ -83,4 +83,11 @@ sub BUILD {
 }
 
 
+## Static function to create a full filename
+sub get_filename($$$){
+  my ($filepath,$year,$week_number) = @_;
+  return $filepath . "/" . $year . '/' . "week" . $week_number. ".html";
+}
+
+
 1;
