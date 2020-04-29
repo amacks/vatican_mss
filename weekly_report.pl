@@ -156,14 +156,14 @@ sub get_header_data{
 		$link_sth->execute($header_data->{'previous_week_id'});
 		my $row = $link_sth->fetchrow_hashref();
 		if (defined($row)){
-			$header_data->{'previous_link'} = Vatican::Config::get_filename($filepath, $row->{'year'}, $row->{'week_number'});
+			$header_data->{'previous_link'} = Vatican::Config::get_filename("", $row->{'year'}, $row->{'week_number'});
 		}
 	}
 	if (defined($header_data->{'next_week_id'})){
 		$link_sth->execute($header_data->{'next_week_id'});
 		my $row = $link_sth->fetchrow_hashref();
 		if (defined($row)){
-			$header_data->{'next_link'} = Vatican::Config::get_filename($filepath, $row->{'year'}, $row->{'week_number'});
+			$header_data->{'next_link'} = Vatican::Config::get_filename("", $row->{'year'}, $row->{'week_number'});
 		}
 	}
 	$link_sth->finish();
