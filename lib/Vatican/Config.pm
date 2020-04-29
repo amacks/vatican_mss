@@ -33,7 +33,7 @@ has 'ms_table' => (is => 'ro',
                   isa => 'String');
 has 'prefix' => (isa => 'String',
                   is => 'ro',
-                  default => 'vatican')
+                  default => 'vatican');
 has 'generate_database' =>(traits    => ['Hash'],
     is        => 'ro',
     isa       => 'HashRef[Str]',
