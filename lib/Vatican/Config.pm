@@ -31,7 +31,7 @@ has 'year_notes_table' => (is => 'ro',
                   isa => 'String');
 has 'ms_table' => (is => 'ro', 
                   isa => 'String');
-has 'prefix' => (isa => 'String',
+has 'prefix' => (isa => 'Str',
                   is => 'ro',
                   default => 'vatican');
 has 'generate_database' =>(traits    => ['Hash'],
