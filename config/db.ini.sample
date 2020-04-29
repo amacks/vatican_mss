@@ -1,5 +1,7 @@
 [GLOBAL]
 NOTES_TABLE=weekly_notes
+NOTES_PREVIOUS_TABLE=weekly_notes_previous
+NOTES_LINKED_TABLE=weekly_notes_linked
 MS_TABLE=manuscripts
 YEAR_TABLE=yearly_notes
 HOST=<vatican_mss>

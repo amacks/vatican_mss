@@ -51,13 +51,30 @@
 			</div>
 		</div>
 	</div>
-<div class="grid-container grid-x grid-margin-x cell small-12">
-<nav aria-label="You are here:" role="navigation">
-<ul class="breadcrumbs">
-  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
-  <li>Week ${datestamp_parts.week}</li>
-</ul>
+<hr>
+<div class="grid-container">
+	<div class="grid-x grid-margin-x">
+		<div class="cell small-2">
+			[% IF header_data.previous_link.defined() -%]
+			<nav aria-label="Previous link" role="navigation">
+			<a class="pagination-previous" href="${header_data.previous_link}">Previous Entry</a>
+			[% END -%]
+		</div>
+		<div class="cell small-8 text-center">
+			<nav aria-label="You are here:" role="navigation">
+			<ul class="breadcrumbs">
+			  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+			  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
+			  <li>Week ${datestamp_parts.week}</li>
+			</ul>
+		</div>
+		<div class="cell small-2">
+			[% IF header_data.next_link.defined() -%]
+			<nav aria-label="Next link" role="navigation">
+			<a class="pagination-next" href="${header_data.next_link}">Next Entry</a>
+			[% END -%]
+		</div>
+	</div>
 </div>
 </nav>
 </div>
