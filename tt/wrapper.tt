@@ -26,10 +26,9 @@
 
 [% content -%]
 
-<hr>
-<div class="wrapper-footer grid-container fluid">
+<div class="wrapper-footer grid-container">
 	<form action="/vatican/search-results.html" method="GET">
-		<div class="grid-x search-box">
+		<div class="grid-x search-box align-center">
 	    	<div class="cell small-1 medium-1">
 	    		<!--label class="text-right middle" for="footer-search">Search  </label-->
 	    	</div>

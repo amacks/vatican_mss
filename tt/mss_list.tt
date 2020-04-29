@@ -51,34 +51,39 @@
 			</div>
 		</div>
 	</div>
-<hr>
+</div>
 <div class="grid-container">
-	<div class="grid-x grid-margin-x">
-		<div class="cell small-2">
+	<hr>
+	<div class="grid-x align-middle">
+		<div class="previous-link cell small-3">
 			[% IF header_data.previous_link.defined() -%]
 			<nav aria-label="Previous link" role="navigation">
-			<a class="pagination-previous" href="${header_data.previous_link}">Previous Entry</a>
+			<a href="${header_data.previous_link}">Previous Entry</a>
 			</nav>
 			[% END -%]
 		</div>
-		<div class="cell small-8 text-center">
-			<nav aria-label="You are here:" role="navigation">
-			<ul class="breadcrumbs">
-			  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-			  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
-			  <li>Week ${datestamp_parts.week}</li>
-			</ul>
-			</nav>
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+					<ul class="breadcrumbs">
+					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+					  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
+					  <li>Week ${datestamp_parts.week}</li>
+					</ul>
+					</nav>
+				</div>
+			</div>
 		</div>
-		<div class="cell small-2">
+		<div class="next-link cell small-3 text-right">
 			[% IF header_data.next_link.defined() -%]
 			<nav aria-label="Next link" role="navigation">
-			<a class="pagination-next" href="${header_data.next_link}">Next Entry</a>
+			<a href="${header_data.next_link}">Next Entry</a>
 			</nav>
 			[% END -%]
 		</div>
 	</div>
-</div>
+	<hr>
 </div>
 
 [%- END -%]
