@@ -60,9 +60,9 @@
 			<a class="pagination-previous" href="${header_data.previous_link}">Previous Entry</a>
 			[% END -%]
 		</div>
-		<div class="cell small-8">
+		<div class="cell small-8 text-center">
 			<nav aria-label="You are here:" role="navigation">
-			<ul class="breadcrumbs" style="text-align=center">
+			<ul class="breadcrumbs">
 			  <li><a href="/vatican/">Vatican Manuscripts</a></li>
 			  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
 			  <li>Week ${datestamp_parts.week}</li>
