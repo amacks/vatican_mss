@@ -29,10 +29,10 @@
 <div class="wrapper-footer grid-container">
 	<form action="/vatican/search-results.html" method="GET">
 		<div class="grid-x search-box align-center">
-	    	<div class="cell small-1 medium-1">
+	    	<div class="cell small-1 medium-1 large-1">
 	    		<!--label class="text-right middle" for="footer-search">Search  </label-->
 	    	</div>
-	    	<div class="cell small-8 medium-4">
+	    	<div class="cell small-8 medium-6 large-4">
 	    		<input type="text" name="q" id="footer-search">
 	    	</div>
 	    	<div class="cell small-3 medium-2">
