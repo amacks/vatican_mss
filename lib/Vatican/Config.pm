@@ -23,6 +23,10 @@ has 'db_host' => (is => 'ro',
                   isa => 'String');
 has 'notes_table' => (is => 'ro', 
                   isa => 'String');
+has 'notes_previous_table' => (is => 'ro', 
+                  isa => 'String');
+has 'notes_linked_table' => (is => 'ro', 
+                  isa => 'String');
 has 'year_notes_table' => (is => 'ro', 
                   isa => 'String');
 has 'ms_table' => (is => 'ro', 
@@ -61,6 +65,8 @@ sub BUILD {
 	$this->{'db_name'} = $config_file->param("GLOBAL.DATABASE");
 	$this->{'db_host'} = $config_file->param("GLOBAL.HOST");
   $this->{'notes_table'} = $config_file->param("GLOBAL.NOTES_TABLE");
+  $this->{'notes_linked_table'} = $config_file->param("GLOBAL.NOTES_LINKED_TABLE");
+  $this->{'notes_previous_table'} = $config_file->param("GLOBAL.NOTES_PREVIOUS_TABLE");
   $this->{'year_notes_table'} = $config_file->param("GLOBAL.YEAR_TABLE");
 	$this->{'ms_table'} = $config_file->param("GLOBAL.MS_TABLE");
 	## hashes for sub configs
