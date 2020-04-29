@@ -31,6 +31,9 @@ has 'year_notes_table' => (is => 'ro',
                   isa => 'String');
 has 'ms_table' => (is => 'ro', 
                   isa => 'String');
+has 'prefix' => (isa => 'String',
+                  is => 'ro',
+                  default => 'vatican')
 has 'generate_database' =>(traits    => ['Hash'],
     is        => 'ro',
     isa       => 'HashRef[Str]',
@@ -86,7 +89,7 @@ sub BUILD {
 ## Static function to create a full filename
 sub get_filename($$$){
   my ($filepath,$year,$week_number) = @_;
-  return $filepath . "/" . $year . '/' . "week" . $week_number. ".html";
+  return $this->prefix . '/' . $year . '/' . "week" . $week_number. ".html";
 }
 
 
