@@ -107,3 +107,6 @@ blockquote.twitter-tweet {
     -webkit-appearance: none;
     height: 41px;
 }
+/* arrows for the previous and next links */
+.previous-link a:before { content: "\00AB "; }
+.next-link a:after { content: " \00BB"; }
