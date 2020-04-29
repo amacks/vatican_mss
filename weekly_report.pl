@@ -71,9 +71,9 @@ on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id
 (week(ms1.date_added,0)+1 = ?)
 ORDER by ms1.sort_shelfmark asc";
 
-my $header_stmt = "select header_text, image_filename, boundry_image_filename from __NOTES_TABLE__ 
+my $header_stmt = "select header_text, image_filename, boundry_image_filename, previous_week_id, next_week_id from __NOTES_TABLE__ 
 where  year=? and week_number=?  ";
-
+my $links_stmt = "select year, week_number from __NOTES_TABLE__ where id=?  ";
 
 
 ### handle arguments to set the offset values and decide if we're output to console or note
@@ -131,12 +131,13 @@ sub get_header_data{
 	my $year = shift;
 	## get the DB configs
 	my $config = new Vatican::Config();
-	my $notes_table = $config->notes_table();
+	my $notes_table = $config->notes_linked_table();
 	## connect to a DB
 	my $vatican_db = new Vatican::DB();
 	my $dbh=$vatican_db->get_generate_dbh();
 ## now prepare a handle for the statement
 	$header_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
+	$links_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
 
 	my $sth = $dbh->prepare($header_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
 	$sth->bind_param(1,$year, SQL_INTEGER);
@@ -147,8 +148,24 @@ sub get_header_data{
 	## now markdown it
 	my $m = Text::Markdown->new;
 	$header_data->{'header_text_html'} = $m->markdown($header_data->{'header_text'});
- 
 	$sth->finish();
+	## figure out the previous and next links
+	my $link_sth = $dbh->prepare($links_stmt) or die "cannot prepare links statement: ". $dbh->errstr();
+	## get the previous
+	if (defined($header_data->{'previous_week_id'})){
+		$link_sth->execute($header_data->{'previous_week_id'});
+		my $row = $link_sth->fetchrow_hashref();
+		if (defined($row)){
+			$header_data->{'previous_link'} = Vatican::Config::get_filename($filepath, $row->{'year'}, $row->{'week_number'});
+		}
+	}
+	if (defined($header_data->{'next_week_id'})){
+		$link_sth->execute($header_data->{'next_week_id'});
+		my $row = $link_sth->fetchrow_hashref();
+		if (defined($row)){
+			$header_data->{'next_link'} = Vatican::Config::get_filename($filepath, $row->{'year'}, $row->{'week_number'});
+		}
+	}
 	$dbh->disconnect();
 	return $header_data;
 }
@@ -185,7 +202,8 @@ my $formatted_html = format_mss_list(get_mss_interval($week_number, $year),get_h
 if (!defined($filepath)){
 	print $formatted_html;
 } else {
-	my $filename = $filepath . "/" . $year . '/' . "week" . $week_number. ".html";
+	my $filename = Vatican::Config::get_filename($filepath,$year,$week_number);
+
 	warn "writing to $filename";
 	open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
 	print OUTPUT_FILE $formatted_html;
