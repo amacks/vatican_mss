@@ -108,5 +108,5 @@ blockquote.twitter-tweet {
     height: 41px;
 }
 /* arrows for the previous and next links */
-.previous-link a:before { content: "\00AB "; }
-.next-link a:after { content: " \00BB"; }
+.previous-link a:before { content: "\00AB\00a0"; }
+.next-link a:after { content: "\00a0\00BB"; }
