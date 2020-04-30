@@ -3,7 +3,7 @@
  title="Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}"
  -%]
 
-<div class="grid-container fluid">
+<div class="grid-container">
 	<div class="grid-x grid-margin-x">
 		<div class="header cell">
 			<h2>Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}</h2>
