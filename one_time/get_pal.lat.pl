@@ -18,11 +18,13 @@ use Encode;
 use utf8;
 
 ## local variables
-my $url_base = 'https://digi.ub.uni-heidelberg.de/de/bpd/virtuelle_bibliothek/codpallat';
+my $lat_url_base = 'https://digi.ub.uni-heidelberg.de/de/bpd/virtuelle_bibliothek/codpallat';
+my $gr_url_base = 'http://digi.ub.uni-heidelberg.de/de/bpd/virtuelle_bibliothek/codpalgraec/';
 my @filenames = ('0-99.html');
 my $DEBUG=1;
 
-sub get_url($) {
+sub get_url($$) {
+	my $url_base = shift;
 	my $filename = shift;
 	my $url = $url_base . '/' . $filename;
 	warn " Preparing to retrieve $url" if ($DEBUG);
@@ -55,10 +57,10 @@ sub get_items{
 	my @information = $tree->findvalues('//ul[ @class="werke" ]/li[ @class="mit-thumbnail"]/p[normalize-space(.)]');
 	warn "  ". ($#urls+1) . " MS" if ($DEBUG);
 	## cleanup information
-	map { s/Pal\. lat\. \d{1,4}\s*//}  @information;
+	map { s/Pal\. (lat|gr)\. \d{1,4}\s*//}  @information;
 	map { s/([a-z])([A-Z0-9])/$1; $2/g } @information;
 	map { s/,/;/g } @information;
-	map { s/Pal\. lat\. /pal.lat./} @labels;
+	map { s/Pal\. (lat|gr)\. /pal.$1./} @labels;
 	return {
 		'labels' => \@labels,
 		'urls' => \@urls,
@@ -87,11 +89,21 @@ sub simple_csv($){
 }
 my @all_manuscripts;
 ##generate coded filenames
+my @latin_filenames = @filenames;
 for (my $i=1;$i<=20;$i++){
-	push @filenames, ${i}."xx.html";
+	push @latin_filenames, ${i}."xx.html";
 }
-for my $filename (@filenames){
+for my $filename (@latin_filenames){
 	#warn Dumper(weave(get_items(get_url($filename))));
-	push @all_manuscripts, @{weave(get_items(get_url($filename)))};
+	push @all_manuscripts, @{weave(get_items(get_url($lat_url_base, $filename)))};
+}
+## do the same for greeks
+my @greek_filenames = @filenames;
+for (my $i=1;$i<=4;$i++){
+	push @greek_filenames, ${i}."xx.html";
+}
+for my $filename (@greek_filenames){
+	#warn Dumper(weave(get_items(get_url($filename))));
+	push @all_manuscripts, @{weave(get_items(get_url($gr_url_base, $filename)))};
 }
 simple_csv(\@all_manuscripts);
