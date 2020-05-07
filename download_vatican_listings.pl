@@ -180,8 +180,10 @@ sub post_import_update(){
 		join dbbe_sources as dbbe 
 		on m.shelfmark=dbbe.shelfmark
 		set m.notes = concat("See [Database of Byzantine Book Epigrams](", url, ")"), m.date=dbbe.date, m.title=dbbe.title
-		where notes is null'
-	);
+		where notes is null',
+	pal_lat => 'update  manuscripts as m join pal_lat_sources as pl on m.shelfmark=pl.shelfmark
+		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Codices Palatini Entry](", pl.url, "), ", pl.description)'
+);
 	## now loop through the SQL and execute it
 	my $config = new Vatican::Config();
 	my $ms_table = $config->ms_table();
