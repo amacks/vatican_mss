@@ -33,9 +33,10 @@ my %fonds = (
 	'borg.copt' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1383/',
 	'borg.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1384/',
 	'borg.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1385/',
-	'chig' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1386/'
+	'chig' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1386/',
+	'arch.cap.s.pietro' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1379/'
 );
-my $base_url = "https://pinakes.irht.cnrs.fr/";
+my $base_url = "https://pinakes.irht.cnrs.fr";
 my $DEBUG=0;
 
 sub get_url($) {
@@ -65,14 +66,17 @@ sub get_items{
 	my $html = shift || return undef;
 	my $fond = shift;
 	my $tree = HTML::TreeBuilder::XPath->new_from_content( $html );
-	my @shelfmarks = $tree->findvalues('//tbody/tr/td[1]');
+	my @shelfmarks = $tree->findvalues('//table[@id="villes"]/tbody/tr/td[1]');
 	## parse the string like I-Rvat : Barb. lat 0711
 	## into Barb.lat.711
 	for (my $i=0;$i<=$#shelfmarks;$i++){
-		$shelfmarks[$i] =~ s/^0+//g;
-		$shelfmarks[$i] = $fond . '.' . $shelfmarks[$i];
+		my $shelfmark = $shelfmarks[$i];
+		$shelfmark =~ s/^0+//g;
+		$shelfmark =~ s/\s0*//g;
+		$shelfmark = $fond . '.' . $shelfmark;
+		$shelfmarks[$i] = $shelfmark;
 	}
-	my @urls = $tree->findvalues('//tbody/tr/td[1]/a/@href');
+	my @urls = $tree->findvalues('//table[@id="villes"]/tbody/tr/td[1]/a/@href');
 	for (my $i=0;$i<=$#urls;$i++){
 		$urls[$i] =$base_url . $urls[$i];
 	}
