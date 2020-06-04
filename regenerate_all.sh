@@ -18,4 +18,4 @@ for week in `seq 1 ${CURRENT_WEEK}`; do
 	./weekly_report.pl --week=${week} --year=${CURRENT_YEAR} --filepath=/apps/apache/htdocs/
 done
 
-./generate_index.pl --filepath=${FILEPATH}vatican/
+./generate_index.pl --filepath=${FILEPATH}
