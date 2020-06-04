@@ -184,6 +184,9 @@ sub post_import_update(){
 	pal_lat => 'update  manuscripts as m join pal_lat_gr_sources as pl on m.shelfmark=pl.shelfmark
 		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Codices Palatini Entry](", pl.url, "), ", pl.description)
 		where m.notes is NULL or m.notes not like "%Codices Palatini Entry%"'
+	pinakes => 'update  manuscripts as m join pinakes_sources as p on m.shelfmark=p.shelfmark
+		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Pinakes Entry](", p.url, "), ")
+		where m.notes is NULL or m.notes not like "%Pinakes%"'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Vatican::Config();
