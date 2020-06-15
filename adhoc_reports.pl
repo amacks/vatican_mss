@@ -33,7 +33,7 @@ my $DEBUG=0;
 my $url_prefix="/vatican";
 
 ## for the database
-my $results_stmt = "select shelfmark, title, author, incipit, notes, thumbnail_url
+my $results_stmt = "select shelfmark, title, author, incipit, notes, thumbnail_url, date_added, lq_date_added, high_quality
 from
 (select 
  ms1.shelfmark as shelfmark, 
