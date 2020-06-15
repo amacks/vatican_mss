@@ -164,7 +164,7 @@ if (!defined($filepath)){
 	print "Warning: cannot export without filepath";
 } else {
 	foreach my $report (@{${reports_data}}) {
-		my $filename = $filepath . $report->{'filename'} . ".html";
+		my $filename = $filepath . $url_prefix . "/" .$report->{'filename'} . ".html";
 		warn "\tbuilding report $filename";
 
 		my $formatted_html = format_mss_list(get_mss_listing($report->{'query'}), $report);
