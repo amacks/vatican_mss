@@ -6,6 +6,10 @@ MS_TABLE=manuscripts
 YEAR_TABLE=yearly_notes
 HOST=<vatican_mss>
 DATABASE=<>
+PREFIX="/vatican"
+BASE_URL="https://digi.vatlib.it/mss"
+MS_BASE_URL="https://digi.vatlib.it/view/MSS_"
+
 
 [GENERATE_DATABASE]
 USERNAME=<>
