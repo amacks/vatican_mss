@@ -34,6 +34,11 @@ has 'ms_table' => (is => 'ro',
 has 'prefix' => (isa => 'Str',
                   is => 'ro',
                   default => 'vatican');
+has 'base_url' => (is => 'ro', 
+                  isa => 'String');
+has 'ms_base_url' => (is => 'ro', 
+                  isa => 'String');
+
 has 'generate_database' =>(traits    => ['Hash'],
     is        => 'ro',
     isa       => 'HashRef[Str]',
@@ -71,7 +76,10 @@ sub BUILD {
   $this->{'notes_linked_table'} = $config_file->param("GLOBAL.NOTES_LINKED_TABLE");
   $this->{'notes_previous_table'} = $config_file->param("GLOBAL.NOTES_PREVIOUS_TABLE");
   $this->{'year_notes_table'} = $config_file->param("GLOBAL.YEAR_TABLE");
-	$this->{'ms_table'} = $config_file->param("GLOBAL.MS_TABLE");
+  $this->{'ms_table'} = $config_file->param("GLOBAL.MS_TABLE");
+  $this->{'prefix'} = $config_file->param("GLOBAL.PREFIX");
+  $this->{'base_url'} = $config_file->param("GLOBAL.BASE_URL");
+  $this->{'ms_base_url'} = $config_file->param("GLOBAL.MS_BASE_URL");
 	## hashes for sub configs
 	my $generate = {
 		'username' => $config_file->param("GENERATE_DATABASE.USERNAME"),
