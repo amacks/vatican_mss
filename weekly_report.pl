@@ -42,15 +42,14 @@ sub get_week_and_year(){
 }
 ## constants
 my $today_timestamp = get_time('%Y_%m_%d');
-my $base_url="https://digi.vatlib.it/mss";
-my $ms_base_url = "https://digi.vatlib.it/view/MSS_";
+my $ms_base_url;
 my @collections=("Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
 my $DEBUG=0;
 my $inital_load_end = '2018-01-21 21:06:15';
 
 my $header = "";
 my $footer = "";
-my $url_prefix="/vatican";
+my $url_prefix;
 
 ## for the database
 my $report_stmt = "select 
@@ -179,9 +178,9 @@ sub format_mss_list{
 		my %data = (
 				'mss_list' => $mss_list,
 				'datestamp_parts' => { 'week' => $week_number, 'year' => $year},
-				'ms_base_url' => $ms_base_url,
+				'ms_base_url' => $config->ms_base_url(),
 				'header_data' => $header_data,
-				'url_prefix' => $url_prefix,
+				'url_prefix' => $config->prefix(),
 				'ms_count' => $#{$mss_list}+1,
 			);
 		my $output;

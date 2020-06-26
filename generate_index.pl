@@ -25,7 +25,7 @@ use File::Basename;
 use lib dirname($0) . "/lib";
 use Vatican::Config;
 use Vatican::DB;
-my $url_prefix="/vatican";
+my $url_prefix;
 
 
 
@@ -178,7 +178,8 @@ my $week_offset=0;
 my $filepath = undef; ## if defined, the root path where to output the file
 GetOptions(
 		'filepath=s' => \$filepath);
-
+my $config = new Vatican::Config();
+$url_prefix = $config->prefix();
 
 if (defined($filepath)){
 	my $full_filepath = $filepath . $filepath_suffix;
