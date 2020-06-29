@@ -86,7 +86,7 @@ my $filepath = undef; ## if defined, the root path where to output the file
 GetOptions(
 		'filepath=s' => \$filepath);
 
-my $full_file = $filepath . '/'. $config->prefix() . $output_filename;
+my $full_file = $filepath . '/'. $config->prefix() . '/'. $output_filename;
 
 ## at this point we have the graph as data, time to build a webpage with TT
 my %tt_data = (
