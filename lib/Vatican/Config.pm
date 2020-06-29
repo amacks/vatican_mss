@@ -33,7 +33,7 @@ has 'ms_table' => (is => 'ro',
                   isa => 'String');
 has 'prefix' => (isa => 'Str',
                   is => 'ro',
-                  default => 'vatican');
+                  default => '/vatican');
 has 'base_url' => (is => 'ro', 
                   isa => 'String');
 has 'ms_base_url' => (is => 'ro', 
