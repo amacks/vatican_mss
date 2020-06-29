@@ -164,7 +164,7 @@ sub get_header_data{
 			$header_data->{'next_link'} = $config->get_filename("", $row->{'year'}, $row->{'week_number'});
 		}
 	}
-	warn Dumper($header_data);
+	##warn Dumper($header_data);
 	$link_sth->finish();
 	$dbh->disconnect();
 	return $header_data;
