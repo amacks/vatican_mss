@@ -143,7 +143,7 @@ sub format_mss_list{
 				'mss_list' => $mss_list,
 				'ms_base_url' => $ms_base_url,
 				'header_data' => $header_data,
-				'url_prefix' => $url_prefix,
+				'url_prefix' => '/' . $url_prefix,
 				'ms_count' => $#{$mss_list}+1,
 			);
 		my $output;
