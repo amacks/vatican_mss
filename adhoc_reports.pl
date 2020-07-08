@@ -194,8 +194,12 @@ if (!defined($filepath)){
 	    ENCODING     => 'utf8',
 	}) || die "$Template::ERROR\n";
 	my $output;
+	my $adhoc_index_data = {
+		'url_prefix' => $url_prefix,
+		'reports_data' => $reports_data
+	};
 	$tt->process("adhoc_index.tt",
-		{ 'reports_data' => $reports_data }, \$output, {binmode => ':utf8'}
+		$adhoc_index_data, \$output, {binmode => ':utf8'}
 		)|| die $tt->error(), "\n";
 	open(OUTPUT_FILE, ">:utf8", $index_filename) or die "Could not open file '$index_filename'. $!";
 	print OUTPUT_FILE $output;
