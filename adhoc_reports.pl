@@ -195,7 +195,7 @@ if (!defined($filepath)){
 	}) || die "$Template::ERROR\n";
 	my $output;
 	my $adhoc_index_data = {
-		'url_prefix' => $url_prefix,
+		'url_prefix' => '/' . $url_prefix,
 		'reports_data' => $reports_data
 	};
 	$tt->process("adhoc_index.tt",
