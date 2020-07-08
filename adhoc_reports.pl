@@ -30,7 +30,8 @@ my $ms_base_url = "https://digi.vatlib.it/view/MSS_";
 my @collections=("Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
 my $DEBUG=0;
 
-my $url_prefix="/vatican";
+my $url_prefix="vatican";
+my $report_infix = 'adhoc';
 
 ## for the database
 my $results_stmt_skel = "select shelfmark, title, author, incipit, notes, thumbnail_url, date_added, lq_date_added, high_quality
@@ -164,8 +165,16 @@ my $reports_data = get_header_data();
 if (!defined($filepath)){
 	print "Warning: cannot export without filepath";
 } else {
+	## double check for directory
+	my $subdirectory = $url_prefix . "/" . $report_infix; ## sits between the filesystem prefix and the filename
+	if ( ! -d $filepath . '/' . $subdirectory ){
+		mkdir($filepath . '/' . $subdirectory) or die "Cannot create $subdirectory";
+	}
+
 	foreach my $report (@{${reports_data}}) {
-		my $filename = $filepath . $url_prefix . "/" .$report->{'filename'} . ".html";
+		my $uri = $subdirectory . '/' .$report->{'filename'} . ".html";
+		my $filename = $filepath . '/' . $uri;
+		$report->{'uri'} = $uri;
 		warn "\tbuilding report $filename";
 
 		my $formatted_html = format_mss_list(get_mss_listing($report->{'query'}), $report);
@@ -173,6 +182,22 @@ if (!defined($filepath)){
 		open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
 		print OUTPUT_FILE $formatted_html;
 		close(OUTPUT_FILE);
-
+		## store the relevant info in the index-data array
 	}
+	## now build an index page
+	my $index_filename = $filepath . '/' . $subdirectory . '/' .'index.html';
+	warn "\tBuilding index $index_filename";
+	#warn Dumper($reports_data);exit;
+	my $tt = Template->new({
+	    INCLUDE_PATH => 'tt',
+	    INTERPOLATE  => 1,
+	    ENCODING     => 'utf8',
+	}) || die "$Template::ERROR\n";
+	my $output;
+	$tt->process("adhoc_index.tt",
+		{ 'reports_data' => $reports_data }, \$output, {binmode => ':utf8'}
+		)|| die $tt->error(), "\n";
+	open(OUTPUT_FILE, ">:utf8", $index_filename) or die "Could not open file '$index_filename'. $!";
+	print OUTPUT_FILE $output;
+	close(OUTPUT_FILE);
 }

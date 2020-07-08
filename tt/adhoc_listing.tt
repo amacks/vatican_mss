@@ -33,6 +33,7 @@
 					<nav aria-label="You are here:" role="navigation">
 					<ul class="breadcrumbs">
 					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+					  <li><a href="/vatican/adhoc/"> Ad-Hoc Reports</a></li>
 					  <li>${header_data.short_title}</li>
 					</ul>
 					</nav>
