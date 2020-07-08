@@ -14,7 +14,7 @@
 [%- FOREACH report IN reports_data -%]
 <div class="grid-x grid-margin-x index-list-item">
   <div class="cell small-3 medium-1 ">
-    <span class="index-date"><a href="${report.uri}">${report.short_title}</a></span>
+    <span class="index-date"><a href="/${report.uri}">${report.short_title}</a></span>
   </div>
   <div class="cell auto normal-text">
    [%- report.header_text_html | remove("<[^>]*?>") -%]
