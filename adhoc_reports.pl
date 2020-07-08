@@ -33,7 +33,7 @@ my $DEBUG=0;
 my $url_prefix="/vatican";
 
 ## for the database
-my $results_stmt = "select shelfmark, title, author, incipit, notes, thumbnail_url, date_added, lq_date_added, high_quality
+my $results_stmt_skel = "select shelfmark, title, author, incipit, notes, thumbnail_url, date_added, lq_date_added, high_quality
 from
 (select 
  ms1.shelfmark as shelfmark, 
@@ -82,7 +82,8 @@ sub get_mss_listing{
 	## connect to a DB
 	my $vatican_db = new Vatican::DB();
 	my $dbh=$vatican_db->get_generate_dbh();
-## now prepare a handle for the statement
+## make a copy and prepare the statement
+	my $results_stmt = $results_stmt_skel;
 	$results_stmt =~ s/__MS_TABLE__/$ms_table/g;
 	$results_stmt =~ s/__QUERY__/$query/g;
 	my $sth = $dbh->prepare($results_stmt) or die "cannot prepare results statement: ". $dbh->errstr();
