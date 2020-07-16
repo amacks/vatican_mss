@@ -23,15 +23,24 @@
 [% "<hr>" UNLESS loop.last %]
 [%- END -%]
 </div>
-<hr>
-<div class="grid-container grid-x grid-margin-x cell small-12">
-<nav aria-label="You are here:" role="navigation">
-<ul class="breadcrumbs">
-  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-  <li>Ad-Hoc Reports</li>
-</ul>
-</nav>
-</div>
+
+<div class="grid-container">
+	<hr>
+	<div class="grid-x align-middle">
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+					<ul class="breadcrumbs">
+					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+					  <li><a href="/vatican/adhoc/"> Ad-Hoc Reports</a></li>
+					</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
 </div>
 
 [%- END -%]
