@@ -23,7 +23,7 @@
 [% "<hr>" UNLESS loop.last %]
 [%- END -%]
 </div>
-
+<hr>
 <div class="grid-container grid-x grid-margin-x cell small-12">
 <nav aria-label="You are here:" role="navigation">
 <ul class="breadcrumbs">
