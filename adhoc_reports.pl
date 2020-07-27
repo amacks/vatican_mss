@@ -34,7 +34,7 @@ my $url_prefix="vatican";
 my $report_infix = 'adhoc';
 
 ## for the database
-my $results_stmt_skel = "select shelfmark, title, author, incipit, notes, thumbnail_url, date_added, lq_date_added, high_quality
+my $results_stmt_skel = "select shelfmark, title, author, incipit, notes, thumbnail_url, date_added, lq_date_added, high_quality, date
 from
 (select 
  ms1.shelfmark as shelfmark, 
