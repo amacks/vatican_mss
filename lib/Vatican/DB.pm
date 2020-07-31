@@ -106,7 +106,7 @@ sub generate_sort_shelfmark($){
 	my $sortable_shelmark = '';
 	my @sub_shelfmarks = split(/\./, $shelfmark); 
 	for (my $i=0; $i<=$#sub_shelfmarks; $i++){
-		if ($sub_shelfmarks[$i] =~ /^[ixvldm]+$/mi and 
+		if ($sub_shelfmarks[$i] =~ /^[ixvlcdm]+$/mi and 
 			(!defined($sub_shelfmarks[$i+1]) or $sub_shelfmarks[$i+1] !~ /^[ixvldm]+$/mi)){
 			## if we can be a roman numeral, convert it, it will get zero padded like all the rest
 			## we have to check that the NEXT token is not a roman as well to handle stupid ones like 
