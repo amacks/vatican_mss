@@ -1,0 +1,46 @@
+[%- WRAPPER "wrapper.tt"
+ title="Special Reports on BAV Manuscripts"
+ -%]
+<div class="grid-container fluid">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h2>Special Reports on BAV Manuscripts</h2>
+		</div>
+		<div class="cell normal-text">
+			This is a collection of special purpose reports 
+		</div>
+	</div>
+<div class="index-list">
+[%- FOREACH report IN reports_data -%]
+<div class="grid-x grid-margin-x index-list-item">
+  <div class="cell small-3 medium-1 ">
+    <span class="index-date"><a href="/${report.uri}">${report.short_title}</a></span>
+  </div>
+  <div class="cell auto normal-text">
+   [%- report.header_text_html | remove("<[^>]*?>") -%]
+  </div>
+</div>
+[% "<hr>" UNLESS loop.last %]
+[%- END -%]
+</div>
+
+<div class="grid-container">
+	<hr>
+	<div class="grid-x align-middle">
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+					<ul class="breadcrumbs">
+					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+					  <li><a href="/vatican/adhoc/"> Ad-Hoc Reports</a></li>
+					</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+[%- END -%]
