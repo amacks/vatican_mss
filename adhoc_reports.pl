@@ -138,13 +138,19 @@ sub format_mss_list{
 		warn " format_mss_list requires an argument of an arrayref to a list of MS";
 		return undef;
 	} else {
+		my $ms_count = $#{$mss_list}+1;
+		for my $fieldname ("header_text_html", "footer_text_html"){
+			if (defined($header_data->{$fieldname})){
+				$header_data->{$fieldname} =~ s/\$NUMBER\$/$ms_count/g;				
+			}
+		}
 		## setup the template system
 		my %data = (
 				'mss_list' => $mss_list,
 				'ms_base_url' => $ms_base_url,
 				'header_data' => $header_data,
 				'url_prefix' => '/' . $url_prefix,
-				'ms_count' => $#{$mss_list}+1,
+				'ms_count' => $ms_count,
 			);
 		my $output;
 		my $tt = Template->new({
