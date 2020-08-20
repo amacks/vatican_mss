@@ -19,3 +19,5 @@ for week in `seq 1 ${CURRENT_WEEK}`; do
 done
 
 ./generate_index.pl --filepath=${FILEPATH}
+
+./adhoc_reports.pl --filepath=${FILEPATH}
