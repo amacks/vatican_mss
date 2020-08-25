@@ -23,6 +23,7 @@
 		</div>
 		</div><!--end of text area-->
 	</div>
+	<!--div>There were ${ms_count} manuscripts matching this query</div-->
 </div>
 <div class="grid-container">
 	<hr>
