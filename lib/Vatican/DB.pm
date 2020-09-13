@@ -44,11 +44,10 @@ sub get_generate_dbh{
 	my $dbh=DBI->connect_cached ("dbi:mysql:database=" . $config->db_name() .
 		":host=" . $config->db_host(). ":port=3306'",
 		$config->generate_database()->{'username'}, $config->generate_database()->{'password'}, 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
+		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8mb4 => 1 }) 
 	or die "Can't connect to the MySQL " . $config->db_host() . '-' . $config->db_name() .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
     return $dbh;
 }
 
@@ -60,11 +59,10 @@ sub get_insert_dbh{
 	my $dbh=DBI->connect_cached ("dbi:mysql:database=" . $config->db_name() .
 		":host=" . $config->db_host(). ":port=3306'",
 		$config->insert_database()->{'username'}, $config->insert_database()->{'password'}, 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
+		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8mb4 => 1 }) 
 	or die "Can't connect to the MySQL " . $config->db_host() . '-' . $config->db_name() .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
    	return $dbh;
 }
 
