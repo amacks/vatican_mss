@@ -225,7 +225,7 @@ for my $collection (@collections){
 			## add in the filepath
 			$item_hash->{'filepath'} = $filepath;
 			my $collection_rows_imported = update_database($item_hash);
-			print ($#{$collection_rows_imported}+1) . "  inserted for $collection \n";
+			print $#{$collection_rows_imported}+1 . "  inserted for $collection \n";
 			push @$shelfmarks_inserted, @$collection_rows_imported;
 		} else {
 			warn "No items found in $collection"
@@ -234,7 +234,7 @@ for my $collection (@collections){
 		warn "Failure downloading HTML for $collection";
 	}
 }
-print "Done with " . ($#{$shelfmarks_inserted}+1) . "inserted. \n";
+print "Done with " . ($#{$shelfmarks_inserted}+1) . " inserted. \n";
 for my $shelfmark (@$shelfmarks_inserted){
 	print "\t" . $shelfmark;
 }
