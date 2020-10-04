@@ -47,11 +47,14 @@ from
  ms1.notes as notes,
  ms1.thumbnail_url as thumbnail_url,
  ms1.date as date,
- ms1.sort_shelfmark from 
+ ms1.sort_shelfmark,
+ ms1.ignore
+ from
 __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
 on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id) as hq_lq
  where
-__QUERY__
+(__QUERY__) AND
+hq_lq.ignore is false
 ORDER by sort_shelfmark asc";
 
 my $header_stmt = "select header_text, short_title, footer_text, query, filename from adhoc_reports where enabled=1";
@@ -87,6 +90,7 @@ sub get_mss_listing{
 	my $results_stmt = $results_stmt_skel;
 	$results_stmt =~ s/__MS_TABLE__/$ms_table/g;
 	$results_stmt =~ s/__QUERY__/$query/g;
+	warn $results_stmt;
 	my $sth = $dbh->prepare($results_stmt) or die "cannot prepare results statement: ". $dbh->errstr();
 	## now do the query
 	$sth->execute() or die "cannot run report: " . $sth->errstr();
