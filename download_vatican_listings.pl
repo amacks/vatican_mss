@@ -39,7 +39,7 @@ my $base_url;
 my $ms_base_url;
 my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
 #@collections=('Ross');
-my $DEBUG=1;
+my $DEBUG=0;
 my $inital_load_end = '2018-01-21 21:06:15';
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, ?, now())";
@@ -102,7 +102,7 @@ sub update_database{
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
-		my $rows_inserted = 0;
+		my $rows_inserted = [];
 		$sth->bind_param(3, 1, SQL_INTEGER);
 		for my $shelfmark (@{$data->{'high-quality'}}){
 			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
@@ -111,7 +111,7 @@ sub update_database{
 			$sth->bind_param(4, $image_url, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
-				$rows_inserted++;
+				push @$rows_inserted, $shelfmark;
 				## if we have a filepath, download the thumbnail to local
 				if (defined($data->{'filepath'})){
 					my $local_filepath = $data->{'filepath'} . "/" . $year . '/thumbnails';
@@ -138,7 +138,7 @@ sub update_database{
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
-				$rows_inserted++;
+				push @$rows_inserted, $shelfmark;
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
@@ -195,7 +195,7 @@ sub post_import_update(){
 	my $vatican_db = new Vatican::DB();
 	my $dbh=$vatican_db->get_insert_dbh();
 	for my $stm_key (sort keys %update_stmts){
-		warn " Doing $stm_key update";
+		warn " Doing $stm_key update" if ($DEBUG);
 		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
 		if (defined($sth)){
 			$sth->execute() or warn "error executing $stm_key update " . $dbh->errstr();
@@ -216,7 +216,7 @@ $base_url = $config->base_url();
 $ms_base_url = $config->ms_base_url();
 
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
-my $total_count = 0;
+my $shelfmarks_inserted = [];
 for my $collection (@collections){
 	my $html = get_listing_html($collection);
 	if (defined($html)){
@@ -224,9 +224,9 @@ for my $collection (@collections){
 		if (defined($item_hash)){
 			## add in the filepath
 			$item_hash->{'filepath'} = $filepath;
-			my $row_count = update_database($item_hash);
-			print " $row_count inserted for $collection \n";
-			$total_count+=$row_count;
+			my $collection_rows_imported = update_database($item_hash);
+			print $#{$collection_rows_imported}+1 . "  inserted for $collection \n";
+			push @$shelfmarks_inserted, @$collection_rows_imported;
 		} else {
 			warn "No items found in $collection"
 		}
@@ -234,6 +234,9 @@ for my $collection (@collections){
 		warn "Failure downloading HTML for $collection";
 	}
 }
-print "Done with $total_count inserted \n";
+print "Done with " . ($#{$shelfmarks_inserted}+1) . " inserted. \n";
+for my $shelfmark (@$shelfmarks_inserted){
+	print "\t" . $shelfmark;
+}
 post_import_update();
 
