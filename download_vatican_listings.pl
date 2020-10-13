@@ -235,8 +235,8 @@ for my $collection (@collections){
 	}
 }
 print "Done with " . ($#{$shelfmarks_inserted}+1) . " inserted. \n";
-for my $shelfmark (@$shelfmarks_inserted){
-	print "\t" . $shelfmark;
-}
+print "\t";
+print join(@$shelfmarks_inserted, " ");
+print "\n";
 post_import_update();
 
