@@ -186,7 +186,24 @@ sub post_import_update(){
 		where m.notes is NULL or m.notes not like "%Codices Palatini Entry%"',
 	pinakes => 'update  manuscripts as m join pinakes_sources as p on m.shelfmark=p.shelfmark
 		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Pinakes Entry](", p.url, "), ")
-		where m.notes is NULL or m.notes not like "%Pinakes%"'
+		where m.notes is NULL or m.notes not like "%Pinakes%"',
+	bannister => 'update manuscripts as m join
+(select
+		b.shelfmark as shelfmark,
+		group_concat(concat(coalesce(concat(m.notes, ", "), ""), "[Bannister ID: ", b.bannister_id,
+		coalesce(concat(", Title: ", b.title),""),
+		coalesce(concat(", Folio: ", b.folio),""),
+		coalesce(concat(", Century: ", b.century),""),
+		coalesce(concat(", Source: ", b.source),""),
+		coalesce(concat(", Provinance: ", b.provinance),""),
+		coalesce(concat(", Notation: ", b.notation),""),
+		"](https://www.uni-regensburg.de/Fakultaeten/phil_Fak_I/Musikwissenschaft/cantus/)")) as notes
+		from manuscripts as m join bannister_sources as b on m.shelfmark=b.shelfmark
+		where m.notes is NULL or m.notes not like "%Bannister%"
+		group by b.shelfmark)
+ as inner_table on
+m.shelfmark=inner_table.shelfmark
+set m.notes = inner_table.notes'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Vatican::Config();
