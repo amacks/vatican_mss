@@ -190,14 +190,16 @@ sub post_import_update(){
 	bannister => 'update manuscripts as m join
 (select
 		b.shelfmark as shelfmark,
-		group_concat(concat(coalesce(concat(m.notes, ", "), ""), "[Bannister ID: ", b.bannister_id,
-		coalesce(concat(", Title: ", b.title),""),
+		concat(coalesce(concat(m.notes, ", "), ""), group_concat(
+		"See Bannister, H. M. [Monumenti vaticani di paleografia musicale latina](https://www-app.uni-regensburg.de/Fakultaeten/PKGG/Musikwissenschaft/Cantus/Bannister/index.htm) ID# ", b.bannister_id,
+		"[",
+		coalesce(concat(" Title: ", b.title),""),
 		coalesce(concat(", Folio: ", b.folio),""),
 		coalesce(concat(", Century: ", b.century),""),
 		coalesce(concat(", Source: ", b.source),""),
 		coalesce(concat(", Provinance: ", b.provinance),""),
 		coalesce(concat(", Notation: ", b.notation),""),
-		"](https://www.uni-regensburg.de/Fakultaeten/phil_Fak_I/Musikwissenschaft/cantus/)")) as notes
+		"]")) as notes
 		from manuscripts as m join bannister_sources as b on m.shelfmark=b.shelfmark
 		where m.notes is NULL or m.notes not like "%Bannister%"
 		group by b.shelfmark)
