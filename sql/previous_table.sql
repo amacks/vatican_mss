@@ -16,6 +16,8 @@ weekly_notes.header_text as header_text,
 weekly_notes.image_filename as image_filename,
 weekly_notes.boundry_image_filename as boundry_image_filename,
 weekly_notes.previous_id as previous_week_id,
+previous.year as previous_week_year,
+previous.week_number as previous_week_week_number,
 next.id as next_week_id,
 next.year as next_week_year,
 next.week_number as next_week_week_number
