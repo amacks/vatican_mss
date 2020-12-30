@@ -111,7 +111,8 @@ sub generate_sort_shelfmark($){
 			## Chig.I.I.17
 			## hack to fix `roman` since it cannot handle iiii
 			$sub_shelfmarks[$i] =~ s/iiii/iv/g;
-			$sub_shelfmarks[$i] = arabic($sub_shelfmarks[$i]);
+			$sub_shelfmarks[$i] = arabic($sub_shelfmarks[$i]) || $sub_shelfmarks[$i]; ## if the arabic conversion fails, keep the old format
+			## needed for borg.ill, which matches
 		}
 		if ($sub_shelfmarks[$i] =~ /^\d+$/m){
 			$sub_shelfmarks[$i] = sprintf("%05d", $sub_shelfmarks[$i]);
