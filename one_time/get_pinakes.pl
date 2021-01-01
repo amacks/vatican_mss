@@ -14,28 +14,32 @@ use utf8;
 
 ## local variables
 my %fonds = (
-	'vat.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1403/',
-	'ott.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1388/',
-	'pal.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1391/',
-	'pal.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1392/',
-	'reg.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1839/',
-	'ross' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1397/',
+	'arch.cap.s.pietro' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1379/',
 	'barb.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1380/',
-	'sbath' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1398/',
-	'urb.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1400/',
-	'urb.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1402/',
-	'vat.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1404/',
-	'vat.sir' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1405/',
-	'vat.copt' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1671/',
-	'vat.ar' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1840/',
 	'barb.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1381/',
 	'bonc' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1382/',
 	'borg.copt' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1383/',
 	'borg.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1384/',
 	'borg.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1385/',
 	'chig' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1386/',
-	'arch.cap.s.pietro' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1379/'
+	'ott.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1388/',
+	'pal.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1391/',
+	'pal.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1392/',
+	'reg.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1395/',
+	'reg.gr.Pio.ii' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1396/'
+	'reg.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1839/',
+	'ross' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1397/',
+	'sbath' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1398/',
+	'urb.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1400/',
+	'urb.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1402/',
+	'vat.ar' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1840/',
+	'vat.copt' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1671/',
+	'vat.gr' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1403/',
+	'vat.lat' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1404/',
+	'vat.sir' => 'https://pinakes.irht.cnrs.fr/notice/fonds/1405/',
 );
+
+%fonds = ();
 my $base_url = "https://pinakes.irht.cnrs.fr";
 my $DEBUG=0;
 
