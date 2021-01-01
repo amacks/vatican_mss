@@ -1,0 +1,48 @@
+
+[%- WRAPPER "wrapper.tt"
+ title="Vatican Manuscripts: ${header_data.short_title}"
+ -%]
+
+<div class="grid-container">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h2>Vatican Manuscripts: ${header_data.short_title}</h2>
+		</div>
+	</div>
+	<div class="grid-x grid-margin-x">
+		<div class="cell small-12 normal-text"><!--Start of Text Area-->
+			${header_data.header_text_html}
+		</div>
+		<!--div>There were ${ms_count} manuscripts matching this query</div-->
+		<div class="cell">
+			[% PROCESS mss_list.tt
+				mss_list=mss_list
+			%]
+		</div>
+		<div class="cell small-12 normal-text"><!--Start of Text Area-->
+			${header_data.footer_text_html}
+		</div>
+		</div><!--end of text area-->
+	</div>
+</div>
+<div class="grid-container">
+	<hr>
+	<div class="grid-x align-middle">
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+					<ul class="breadcrumbs">
+					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+					  <li><a href="/vatican/adhoc/"> Ad-Hoc Reports</a></li>
+					  <li>${header_data.short_title}</li>
+					</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+[%- END -%]

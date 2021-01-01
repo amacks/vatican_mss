@@ -44,11 +44,10 @@ sub get_generate_dbh{
 	my $dbh=DBI->connect_cached ("dbi:mysql:database=" . $config->db_name() .
 		":host=" . $config->db_host(). ":port=3306'",
 		$config->generate_database()->{'username'}, $config->generate_database()->{'password'}, 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
+		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8mb4 => 1 }) 
 	or die "Can't connect to the MySQL " . $config->db_host() . '-' . $config->db_name() .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
     return $dbh;
 }
 
@@ -60,11 +59,10 @@ sub get_insert_dbh{
 	my $dbh=DBI->connect_cached ("dbi:mysql:database=" . $config->db_name() .
 		":host=" . $config->db_host(). ":port=3306'",
 		$config->insert_database()->{'username'}, $config->insert_database()->{'password'}, 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8 => 1 }) 
+		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8mb4 => 1 }) 
 	or die "Can't connect to the MySQL " . $config->db_host() . '-' . $config->db_name() .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-    $dbh->do('SET NAMES utf8');
    	return $dbh;
 }
 
@@ -106,14 +104,15 @@ sub generate_sort_shelfmark($){
 	my $sortable_shelmark = '';
 	my @sub_shelfmarks = split(/\./, $shelfmark); 
 	for (my $i=0; $i<=$#sub_shelfmarks; $i++){
-		if ($sub_shelfmarks[$i] =~ /^[ixvldm]+$/mi and 
+		if ($sub_shelfmarks[$i] =~ /^[ixvlcdm]+$/mi and 
 			(!defined($sub_shelfmarks[$i+1]) or $sub_shelfmarks[$i+1] !~ /^[ixvldm]+$/mi)){
 			## if we can be a roman numeral, convert it, it will get zero padded like all the rest
 			## we have to check that the NEXT token is not a roman as well to handle stupid ones like 
 			## Chig.I.I.17
 			## hack to fix `roman` since it cannot handle iiii
 			$sub_shelfmarks[$i] =~ s/iiii/iv/g;
-			$sub_shelfmarks[$i] = arabic($sub_shelfmarks[$i]);
+			$sub_shelfmarks[$i] = arabic($sub_shelfmarks[$i]) || $sub_shelfmarks[$i]; ## if the arabic conversion fails, keep the old format
+			## needed for borg.ill, which matches
 		}
 		if ($sub_shelfmarks[$i] =~ /^\d+$/m){
 			$sub_shelfmarks[$i] = sprintf("%05d", $sub_shelfmarks[$i]);

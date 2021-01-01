@@ -97,3 +97,16 @@ img.ms_thumbnail {
 blockquote.twitter-tweet {
 	font-size: smaller;
 }
+
+/* fix some weirdness with the google search form */
+.submit::-moz-focus-inner { 
+    border: 0;
+}
+#footer-search, .submit {
+	border-radius: 0;
+    -webkit-appearance: none;
+    height: 41px;
+}
+/* arrows for the previous and next links */
+.previous-link a:before { content: "\00AB\00a0"; }
+.next-link a:after { content: "\00a0\00BB"; }

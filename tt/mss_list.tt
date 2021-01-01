@@ -1,26 +1,3 @@
-
-[%- WRAPPER "wrapper.tt"
- title="Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}"
- -%]
-
-<div class="grid-container fluid">
-	<div class="grid-x grid-margin-x">
-		<div class="header cell">
-			<h2>Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}</h2>
-		</div>
-	</div>
-	<div class="grid-x grid-margin-x">
-		<div class="cell medium-8 small-12"><!--Start of Text Area-->
-		<div class="cell normal-text">
-			${header_data.header_text_html}
-		</div>
-		[%- IF header_data.boundry_image_filename.defined() -%]
-		<div class="cell boundry-image">
-		<a href="${header_data.boundry_image_filename}"><img alt="${header_data.boundry_image_filename}" src="${header_data.boundry_image_filename}"></a>
-		</div> 
-		[%- END -%]
-		<!--div>There were ${ms_count} manuscripts added this week</div-->
-		<div class="cell">
 <div class="mss_list">
 [% FOREACH ms IN mss_list %]
 	<div class="mss_row grid-x">
@@ -42,24 +19,3 @@
 [% "<hr>" UNLESS loop.last %]
 [% END %]
 </div>
-		</div>
-
-		</div><!--end of text area-->
-		<div class="cell medium-4 small-12">
-			<div class="right-image" >
-				<a href="${header_data.image_filename}"><img src="${header_data.image_filename}"></a>
-			</div>
-		</div>
-	</div>
-<div class="grid-container grid-x grid-margin-x cell small-12">
-<nav aria-label="You are here:" role="navigation">
-<ul class="breadcrumbs">
-  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
-  <li>Week ${datestamp_parts.week}</li>
-</ul>
-</div>
-</nav>
-</div>
-
-[%- END -%]

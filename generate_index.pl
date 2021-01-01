@@ -25,6 +25,8 @@ use File::Basename;
 use lib dirname($0) . "/lib";
 use Vatican::Config;
 use Vatican::DB;
+my $url_prefix;
+
 
 
 
@@ -42,7 +44,7 @@ my $header = "";
 my $footer = "";
 my $main_template_filename = "index.tt";
 my $year_template_filename = "year_index.tt";
-my $url_prefix = "/vatican";
+my $filepath_suffix = "vatican/";
 
 ## for the database
 my $db_stmt_master = "select year, week_number, header_text, image_filename from __WEEK_TABLE__ __WHERE__ order by year desc, week_number desc __LIMIT__";
@@ -176,13 +178,15 @@ my $week_offset=0;
 my $filepath = undef; ## if defined, the root path where to output the file
 GetOptions(
 		'filepath=s' => \$filepath);
-
+my $config = new Vatican::Config();
+$url_prefix = $config->prefix();
 
 if (defined($filepath)){
+	my $full_filepath = $filepath . $filepath_suffix;
 	## top level index
 	my $index_html= format_page(get_notes({mode=>'top'}), "top");
 
-	my $filename = $filepath . "/index.html" ;
+	my $filename = $full_filepath . "/index.html" ;
 	warn "writing to $filename";
 	open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
 	print OUTPUT_FILE $index_html;
@@ -193,7 +197,7 @@ if (defined($filepath)){
 		my $year_html = format_page(
 				get_notes({mode=>'year', year=>$year_row->{'year'}}), 
 				"year", $year_row->{'year'}, $year_row->{'header_text_html'});
-		my $filename = $filepath . "/" . $year_row->{'year'} . "/index.html" ;
+		my $filename = $full_filepath . "/" . $year_row->{'year'} . "/index.html" ;
 		warn "writing to $filename";
 		open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";
 		print OUTPUT_FILE $year_html;

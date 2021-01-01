@@ -35,11 +35,11 @@ sub get_time
 }
 ## constants
 my $today_timestamp = get_time("%Y_%m_%d");
-my $base_url="https://digi.vatlib.it/mss";
-my $ms_base_url = "https://digi.vatlib.it/view/MSS_";
+my $base_url;
+my $ms_base_url;
 my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
-#@collections=('Ross');
-my $DEBUG=1;
+#@collections=('Borg.ill');
+my $DEBUG=0;
 my $inital_load_end = '2018-01-21 21:06:15';
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, ?, now())";
@@ -102,7 +102,7 @@ sub update_database{
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
-		my $rows_inserted = 0;
+		my $rows_inserted = [];
 		$sth->bind_param(3, 1, SQL_INTEGER);
 		for my $shelfmark (@{$data->{'high-quality'}}){
 			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
@@ -111,7 +111,7 @@ sub update_database{
 			$sth->bind_param(4, $image_url, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
-				$rows_inserted++;
+				push @$rows_inserted, $shelfmark;
 				## if we have a filepath, download the thumbnail to local
 				if (defined($data->{'filepath'})){
 					my $local_filepath = $data->{'filepath'} . "/" . $year . '/thumbnails';
@@ -138,7 +138,7 @@ sub update_database{
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
-				$rows_inserted++;
+				push @$rows_inserted, $shelfmark;
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
@@ -186,7 +186,32 @@ sub post_import_update(){
 		set m.date = concat(cla.date_start, '-', cla.date_end),
 		m.notes = concat("CLA# [", cla.cla_volume, ".", cla.cla_number, "](", cla.url, "), Script: ",cla.script, " ", cla.provenance, " ", cla.comments),
 		m.title = cla.contents
-	where m.author is null and m.title is null and m.notes is null'
+	where m.author is null and m.title is null and m.notes is null',
+	pal_lat => 'update  manuscripts as m join pal_lat_gr_sources as pl on m.shelfmark=pl.shelfmark
+		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Codices Palatini Entry](", pl.url, "), ", pl.description)
+		where m.notes is NULL or m.notes not like "%Codices Palatini Entry%"',
+	pinakes => 'update  manuscripts as m join pinakes_sources as p on m.shelfmark=p.shelfmark
+		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Pinakes Entry](", p.url, "), ")
+		where m.notes is NULL or m.notes not like "%Pinakes%"',
+	bannister => 'update manuscripts as m join
+(select
+		b.shelfmark as shelfmark,
+		concat(coalesce(concat(m.notes, ", "), ""), group_concat(
+		"See Bannister, H. M. [Monumenti vaticani di paleografia musicale latina](https://www-app.uni-regensburg.de/Fakultaeten/PKGG/Musikwissenschaft/Cantus/Bannister/index.htm) ID# ", b.bannister_id,
+		"[",
+		coalesce(concat(" Title: ", b.title),""),
+		coalesce(concat(", Folio: ", b.folio),""),
+		coalesce(concat(", Century: ", b.century),""),
+		coalesce(concat(", Source: ", b.source),""),
+		coalesce(concat(", Provinance: ", b.provinance),""),
+		coalesce(concat(", Notation: ", b.notation),""),
+		"]")) as notes
+		from manuscripts as m join bannister_sources as b on m.shelfmark=b.shelfmark
+		where m.notes is NULL or m.notes not like "%Bannister%"
+		group by b.shelfmark)
+ as inner_table on
+m.shelfmark=inner_table.shelfmark
+set m.notes = inner_table.notes'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Vatican::Config();
@@ -195,7 +220,7 @@ sub post_import_update(){
 	my $vatican_db = new Vatican::DB();
 	my $dbh=$vatican_db->get_insert_dbh();
 	for my $stm_key (sort keys %update_stmts){
-		warn " Doing $stm_key update";
+		warn " Doing $stm_key update" if ($DEBUG);
 		my $sth = $dbh->prepare($update_stmts{$stm_key}) or warn "Cannot prepare $stm_key ". $dbh->errstr();
 		if (defined($sth)){
 			$sth->execute() or warn "error executing $stm_key update " . $dbh->errstr();
@@ -210,9 +235,13 @@ my $filepath = undef; ## if defined, the root path where to output the file
 GetOptions(
 		'filepath=s' => \$filepath);
 
+## setup configs
+my $config = new Vatican::Config();
+$base_url = $config->base_url();
+$ms_base_url = $config->ms_base_url();
 
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
-my $total_count = 0;
+my $shelfmarks_inserted = [];
 for my $collection (@collections){
 	my $html = get_listing_html($collection);
 	if (defined($html)){
@@ -220,9 +249,9 @@ for my $collection (@collections){
 		if (defined($item_hash)){
 			## add in the filepath
 			$item_hash->{'filepath'} = $filepath;
-			my $row_count = update_database($item_hash);
-			print " $row_count inserted for $collection \n";
-			$total_count+=$row_count;
+			my $collection_rows_imported = update_database($item_hash);
+			print $#{$collection_rows_imported}+1 . "  inserted for $collection \n";
+			push @$shelfmarks_inserted, @$collection_rows_imported;
 		} else {
 			warn "No items found in $collection"
 		}
@@ -230,6 +259,9 @@ for my $collection (@collections){
 		warn "Failure downloading HTML for $collection";
 	}
 }
-print "Done with $total_count inserted \n";
+print "Done with " . ($#{$shelfmarks_inserted}+1) . " inserted. \n";
+print "\t";
+print join(" ", @$shelfmarks_inserted);
+print "\n";
 post_import_update();
 
