@@ -183,7 +183,7 @@ sub post_import_update(){
 		where notes is null',
 	cla => 'update manuscripts as m join
 		cla_sources as cla on cla.shelfmark like m.shelfmark
-		set m.date = concat(cla.date_start, '-', cla.date_end),
+		set m.date = concat(cla.date_start, "-", cla.date_end),
 		m.notes = concat("CLA# [", cla.cla_volume, ".", cla.cla_number, "](", cla.url, "), Script: ",cla.script, " ", cla.provenance, " ", cla.comments),
 		m.title = cla.contents
 	where m.author is null and m.title is null and m.notes is null',
