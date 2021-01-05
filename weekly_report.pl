@@ -67,7 +67,7 @@ __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
 on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id 
  where
 (year(ms1.date_added) = ?) AND
-(week(ms1.date_added,0)+1 = ?) AND
+(week(ms1.date_added,4) = ?) AND
 ms1.ignore is false 
 ORDER by ms1.sort_shelfmark asc";
 
