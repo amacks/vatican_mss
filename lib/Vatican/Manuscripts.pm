@@ -12,6 +12,7 @@ use DBI qw(:sql_types);
 use Encode;
 use Moose;
 use utf8;
+use Text::Markdown;
 
 use File::Basename;
 use lib "./lib";
@@ -88,7 +89,7 @@ sub load_manuscripts($){
 			my $sql_frag = join(@{$this->where_fields()}. '=?', " and ");
 			$this->{'raw_sql'} = $sql_frag;
 		} elsif (defined($this->year()) and (defined($this->week()))){
-			my $sql_frag  = '(year(ms1.date_added) = ?) AND (week(ms1.date_added,0)+1 = ?)';
+			my $sql_frag  = '(year(ms1.date_added) = ?) AND (week(ms1.date_added,4) = ?)';
 			$this->where_values([$this->year(), $this->week()]);
 			$this->{'raw_sql'} = $sql_frag;
 		} else {
@@ -113,6 +114,23 @@ sub load_manuscripts($){
 		push @{$this->{'mss_list'}}, $row;
 	}
 	return $#{$this->mss_list()};
+}
+
+## process the notes for markdown
+sub post_process_manuscripts($){
+	my $this = shift;
+	my $m = Text::Markdown->new;
+	my $field_count=0; ## the number of fields with markdown processed. 
+	##equals # of fields per MS with defined values * MS Count
+	for (my $i=0;$i<=$#{$this->mss_list}; $i++){
+		for my $field ("notes"){
+	    	if (defined $this->mss_list()->[$i]->{$field}){ 
+				$this->mss_list()->[$i]->{$field . "_html"} = $m->markdown($this->mss_list()->[$i]->{$field});
+				$field_count++;
+	    	}
+	    } 
+	}
+	return $field_count;
 }
 
 ## do a regex replace in the SQL statement
