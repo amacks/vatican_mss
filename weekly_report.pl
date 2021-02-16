@@ -16,6 +16,7 @@ use File::Basename;
 use lib dirname($0) . "/lib/";
 use Vatican::Config;
 use Vatican::DB;
+use Vatican::Manuscripts;
 
 ## for the storage engine
 use DBD::mysql;
@@ -51,26 +52,6 @@ my $header = "";
 my $footer = "";
 my $url_prefix;
 
-## for the database
-my $report_stmt = "select 
- ms1.shelfmark as shelfmark, 
- ms1.high_quality as high_quality, 
- ms1.date_added as date_added, 
- ms2.date_added as lq_date_added,
- ms1.title as title,
- ms1.author as author,
- ms1.incipit as incipit,
- ms1.notes as notes,
- ms1.thumbnail_url as thumbnail_url,
- ms1.date as date from 
-__MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
-on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id 
- where
-(year(ms1.date_added) = ?) AND
-(week(ms1.date_added,0)+1 = ?) AND
-ms1.ignore is false 
-ORDER by ms1.sort_shelfmark asc";
-
 my $header_stmt = "select header_text, image_filename, boundry_image_filename, previous_week_id, next_week_id from __NOTES_TABLE__ 
 where  year=? and week_number=? ";
 my $links_stmt = "select year, week_number from __NOTES_TABLE__ where id=?  ";
@@ -99,31 +80,10 @@ warn "Processing Week: ". $week_number . " of year ". $year;
 sub get_mss_interval{
 	my $week_number = shift;
 	my $year = shift;
-	## get the DB configs
-	my $ms_table = $config->ms_table();
-	## connect to a DB
-	my $vatican_db = new Vatican::DB();
-	my $dbh=$vatican_db->get_generate_dbh();
-## now prepare a handle for the statement
-	$report_stmt =~ s/__MS_TABLE__/$ms_table/g;
-	my $sth = $dbh->prepare($report_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
-	$sth->bind_param(1,$year, SQL_INTEGER);
-	$sth->bind_param(2,$week_number, SQL_INTEGER);
-	## now do the query
-	$sth->execute() or die "cannot run report: " . $sth->errstr();
-	my $manuscripts = [];
-	my $m = Text::Markdown->new;
-	while (my $row = $sth->fetchrow_hashref()){
-	    for my $field ("notes"){
-	    	if (defined $row->{$field}){ 
-				$row->{$field . "_html"} = $m->markdown($row->{$field});
-	    	}
-	    }
-	    push @$manuscripts, $row;
-	}
-	$sth->finish();
-	$dbh->disconnect();
-	return $manuscripts;
+	my $mss = Vatican::Manuscripts->new(year=>$year, week=>$week_number);
+	$mss->load_manuscripts();
+	$mss->post_process_manuscripts();
+	return $mss->mss_list();
 }
 
 sub get_header_data{
