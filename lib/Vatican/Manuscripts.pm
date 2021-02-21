@@ -54,7 +54,12 @@ has 'DEBUG' => (
 
 #initial SQL statement
 has 'mss_stmt' => (
-	default => "select 
+	default => "select shelfmark, 
+	title, author, incipit, notes, 
+	thumbnail_url, date_added, lq_date_added, 
+	high_quality, date
+from
+(select 
  ms1.shelfmark as shelfmark, 
  ms1.high_quality as high_quality, 
  ms1.date_added as date_added, 
@@ -64,13 +69,16 @@ has 'mss_stmt' => (
  ms1.incipit as incipit,
  ms1.notes as notes,
  ms1.thumbnail_url as thumbnail_url,
- ms1.date as date from 
+ ms1.date as date,
+ ms1.sort_shelfmark,
+ ms1.ignore
+ from
 __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
-on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id 
+on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id) as hq_lq
  where
-__WHERE__ AND
-ms1.ignore is false 
-ORDER by ms1.sort_shelfmark asc",
+(__WHERE__) AND
+hq_lq.ignore is false
+ORDER by sort_shelfmark asc",
 	isa => 'Str',
 	is => 'rw'
 );
@@ -89,7 +97,7 @@ sub load_manuscripts($){
 			my $sql_frag = join(@{$this->where_fields()}. '=?', " and ");
 			$this->{'raw_sql'} = $sql_frag;
 		} elsif (defined($this->year()) and (defined($this->week()))){
-			my $sql_frag  = '(year(ms1.date_added) = ?) AND (week(ms1.date_added,4) = ?)';
+			my $sql_frag  = '(year(date_added) = ?) AND (week(date_added,4) = ?)';
 			$this->where_values([$this->year(), $this->week()]);
 			$this->{'raw_sql'} = $sql_frag;
 		} else {
