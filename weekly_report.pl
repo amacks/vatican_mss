@@ -52,7 +52,16 @@ my $header = "";
 my $footer = "";
 my $url_prefix;
 
-my $header_stmt = "select header_text, image_filename, boundry_image_filename, previous_week_id, next_week_id from __NOTES_TABLE__ 
+my $header_stmt = "select header_text, 
+image_filename, 
+boundry_image_filename, 
+previous_week_id, 
+previous_week_week_number,
+previous_week_year,
+next_week_id,
+next_week_week_number,
+next_week_year
+from __NOTES_TABLE__ 
 where  year=? and week_number=? ";
 my $links_stmt = "select year, week_number from __NOTES_TABLE__ where id=?  ";
 
@@ -108,26 +117,16 @@ sub get_header_data{
 	my $m = Text::Markdown->new;
 	$header_data->{'header_text_html'} = $m->markdown($header_data->{'header_text'});
 	$sth->finish();
+	$dbh->disconnect();
+
 	## figure out the previous and next links
-	my $link_sth = $dbh->prepare($links_stmt) or die "cannot prepare links statement: ". $dbh->errstr();
-	## get the previous
 	if (defined($header_data->{'previous_week_id'})){
-		$link_sth->execute($header_data->{'previous_week_id'});
-		my $row = $link_sth->fetchrow_hashref();
-		if (defined($row)){
-			$header_data->{'previous_link'} = $config->get_filename("", $row->{'year'}, $row->{'week_number'});
-		}
+		$header_data->{'previous_link'} = $config->get_filename("", $header_data->{'previous_week_year'}, $header_data->{'previous_week_week_number'});
 	}
 	if (defined($header_data->{'next_week_id'})){
-		$link_sth->execute($header_data->{'next_week_id'});
-		my $row = $link_sth->fetchrow_hashref();
-		if (defined($row)){
-			$header_data->{'next_link'} = $config->get_filename("", $row->{'year'}, $row->{'week_number'});
-		}
+		$header_data->{'next_link'} = $config->get_filename("", $header_data->{'next_week_year'}, $header_data->{'next_week_week_number'});
 	}
 	##warn Dumper($header_data);
-	$link_sth->finish();
-	$dbh->disconnect();
 	return $header_data;
 }
 sub format_mss_list{

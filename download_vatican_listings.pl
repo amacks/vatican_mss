@@ -38,7 +38,7 @@ my $today_timestamp = get_time("%Y_%m_%d");
 my $base_url;
 my $ms_base_url;
 my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
-#@collections=('Ross');
+#@collections=('Borg.ill');
 my $DEBUG=0;
 my $inital_load_end = '2018-01-21 21:06:15';
 
@@ -181,6 +181,12 @@ sub post_import_update(){
 		on m.shelfmark=dbbe.shelfmark
 		set m.notes = concat("See [Database of Byzantine Book Epigrams](", url, ")"), m.date=dbbe.date, m.title=dbbe.title
 		where notes is null',
+	cla => 'update manuscripts as m join
+		cla_sources as cla on cla.shelfmark like m.shelfmark
+		set m.date = concat(cla.date_start, "-", cla.date_end),
+		m.notes = concat("CLA# [", cla.cla_volume, ".", cla.cla_number, "](", cla.url, "), Script: ",cla.script, " ", cla.provenance, " ", cla.comments),
+		m.title = cla.contents
+	where m.author is null and m.title is null and m.notes is null',
 	pal_lat => 'update  manuscripts as m join pal_lat_gr_sources as pl on m.shelfmark=pl.shelfmark
 		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Codices Palatini Entry](", pl.url, "), ", pl.description)
 		where m.notes is NULL or m.notes not like "%Codices Palatini Entry%"',
