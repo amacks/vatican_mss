@@ -16,6 +16,7 @@ use File::Basename;
 use lib dirname($0) . "/lib/";
 use Vatican::Config;
 use Vatican::DB;
+use Vatican::Manuscripts;
 
 ## for the storage engine
 use DBD::mysql;
@@ -34,28 +35,6 @@ my $url_prefix="vatican";
 my $report_infix = 'adhoc';
 
 ## for the database
-my $results_stmt_skel = "select shelfmark, title, author, incipit, notes, thumbnail_url, date_added, lq_date_added, high_quality, date
-from
-(select 
- ms1.shelfmark as shelfmark, 
- ms1.high_quality as high_quality, 
- ms1.date_added as date_added, 
- ms2.date_added as lq_date_added,
- ms1.title as title,
- ms1.author as author,
- ms1.incipit as incipit,
- ms1.notes as notes,
- ms1.thumbnail_url as thumbnail_url,
- ms1.date as date,
- ms1.sort_shelfmark,
- ms1.ignore
- from
-__MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
-on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id) as hq_lq
- where
-(__QUERY__) AND
-hq_lq.ignore is false
-ORDER by sort_shelfmark asc";
 
 my $header_stmt = "select header_text, short_title, footer_text, query, filename from adhoc_reports where enabled=1";
 
@@ -86,27 +65,10 @@ sub get_mss_listing{
 	## connect to a DB
 	my $vatican_db = new Vatican::DB();
 	my $dbh=$vatican_db->get_generate_dbh();
-## make a copy and prepare the statement
-	my $results_stmt = $results_stmt_skel;
-	$results_stmt =~ s/__MS_TABLE__/$ms_table/g;
-	$results_stmt =~ s/__QUERY__/$query/g;
-	warn $results_stmt;
-	my $sth = $dbh->prepare($results_stmt) or die "cannot prepare results statement: ". $dbh->errstr();
-	## now do the query
-	$sth->execute() or die "cannot run report: " . $sth->errstr();
-	my $manuscripts = [];
-	my $m = Text::Markdown->new;
-	while (my $row = $sth->fetchrow_hashref()){
-	    for my $field ("notes"){
-	    	if (defined $row->{$field}){ 
-				$row->{$field . "_html"} = $m->markdown($row->{$field});
-	    	}
-	    }
-	    push @$manuscripts, $row;
-	}
-	$sth->finish();
-	$dbh->disconnect();
-	return $manuscripts;
+	my $mss = Vatican::Manuscripts->new(raw_sql => $query);
+	$mss->load_manuscripts();
+	$mss->post_process_manuscripts();
+	return $mss->mss_list();
 }
 
 sub get_header_data{
