@@ -39,6 +39,12 @@ has 'DEBUG' => (
 	default => 1
 	);
 
+## constants
+my $select_fonds_skel = "select __FIELDS__ from __TABLE__ where enabled order by code asc";
+my $fonds_table = "fonds";
+my $fields = ["id", "code", "full_name", "header_text"];
+
+
 sub BUILD{
 	my $this = shift;
 	$this->{'config'} = Vatican::Config->new() or die "Cannot read config file";
@@ -49,7 +55,12 @@ sub BUILD{
 sub load_fonds($){
 	my $this = shift;
 	$this->{'fond_listing'} = [];
-	my $get_fonds_statement = "select id, code, full_name, header_text from fonds where enabled order by code asc";
+	my $get_fonds_statement = $select_fonds_skel;
+	my $field_names = join(',', @{$fields});
+
+	$get_fonds_statement =~ s/__TABLE__/$fonds_table/g;
+	$get_fonds_statement =~ s/__FIELDS__/$field_names/g;
+
 	my $sth = $this->_dbh()->prepare($get_fonds_statement) or die "Cannot prepare statement: " . $this->_dbh()->errstr();
 	$sth->execute() or die "Cannot execute statement: " . $sth->errstr();
 	while (my $row = $sth->fetchrow_hashref()){
