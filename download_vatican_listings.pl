@@ -24,6 +24,7 @@ use File::Basename;
 use lib dirname($0) . "/lib/";
 use Vatican::Config;
 use Vatican::DB;
+use Vatican::Fonds;
 
 ## timestamp formatting from 
 ##https://stackoverflow.com/questions/2149532/how-can-i-format-a-timestamp-in-perl
