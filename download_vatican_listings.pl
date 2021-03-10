@@ -42,7 +42,7 @@ my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Ba
 my $DEBUG=0;
 my $inital_load_end = '2018-01-21 21:06:15';
 
-my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added, fond_code) values (?, ?, ?, ?, now())";
+my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added, fond_code) values (?, ?, ?, ?, now(), ?)";
 my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
