@@ -18,6 +18,7 @@ use utf8;
 use File::Basename;
 use lib dirname($0) . "/";
 use Vatican::Config;
+use Vatican::Fond;
 
 has 'config' => (
 	is => 'ro',
@@ -42,7 +43,7 @@ has 'DEBUG' => (
 ## constants
 my $select_fonds_skel = "select __FIELDS__ from __TABLE__ where enabled order by code asc";
 my $fonds_table = "fonds";
-my $fields = ["id", "code", "full_name", "header_text"];
+my $fields = $Vatican::Fond::db_fields;
 
 
 sub BUILD{
@@ -64,7 +65,8 @@ sub load_fonds($){
 	my $sth = $this->_dbh()->prepare($get_fonds_statement) or die "Cannot prepare statement: " . $this->_dbh()->errstr();
 	$sth->execute() or die "Cannot execute statement: " . $sth->errstr();
 	while (my $row = $sth->fetchrow_hashref()){
-		push @{$this->{'fond_listing'}}, $row;
+		my $fond = Vatican::Fond->new($row);
+		push @{$this->{'fond_listing'}}, $fond;
 	}
 	return $#{$this->fond_listing()};
 }
@@ -79,7 +81,7 @@ sub get_fond_codes($){
 	my @fond_codes = ();
 	my $listings = $this->fond_listing();
 	for (my $i=0;$i<=$#{$listings}; $i++){
-		push @fond_codes, $listings->[$i]->{'code'};
+		push @fond_codes, $listings->[$i]->code();
 	}
 	return \@fond_codes;
 }
