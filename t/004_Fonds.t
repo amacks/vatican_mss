@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 1;
+use Test::More tests => 6;
 use JSON;
 use Data::Dumper;
 
@@ -19,5 +19,9 @@ isa_ok (
         "Vatican::Fonds", "Create a bare Fonds object"
         );
 
-warn $fonds->load_fonds();
-warn Dumper($fonds->get_fond_codes());
+ok(
+	$fonds->load_fonds()>=87, "Enough fonds were loaded"
+	);
+isa_ok(
+	$fonds->get_fond_codes(), "ARRAY", "Get Fond Codes returns an arrayref"
+	);
