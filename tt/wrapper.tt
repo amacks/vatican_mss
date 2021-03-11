@@ -44,7 +44,7 @@
 
 
 	<div class="copyright grid-x">
-		<p>Copyright Aaron Macks, 2019-[%- date.format(mytime, '%Y') -%]. 
+		<p>Copyright Aaron Macks, 2019-[%- date.format(date.now, '%Y') -%]. 
 		This project is <em>not</em> an official project of the 
 		<a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.</p>
 	</div>
