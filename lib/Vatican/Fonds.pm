@@ -70,37 +70,52 @@ sub load_fonds($){
 	}
 	return $#{$this->fond_listing()};
 }
-
-## return an array of just the codes.  Useful for iterating through the website 
-sub get_fond_codes($){
+sub _check_loaded($){
 	my $this = shift;
 	if (!defined($this->fond_listing()) || $this->fond_listing() == []){
 		warn " Fonds not yet loaded, loading them";
 		my $count = $this->load_fonds();
 		## note if the load fails, we won't catch it here
+		if (!defined($count) || $count <0){
+			return undef;
+		} else {
+			return 2;
+		}
+	} else {
+		return 1;
 	}
-	my @fond_codes = ();
-	my $listings = $this->fond_listing();
-	for (my $i=0;$i<=$#{$listings}; $i++){
-		push @fond_codes, $listings->[$i]->code();
+}
+
+## return an array of just the codes.  Useful for iterating through the website 
+sub get_fond_codes($){
+	my $this = shift;
+	if ($this->_check_loaded()){
+		my @fond_codes = ();
+		my $listings = $this->fond_listing();
+		for (my $i=0;$i<=$#{$listings}; $i++){
+			push @fond_codes, $listings->[$i]->code();
+		}
+		return \@fond_codes;
+	} else {
+		warn "Fonds were not loaded, error loading";
+		return undef;
 	}
-	return \@fond_codes;
 }
 
 ## returns all the fond data as a single dictionary.  useful for generating listing pages
 sub get_all_fond_data($){
 	my $this = shift;
-	if (!defined($this->fond_listing()) || $this->fond_listing() == []){
-		warn " Fonds not yet loaded, loading them";
-		my $count = $this->load_fonds();
-		## note if the load fails, we won't catch it here
-	}	
-	my @data = ();
-	my $listings = $this->fond_listing();
-	for (my $i=0;$i<=$#{$listings}; $i++){
-		push @data, $listings->[$i]->get_data();
+	if ($this->_check_loaded()){
+		my @data = ();
+		my $listings = $this->fond_listing();
+		for (my $i=0;$i<=$#{$listings}; $i++){
+			push @data, $listings->[$i]->get_data();
+		}
+		return \@data;
+	} else {
+		warn "Fonds were not loaded, error loading";
+		return undef;
 	}
-	return \@data;
 }
 
 1;
