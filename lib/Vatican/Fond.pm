@@ -55,4 +55,16 @@ sub BUILD {
 	}
 } 
 
+## dump out all the fields as a dictionary
+sub get_data($){
+	my $this = shift;
+	my %data;
+	for my $field (@{$db_fields}){
+		$data{$field} = $this->{$field};
+	}
+	for my $field (@{$md_fields}){
+		$data{$field} = $this->{$field};		
+	}
+	return \%data;
+}
 1;

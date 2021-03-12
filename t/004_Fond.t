@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 7;
+use Test::More tests => 9;
 use JSON;
 use Data::Dumper;
 
@@ -14,7 +14,7 @@ BEGIN {
 
 my $fond;
 isa_ok(
-	$fond = Vatican::Fond->new(id=>1, code=>'Vat.lat', name=>'Vaticani Latini', header_text => 'this _is_ markdown'), 
+	$fond = Vatican::Fond->new(id=>1, code=>'Vat.lat', full_name=>'Vaticani Latini', header_text => 'this _is_ markdown'), 
 	"Vatican::Fond", "constructor creates a new object"
 	);
 ok(
@@ -24,9 +24,19 @@ ok(
 	$fond->code() eq "Vat.lat", "Code returns correct"
 	);
 ok(
+	$fond->full_name() eq "Vaticani Latini", "full_name returns correct"
+	);
+ok(
 	$fond->header_text() eq "this _is_ markdown", "header is stored properly"
 	);
 ok (
 	$fond->header_text_html() eq "<p>this <em>is</em> markdown</p>\n", 
 	"Header is converted to html"
+	);
+is_deeply($fond->get_data(),
+	{
+		id=>1, code=>'Vat.lat', full_name=>'Vaticani Latini', header_text => 'this _is_ markdown',
+		header_text_html => "<p>this <em>is</em> markdown</p>\n",
+
+	}, "get_data returns all the data"
 	);
