@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 9;
+use Test::More tests => 12;
 use JSON;
 use Data::Dumper;
 
@@ -39,4 +39,15 @@ is_deeply($fond->get_data(),
 		header_text_html => "<p>this <em>is</em> markdown</p>\n",
 
 	}, "get_data returns all the data"
+	);
+my $rand_image_1 = $fond->get_random_image_url();
+my $rand_image_2 = $fond->get_random_image_url();
+ok (
+	$rand_image_1 =~ /^\/vatican\/20/, "Random image 1 is a url"
+	);
+ok (
+	$rand_image_2 =~ /^\/vatican\/20/, "Random image 2 is a url"
+	);
+ok (
+	$rand_image_1 ne $rand_image_2, "Two random images are different"
 	);

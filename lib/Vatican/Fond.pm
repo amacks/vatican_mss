@@ -19,6 +19,7 @@ use utf8;
 use File::Basename;
 use lib dirname($0) . "/";
 use Vatican::Config;
+use Vatican::DB;
 
 ## constants
 our $db_fields = ["id", "code", "full_name", "header_text"];
@@ -45,6 +46,16 @@ has 'header_text_html' => (
 	isa => 'Maybe[Str]'
 	);
 
+has '_thumbnail_url' => (
+	is => 'rw',
+	isa => 'Maybe[Str]'
+	);
+
+has '_dbh' => (
+	is => 'rw',
+	isa => 'Maybe[DBI::db]'
+	);
+
 sub BUILD {
 	my $this = shift;
 	my $m = Text::Markdown->new;
@@ -66,5 +77,21 @@ sub get_data($){
 		$data{$field} = $this->{$field};		
 	}
 	return \%data;
+}
+
+sub get_random_image_url($){
+	my $this = shift;
+	my $db = Vatican::DB->new();
+	$this->_dbh($db->get_generate_dbh());
+	my $sth = $this->_dbh()->prepare("select thumbnail_url from manuscripts where fond_code like ? and high_quality order by rand() limit 1");
+	$sth->bind_param(1, $this->code());
+	$sth->execute();
+	if (my $row = $sth->fetchrow_hashref()){
+		$this->_thumbnail_url($row->{'thumbnail_url'});
+	} else {
+		warn "no row returned";
+	}
+	$sth->finish();
+	return $this->_thumbnail_url();
 }
 1;
