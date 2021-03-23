@@ -24,6 +24,7 @@ use File::Basename;
 use lib dirname($0) . "/lib/";
 use Vatican::Config;
 use Vatican::DB;
+use Vatican::Fonds;
 
 ## timestamp formatting from 
 ##https://stackoverflow.com/questions/2149532/how-can-i-format-a-timestamp-in-perl
@@ -37,12 +38,13 @@ sub get_time
 my $today_timestamp = get_time("%Y_%m_%d");
 my $base_url;
 my $ms_base_url;
-my @collections=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
+my @collections;
+##=("Arch.Cap.S.Pietro", "Autogr.Paolo.VI","Barb.gr","Barb.lat","Barb.or","Bonc","Borg.Carte.naut","Borg.ar","Borg.arm","Borg.cin","Borg.copt","Borg.ebr","Borg.eg","Borg.et","Borg.gr","Borg.ill","Borg.ind","Borg.isl","Borg.lat","Borg.mess","Borg.pers","Borg.siam", "Borg.sir","Borg.tonch","Borg.turc","Borgh","Capp.Giulia","Capp.Sist","Capp.Sist.Diari","Cappon","Carte.Stefani","Carte.d'Abbadie","Cerulli.et","Cerulli.pers","Chig","Comb","De.Marinis","Ferr","Legat","Neofiti","Ott.gr","Ott.lat","P.I.O","Pagès","Pal.gr","Pal.lat","Pap.Bodmer","Pap.Hanna","Pap.Vat.copt","Pap.Vat.gr","Pap.Vat.lat","Patetta","Raineri","Reg.gr","Reg.gr.Pio.II","Reg.lat","Ross","Ruoli","S.Maria.Magg","S.Maria.in.Via.Lata","Sbath","Sire","Urb.ebr","Urb.gr","Urb.lat","Vat.ar","Vat.arm","Vat.copt","Vat.ebr","Vat.estr.or","Vat.et","Vat.gr","Vat.iber","Vat.ind","Vat.indocin", "Vat.lat","Vat.mus","Vat.pers","Vat.sam","Vat.sir","Vat.slav","Vat.turc");
 #@collections=('Borg.ill');
 my $DEBUG=0;
 my $inital_load_end = '2018-01-21 21:06:15';
 
-my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added) values (?, ?, ?, ?, now())";
+my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added, fond_code) values (?, ?, ?, ?, now(), ?)";
 my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=?";
 
 warn $today_timestamp;
@@ -88,6 +90,7 @@ sub get_items{
 ## takes an argument, a hashref of the data
 sub update_database{
 	my $data = shift;
+	my $fond = shift;
 	if (!defined($data) || (ref($data) ne "HASH")){
 		warn "update_database needs an argument of a hashref";
 		return undef;
@@ -104,6 +107,7 @@ sub update_database{
 		## do the good ones 
 		my $rows_inserted = [];
 		$sth->bind_param(3, 1, SQL_INTEGER);
+		$sth->bind_param(5, $fond, SQL_VARCHAR);
 		for my $shelfmark (@{$data->{'high-quality'}}){
 			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
@@ -240,6 +244,10 @@ my $config = new Vatican::Config();
 $base_url = $config->base_url();
 $ms_base_url = $config->ms_base_url();
 
+## get the list of collections from the Fonds class
+my $fonds = Vatican::Fonds->new();
+$fonds->load_fonds();
+@collections = @{$fonds->get_fond_codes()};
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
 my $shelfmarks_inserted = [];
 for my $collection (@collections){
@@ -249,7 +257,7 @@ for my $collection (@collections){
 		if (defined($item_hash)){
 			## add in the filepath
 			$item_hash->{'filepath'} = $filepath;
-			my $collection_rows_imported = update_database($item_hash);
+			my $collection_rows_imported = update_database($item_hash, $collection);
 			print $#{$collection_rows_imported}+1 . "  inserted for $collection \n";
 			push @$shelfmarks_inserted, @$collection_rows_imported;
 		} else {
