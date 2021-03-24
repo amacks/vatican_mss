@@ -31,7 +31,7 @@
     </div>
   [% ELSIF fond.random_image_filename %]
     <div class="cell small-2">
-      <img alt="Random Manuscript Image from the ${fond.code} fond" src="${fond.image_filename}">
+      <img alt="Random Manuscript Image from the ${fond.code} fond" src="${fond.random_image_filename}">
     </div>
   [% END %]
 </div>
