@@ -22,7 +22,7 @@ use Vatican::Config;
 use Vatican::DB;
 
 ## constants
-our $db_fields = ["id", "code", "full_name", "header_text"];
+our $db_fields = ["id", "code", "full_name", "header_text", "image_filename"];
 my $md_fields = ["header_text_html"];
 
 has 'id' => (
@@ -45,7 +45,10 @@ has 'header_text_html' => (
 	is => 'ro',
 	isa => 'Maybe[Str]'
 	);
-
+has 'image_filename' => (
+	is => 'ro',
+	isa => 'Maybe[Str]'
+	);
 has '_thumbnail_url' => (
 	is => 'rw',
 	isa => 'Maybe[Str]'

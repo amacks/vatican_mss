@@ -57,7 +57,7 @@ has 'mss_stmt' => (
 	default => "select shelfmark, 
 	title, author, incipit, notes, 
 	thumbnail_url, date_added, lq_date_added, 
-	high_quality, date
+	high_quality, date, fond_code
 from
 (select 
  ms1.shelfmark as shelfmark, 
@@ -71,7 +71,8 @@ from
  ms1.thumbnail_url as thumbnail_url,
  ms1.date as date,
  ms1.sort_shelfmark,
- ms1.ignore
+ ms1.ignore,
+ ms1.fond_code
  from
 __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
 on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id) as hq_lq
@@ -94,7 +95,13 @@ sub load_manuscripts($){
 	$this->sql_stmt_replace('__MS_TABLE__', $ms_table);
 	if (!defined($this->raw_sql)){
 		if (defined($this->where_fields()) and defined($this->where_values())){
-			my $sql_frag = join(@{$this->where_fields()}. '=?', " and ");
+			my $sql_frag;
+			for (my $i=0; $i<=$#{$this->where_fields()}; $i++){
+				$sql_frag .= $this->where_fields()->[$i] . '=?';
+				if ($i<$#{$this->where_fields()}){
+					$sql_frag .= " and "; ## and if we are not the last
+				}
+			}
 			$this->{'raw_sql'} = $sql_frag;
 		} elsif (defined($this->year()) and (defined($this->week()))){
 			my $sql_frag  = '(year(date_added) = ?) AND (week(date_added,4) = ?)';

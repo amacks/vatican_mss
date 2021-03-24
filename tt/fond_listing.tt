@@ -1,0 +1,61 @@
+
+[%- WRAPPER "wrapper.tt"
+ title="Vatican Manuscripts from the ${header_data.code} Fond"
+ -%]
+
+<div class="grid-container">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h2>Vatican Manuscripts from the ${header_data.full_name} Fond</h2>
+		</div>
+	</div>
+	<div class="grid-x grid-margin-x">
+		<div class="cell auto"><!--Start of Text Area-->
+		<div class="cell normal-text">
+			${header_data.header_text_html}
+		</div>
+		<hr />
+		<!--div>There were ${ms_count} manuscripts added this week</div-->
+		<div class="cell">
+[% PROCESS mss_list.tt
+	mss_list=mss_list
+%]
+		</div>
+
+		</div><!--end of text area-->
+		[% IF header_data.image_filename %]
+		<div class="cell medium-4 small-12">
+			<div class="right-image" >
+				<a href="${header_data.image_filename}"><img src="${header_data.image_filename}"></a>
+			</div>
+		</div>
+		[% END %]
+	</div>
+</div>
+<div class="grid-container">
+	<hr>
+	<div class="grid-x align-middle">
+		<div class="previous-link cell small-3">
+
+		</div>
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+					<ul class="breadcrumbs">
+					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+					  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
+					  <li>Week ${datestamp_parts.week}</li>
+					</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+		<div class="next-link cell small-3 text-right">
+
+		</div>
+	</div>
+	<hr>
+</div>
+
+[%- END -%]
