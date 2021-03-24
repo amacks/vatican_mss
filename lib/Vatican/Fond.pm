@@ -80,9 +80,7 @@ sub get_data($){
 		$data{$field} = $this->{$field};		
 	}
 	## store a random image
-	if (!defined($data{'image_filename'})){
-		$data{'image_filename'} = $this->get_random_image_url();
-	}
+	$data{'random_image_filename'} = $this->get_random_image_url();
 	return \%data;
 }
 
