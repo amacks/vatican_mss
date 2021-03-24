@@ -121,7 +121,6 @@ if (!defined($filepath)){
 		close(OUTPUT_FILE);
 		## store the relevant info in the index-data array
 	}
-	exit;
 	## now build an index page
 	my $index_filename = $filepath . '/' . $subdirectory . '/' .'index.html';
 	warn "\tBuilding index $index_filename";

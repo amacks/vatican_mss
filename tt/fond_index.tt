@@ -1,0 +1,57 @@
+[%- WRAPPER "wrapper.tt"
+ title="BAV Manuscripts By Fond"
+ -%]
+<div class="grid-container fluid">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h2>BAV Manuscripts By Fond</h2>
+		</div>
+		<div class="cell normal-text">
+			The digitized manuscripts of the Vatican Library, organized by <em>fond</fond>.  
+			Fond is a term for the subcollections by which the library is organized. Some, such as the Rossiani, 
+			are from collections donated to, or bought by, the library.  
+			Others, such as the Archivio del Capitolo di S. Pietro are from smaller libraries within the overall 
+			historical Papal organization. Finally there are open collections, such as the Vaticani, which are still 
+			growing with new additions. 
+			These are further subdivided into language fonds, such as Vaticani Latini. 
+		</div>
+	</div>
+<div class="index-list">
+[%- FOREACH fond IN fond_listings -%]
+<div class="grid-x grid-margin-x index-list-item">
+  <div class="cell small-3 medium-2 ">
+    <span class="index-date"><a href="/${fond.uri}">${fond.full_name}</a></span>
+  </div>
+  <div class="cell auto normal-text">
+   [%- fond.header_text_html | remove("<[^>]*?>") -%]
+  </div>
+  [% IF fond.image_filename %]
+    <div class="cell small-2">
+      <img alt="Random thumbnail from the ${fond.code} fond" src="${fond.image_filename">
+    </div>
+  [% END %]
+</div>
+[% "<hr>" UNLESS loop.last %]
+[%- END -%]
+</div>
+
+<div class="grid-container">
+	<hr>
+	<div class="grid-x align-middle">
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+					<ul class="breadcrumbs">
+					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+					  <li><a href="/vatican/fonds/"> Fonds</a></li>
+					</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+</div>
+
+[%- END -%]

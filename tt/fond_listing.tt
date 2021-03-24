@@ -44,8 +44,8 @@
 					<nav aria-label="You are here:" role="navigation">
 					<ul class="breadcrumbs">
 					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-					  <li><a href="/vatican/${datestamp_parts.year}">${datestamp_parts.year}</a></li>
-					  <li>Week ${datestamp_parts.week}</li>
+					  <li><a href="/vatican/fonds">fonds</a></li>
+					  <li>${header_data.code}</li>
 					</ul>
 					</nav>
 				</div>

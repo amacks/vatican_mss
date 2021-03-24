@@ -79,6 +79,10 @@ sub get_data($){
 	for my $field (@{$md_fields}){
 		$data{$field} = $this->{$field};		
 	}
+	## store a random image
+	if (!defined($data{'image_filename'})){
+		$data{'image_filename'} = $this->get_random_image_url();
+	}
 	return \%data;
 }
 
