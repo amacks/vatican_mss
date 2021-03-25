@@ -125,7 +125,7 @@ img.fond-index-image {
 	text-align: left;
     font-family: 'Raleway', sans-serif;
 }
-/* indent the abstract and bigger image on desktop
+/* indent the abstract and bigger image on desktop */
 @media only screen and (min-width:960px) {
 	.fond-abstract {
 		padding-left: 4rem;
