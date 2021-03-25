@@ -20,7 +20,7 @@
 [%- FOREACH fond IN fond_listings -%]
 <div class="grid-x grid-margin-x index-list-item">
   <div class="cell small-3 medium-2 ">
-    <span class="fond-name"><a href="/${fond.uri}">${fond.full_name}</a></span>
+    <span class="fond-name"><a href="/${fond.uri}">${fond.full_name} <br /> (${fond.code})</a></span>
   </div>
   <div class="cell auto normal-text">
    [%- fond.header_text_html | remove("<[^>]*?>") -%]
