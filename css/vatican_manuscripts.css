@@ -117,11 +117,10 @@ img.fond-index-image {
 	height: auto;
 }
 
-.fond-name {
+.fond-name, .adhoc-name {
 	display: block;
 	font-weight: bold;
 	font-size: 115%;
-	padding-top: 0.1rem;
 	text-align: left;
     font-family: 'Raleway', sans-serif;
 }
