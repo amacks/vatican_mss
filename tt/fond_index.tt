@@ -21,11 +21,13 @@
 <div class="grid-x grid-margin-x index-list-item">
   <div class="cell large-1 show-for-large">
   </div>
-  <div class="cell small-3 medium-2 ">
-    <span class="fond-name"><a href="/${fond.uri}">${fond.full_name} <br /> (${fond.code})</a></span>
-  </div>
-  <div class="cell auto normal-text">
-   [%- fond.header_text_html | remove("<[^>]*?>") -%]
+  <div class="cell auto">
+	  <div class="fond-name">
+	    <a href="/${fond.uri}">${fond.full_name} <br /> (${fond.code})</a>
+	  </div>
+	  <div class="normal-text fond-abstract">
+	   [%- fond.header_text_html | remove("<[^>]*?>") -%]
+	  </div>
   </div>
   [% IF fond.image_filename %]
     <div class="cell small-2">
