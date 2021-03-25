@@ -112,8 +112,9 @@ blockquote.twitter-tweet {
 .next-link a:after { content: "\00a0\00BB"; }
 
 /* css for the index of fonds */
+/* this class will be overwitten for desktop */
 img.fond-index-image {
-	max-width: 8rem;
+	max-width: 6rem;
 	height: auto;
 }
 
@@ -124,8 +125,12 @@ img.fond-index-image {
 	text-align: left;
     font-family: 'Raleway', sans-serif;
 }
+/* indent the abstract and bigger image on desktop
 @media only screen and (min-width:960px) {
 	.fond-abstract {
 		padding-left: 4rem;
+	}
+	img.fond-index-image {
+		max-width: 10rem;
 	}
 }
