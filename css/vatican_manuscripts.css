@@ -88,11 +88,6 @@ img.ms_thumbnail {
 	padding-right: 1rem;
 }
 
-img.fond-index-image {
-	max-width: 3rem;
-	height: auto;
-}
-
 .mss_list {
 	padding-bottom: 1rem;
 	padding-top: 1rem;
@@ -115,3 +110,18 @@ blockquote.twitter-tweet {
 /* arrows for the previous and next links */
 .previous-link a:before { content: "\00AB\00a0"; }
 .next-link a:after { content: "\00a0\00BB"; }
+
+/* css for the index of fonds */
+img.fond-index-image {
+	max-width: 8rem;
+	height: auto;
+}
+
+.fond-name {
+	display: block;
+	font-weight: bold;
+	font-size: 115%;
+	padding-top: 1rem;
+	text-align: center;
+    font-family: 'Raleway', sans-serif;
+}
