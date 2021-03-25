@@ -117,7 +117,9 @@ img.fond-index-image {
 	max-width: 6rem;
 	height: auto;
 }
-
+.fond-abstract {
+	padding-top: .5rem;
+}
 .fond-name, .adhoc-name {
 	display: block;
 	font-weight: bold;
