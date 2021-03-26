@@ -88,7 +88,7 @@ sub get_random_image_url($){
 	my $this = shift;
 	my $db = Vatican::DB->new();
 	$this->_dbh($db->get_generate_dbh());
-	my $sth = $this->_dbh()->prepare("select thumbnail_url from manuscripts where fond_code like ? and high_quality order by rand() limit 1");
+	my $sth = $this->_dbh()->prepare("select thumbnail_url from manuscripts where fond_code like ? and high_quality and `ignore`=0 order by rand() limit 1") or warn "Cannot prepare to select random image " .$this->_dbh->errstr;
 	$sth->bind_param(1, $this->code());
 	$sth->execute();
 	if (my $row = $sth->fetchrow_hashref()){
