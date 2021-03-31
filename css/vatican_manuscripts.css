@@ -129,7 +129,7 @@ img.fond-index-image {
 }
 /* indent the abstract and bigger image on desktop */
 @media only screen and (min-width:960px) {
-	.fond-abstract {
+	.fond-abstract, adhoc-abstract {
 		padding-left: 4rem;
 	}
 	img.fond-index-image {
