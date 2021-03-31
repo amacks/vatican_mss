@@ -13,11 +13,17 @@
 <div class="index-list">
 [%- FOREACH report IN reports_data -%]
 <div class="grid-x grid-margin-x index-list-item">
-  <div class="cell small-3 medium-1 ">
-    <span class="adhoc-name"><a href="/${report.uri}">${report.short_title}</a></span>
+  <div class="cell large-1 show-for-large">
   </div>
-  <div class="cell auto normal-text">
-   [%- report.header_text_html | remove("<[^>]*?>") -%]
+  <div class="cell auto">
+	  <div class="adhoc-name">
+	    <a href="/${report.uri}">${report.short_title}</a>
+	  </div>
+	  <div class="normal-text adhoc-abstract">
+		[%- report.header_text_html | remove("<[^>]*?>") -%]
+	  </div>
+  </div>
+  <div class="cell large-1 show-for-large">
   </div>
 </div>
 [% "<hr>" UNLESS loop.last %]
