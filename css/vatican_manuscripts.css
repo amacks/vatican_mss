@@ -34,7 +34,7 @@ img.index-list-pics {
 	vertical-align:middle;
 }
 
-.index-date {
+.index-date-old {
 	display: block;
 	transform: rotate(45deg);
 	font-weight: bold;
@@ -120,7 +120,7 @@ img.fond-index-image {
 .fond-abstract, .adhoc-abstract {
 	padding-top: .5rem;
 }
-.fond-name, .adhoc-name {
+.fond-name, .adhoc-name, .index-date {
 	display: block;
 	font-weight: bold;
 	font-size: 115%;
@@ -129,7 +129,7 @@ img.fond-index-image {
 }
 /* indent the abstract and bigger image on desktop */
 @media only screen and (min-width:960px) {
-	.fond-abstract, .adhoc-abstract {
+	.fond-abstract, .adhoc-abstract, .index-date {
 		padding-left: 4rem;
 	}
 	img.fond-index-image {
