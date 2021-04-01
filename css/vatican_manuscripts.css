@@ -44,7 +44,7 @@ img.index-list-pics {
     font-family: 'Raleway', sans-serif;
 }
 
-div.index-list {
+div.index-list-old {
 	margin-top: 1.5rem;
 }
 
@@ -129,7 +129,7 @@ img.fond-index-image {
 }
 /* indent the abstract and bigger image on desktop */
 @media only screen and (min-width:960px) {
-	.fond-abstract, .adhoc-abstract, .index-date {
+	.fond-abstract, .adhoc-abstract, .index-list {
 		padding-left: 4rem;
 	}
 	img.fond-index-image {

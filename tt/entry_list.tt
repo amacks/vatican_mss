@@ -6,7 +6,7 @@
     <div class="index-date">
       <a href="${url_prefix}/${week.year}/week${week.week_number}.html">${week.year} Week ${week.week_number}</a>
     </div>
-    <div class="normal-text fond-abstract">
+    <div class="normal-text index-list">
       [%- week.header_text_html | remove("<[^>]*?>") | truncate(360) -%]
     </div>
   </div>
