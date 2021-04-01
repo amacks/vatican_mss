@@ -23,4 +23,4 @@ done
 ./adhoc_reports.pl --filepath=${FILEPATH}
 
 ## Make sure to sync up CSS
-cp css/* ${FILEPATH}/css/
+cp css/* ${FILEPATH}vatican/css/
