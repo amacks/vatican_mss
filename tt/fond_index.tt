@@ -47,19 +47,13 @@
 
 <div class="grid-container">
 	<hr>
-	<div class="grid-x">
-		<div class="cell small-6 align-middle">
-			<div class="grid-container">
-				<div class="grid-x align-center">
-					<nav aria-label="You are here:" role="navigation">
-					<ul class="breadcrumbs">
-					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-					  <li><a href="/vatican/fonds/"> Fonds</a></li>
-					</ul>
-					</nav>
-				</div>
-			</div>
-		</div>
+	<div class="grid-x align-center">
+		<nav aria-label="You are here:" role="navigation">
+		<ul class="breadcrumbs">
+		  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+		  <li><a href="/vatican/fonds/"> Fonds</a></li>
+		</ul>
+		</nav>
 	</div>
 	<hr>
 </div>
