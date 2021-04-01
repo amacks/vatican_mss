@@ -5,7 +5,7 @@
   <div class="cell auto">
     <div class="index-date">
       <a href="${url_prefix}/${week.year}/week${week.week_number}.html">${week.year} Week ${week.week_number}</a>
-      </div>
+    </div>
     <div class="normal-text fond-abstract">
       [%- week.header_text_html | remove("<[^>]*?>") | truncate(360) -%]
     </div>
