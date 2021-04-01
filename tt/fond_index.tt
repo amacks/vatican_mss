@@ -37,12 +37,12 @@
     <div class="cell small-2">
       <img class="fond-index-image" alt="Random Manuscript Image from the ${fond.code} fond" src="${fond.random_image_filename}">
     </div>
-  [% END %]
+  [% END ## end of image condition %]
   <div class="cell large-1 show-for-large">
   </div>
 </div>
 [% "<hr>" UNLESS loop.last %]
-[%- END -%]
+[%- END ## end of the main fond for-loop -%]
 </div>
 
 <div class="grid-container">
