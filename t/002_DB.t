@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 33;
+use Test::More tests => 36;
 use JSON;
 use Data::Dumper;
 
@@ -15,6 +15,7 @@ BEGIN {
 my $db;
 my $dbh;
 my $sth;
+my $insert_dbh;
 ok (
 	$db = Vatican::DB->new(), "new DB class object"
 	);
@@ -23,6 +24,15 @@ ok (
 	);
 isa_ok (
 	ref($dbh), "DBI::db", "dbh is the proper type of object"
+	);
+ok (
+	$insert_dbh = $db->get_insert_dbh(), "get_insert_dbh runs"
+	);
+isa_ok (
+	ref($insert_dbh), "DBI::db", "insert_dbh is the proper type of object"
+	);
+ok (
+	$insert_dbh eq $db->get_insert_dbh(), "insert_dbh is properly cached"
 	);
 ok (
 	$sth = $dbh->prepare("select 1,2 from dual"), "prepare a statement"

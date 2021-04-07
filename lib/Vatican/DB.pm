@@ -28,7 +28,10 @@ has 'config' => (
 	isa => 'Vatican::Config'
 	);
 
-
+has '_insert_dbh' => (
+	is => 'rw',
+	isa => 'Maybe[DBI::db]'
+);
 
 sub BUILD{
 	my $this = shift;
@@ -54,10 +57,10 @@ sub get_generate_dbh{
 ## return the stored handle.  if there is no stored handle, generate one and then return it
 sub get_insert_dbh{
 	my $this = shift;
-	if (!defined($this->{'_insert_dbh'})) {
-		$this->{'_insert_dbh'} = $this->_generate_insert_dbh();
+	if (!defined($this->_insert_dbh())) {
+		$this->_insert_dbh($this->_generate_insert_dbh());
 	}
-	return $this->{'_insert_dbh'};
+	return $this->_insert_dbh();
 }
 
 ## generate a DB handle 
