@@ -34,7 +34,7 @@ img.index-list-pics {
 	vertical-align:middle;
 }
 
-.index-date {
+.index-date-old {
 	display: block;
 	transform: rotate(45deg);
 	font-weight: bold;
@@ -44,7 +44,7 @@ img.index-list-pics {
     font-family: 'Raleway', sans-serif;
 }
 
-div.index-list {
+div.index-list-old {
 	margin-top: 1.5rem;
 }
 
@@ -70,8 +70,17 @@ div.index-list {
 	font-family: 'zainerinitials_45_mm', 'Gentium Book Basic', serif;
 }
 
+@media only screen and (min-width:960px) {
+	.normal-text {
+		padding-left: 2rem;
+		padding-right: 2rem;
+	}
+}
+
 h1, h2, h3 {
 	font-family: 'Raleway', sans-serif !important;
+	padding-bottom: 2rem !important;
+	padding-top: 1rem !important;
 }
 
 .boundry-image img {
@@ -110,3 +119,29 @@ blockquote.twitter-tweet {
 /* arrows for the previous and next links */
 .previous-link a:before { content: "\00AB\00a0"; }
 .next-link a:after { content: "\00a0\00BB"; }
+
+/* css for the index of fonds */
+/* this class will be overwitten for desktop */
+img.fond-index-image {
+	max-width: 6rem;
+	height: auto;
+}
+.fond-abstract, .adhoc-abstract {
+	padding-top: .5rem;
+}
+.fond-name, .adhoc-name, .index-date {
+	display: block;
+	font-weight: bold;
+	font-size: 115%;
+	text-align: left;
+    font-family: 'Raleway', sans-serif;
+}
+/* indent the abstract and bigger image on desktop */
+@media only screen and (min-width:960px) {
+	.fond-abstract, .adhoc-abstract, .index-list {
+		padding-left: 4rem;
+	}
+	img.fond-index-image {
+		max-width: 10rem;
+	}
+}

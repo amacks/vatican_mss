@@ -22,7 +22,7 @@ use Vatican::Config;
 use Vatican::DB;
 
 ## constants
-our $db_fields = ["id", "code", "full_name", "header_text"];
+our $db_fields = ["id", "code", "full_name", "header_text", "image_filename"];
 my $md_fields = ["header_text_html"];
 
 has 'id' => (
@@ -45,7 +45,10 @@ has 'header_text_html' => (
 	is => 'ro',
 	isa => 'Maybe[Str]'
 	);
-
+has 'image_filename' => (
+	is => 'ro',
+	isa => 'Maybe[Str]'
+	);
 has '_thumbnail_url' => (
 	is => 'rw',
 	isa => 'Maybe[Str]'
@@ -76,6 +79,8 @@ sub get_data($){
 	for my $field (@{$md_fields}){
 		$data{$field} = $this->{$field};		
 	}
+	## store a random image
+	$data{'random_image_filename'} = $this->get_random_image_url();
 	return \%data;
 }
 
@@ -83,7 +88,7 @@ sub get_random_image_url($){
 	my $this = shift;
 	my $db = Vatican::DB->new();
 	$this->_dbh($db->get_generate_dbh());
-	my $sth = $this->_dbh()->prepare("select thumbnail_url from manuscripts where fond_code like ? and high_quality order by rand() limit 1");
+	my $sth = $this->_dbh()->prepare("select thumbnail_url from manuscripts where fond_code like ? and high_quality and `ignore`=0 order by rand() limit 1") or warn "Cannot prepare to select random image " .$this->_dbh->errstr;
 	$sth->bind_param(1, $this->code());
 	$sth->execute();
 	if (my $row = $sth->fetchrow_hashref()){

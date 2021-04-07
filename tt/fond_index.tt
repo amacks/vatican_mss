@@ -1,0 +1,61 @@
+[%- WRAPPER "wrapper.tt"
+ title="BAV Manuscripts By Fond"
+ -%]
+<div class="grid-container fluid">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h2>BAV Manuscripts By Fond</h2>
+		</div>
+		<div class="cell normal-text">
+			<p>The digitized manuscripts of the Vatican Library, organized by <em>fond</em>.  
+			Fond is a term for the subcollections by which the library is organized. Some, such as the Rossiani, 
+			are from collections donated to, or bought by, the library.  
+			Others, such as the Archivio del Capitolo di S. Pietro are from smaller libraries within the overall 
+			historical Papal organization. Finally there are open collections, such as the Vaticani, which are still 
+			growing with new additions. 
+			These are further subdivided into language fonds, such as Vaticani Latini. </p>
+		</div>
+	</div>
+<div class="index-list">
+[%- FOREACH fond IN fond_listings -%]
+<div class="grid-x grid-margin-x index-list-item">
+  <!--div class="cell large-1 show-for-large">
+  </div-->
+  <div class="cell auto">
+	  <div class="fond-name">
+	    <a href="/${fond.uri}">${fond.full_name} (${fond.code})</a>
+	  </div>
+	  <div class="normal-text fond-abstract">
+	   [%- fond.header_text_html | remove("<[^>]*?>") -%]
+	  </div>
+  </div>
+  [% IF fond.image_filename %]
+    <div class="cell small-2">
+      <img class="fond-index-image" alt="Header Image from the ${fond.code} fond" src="${fond.image_filename}">
+    </div>
+  [% ELSIF fond.random_image_filename %]
+    <div class="cell small-2">
+      <img class="fond-index-image" alt="Random Manuscript Image from the ${fond.code} fond" src="${fond.random_image_filename}">
+    </div>
+  [% END ## end of image condition %]
+  <div class="cell large-1 show-for-large">
+  </div>
+</div>
+[% "<hr>" UNLESS loop.last %]
+[%- END ## end of the main fond for-loop -%]
+</div>
+
+<div class="grid-container">
+	<hr>
+	<div class="grid-x align-center">
+		<nav aria-label="You are here:" role="navigation">
+		<ul class="breadcrumbs">
+		  <li><a href="/vatican/">Vatican Manuscripts</a></li>
+		  <li><a href="/vatican/fonds/"> Fonds</a></li>
+		</ul>
+		</nav>
+	</div>
+	<hr>
+</div>
+
+[%- END -%]

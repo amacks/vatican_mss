@@ -33,10 +33,12 @@ ok (
 	$fond->header_text_html() eq "<p>this <em>is</em> markdown</p>\n", 
 	"Header is converted to html"
 	);
+#warn Dumper($fond->get_data());
 is_deeply($fond->get_data(),
 	{
 		id=>1, code=>'Vat.lat', full_name=>'Vaticani Latini', header_text => 'this _is_ markdown',
 		header_text_html => "<p>this <em>is</em> markdown</p>\n",
+		random_image_filename => undef
 
 	}, "get_data returns all the data"
 	);

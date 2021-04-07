@@ -1,19 +1,22 @@
-<div class="index-list">
 [%- FOREACH week IN weeks_notes -%]
 <div class="grid-x grid-margin-x index-list-item">
-  <div class="cell small-3 medium-1 ">
-    <span class="index-date"><a href="${url_prefix}/${week.year}/week${week.week_number}.html">${week.year} <br /> Week ${week.week_number}</a></span>
-    <div class="show-for-small-only"><a href="${url_prefix}/${week.year}/week${week.week_number}.html"><img class="index-list-pics" alt="MS Image" src="${url_prefix}/${week.year}/${week.image_filename}" /></a></div>
+  <div class="cell large-1 show-for-large">
   </div>
-  <div class="cell auto normal-text">
-   [%- week.header_text_html | remove("<[^>]*?>") | truncate(360) -%]
+  <div class="cell auto">
+    <div class="index-date">
+      <a href="${url_prefix}/${week.year}/week${week.week_number}.html">${week.year} Week ${week.week_number}</a>
+    </div>
+    <div class="normal-text index-list">
+      [%- week.header_text_html | remove("<[^>]*?>") | truncate(360) -%]
+    </div>
   </div>
   [%- IF week.image_filename.defined() -%]
     <div class="cell show-for-medium medium-1">
       <a href="${url_prefix}/${week.year}/week${week.week_number}.html"><img class="index-list-pics" alt="MS Image" src="${url_prefix}/${week.year}/${week.image_filename}" /></a>
     </div>
   [%- END -%]
+  <div class="cell large-1 show-for-large">
+  </div>
 </div>
 [% "<hr>" UNLESS loop.last %]
 [%- END -%]
-</div>
