@@ -43,10 +43,25 @@ my @collections;
 #@collections=('Borg.ill');
 my $DEBUG=0;
 my $inital_load_end = '2018-01-21 21:06:15';
+my $temp_table = "current_manuscripts";
 
 my $insert_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added, fond_code) values (?, ?, ?, ?, now(), ?)";
-my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=?";
-
+my $update_tn_stmt = "update __MS_TABLE__ set thumbnail_url=\"/vatican/__YEAR__/thumbnails/__SHELFMARK__.jpg\" where shelfmark=? and high_quality=1";
+## static statements for working through the temporary table
+my $create_temp_stmt = "create temporary table __TEMP_TABLE__ (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `shelfmark` varchar(32) CHARACTER SET utf8 DEFAULT NULL, 
+  `date_added` timestamp NULL DEFAULT NULL,
+  `sort_shelfmark` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
+  `fond_code` varchar(64) DEFAULT NULL,
+  `high_quality` int(1) DEFAULT NULL,
+  PRIMARY KEY (`id`))";
+my $temp_insert_stmt = "insert into __TEMP_TABLE__ (shelfmark, sort_shelfmark, high_quality, date_added, fond_code) values (?, ?, ?, now(), ?)";
+my $select_new_temp_rows_stmt = "select c.id
+from __TEMP_TABLE__ as c left outer join __MS_TABLE__ as m
+on c.shelfmark=m.shelfmark and c.high_quality=m.high_quality
+where m.shelfmark is null";
+my $insert_from_temp_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, date_added, fond_code, thumbnail_url) select shelfmark, sort_shelfmark, high_quality, date_added, fond_code, ? from __TEMP_TABLE__ where id=?";
 warn $today_timestamp;
 
 sub get_listing_html{
@@ -89,6 +104,7 @@ sub get_items{
 
 ## takes an argument, a hashref of the data
 sub update_database{
+	my $vatican_db = shift;
 	my $data = shift;
 	my $fond = shift;
 	if (!defined($data) || (ref($data) ne "HASH")){
@@ -102,6 +118,76 @@ sub update_database{
 		## connect to a DB
 		my $vatican_db = new Vatican::DB();
 		my $dbh=$vatican_db->get_insert_dbh();## now prepare a handle for the statement
+		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
+		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
+		## do the good ones 
+		my $rows_inserted = [];
+		$sth->bind_param(3, 1, SQL_INTEGER);
+		$sth->bind_param(5, $fond, SQL_VARCHAR);
+		for my $shelfmark (@{$data->{'high-quality'}}){
+			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
+			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
+			$sth->bind_param(2, Vatican::DB::generate_sort_shelfmark($shelfmark), SQL_VARCHAR);
+			$sth->bind_param(4, $image_url, SQL_VARCHAR);
+			my $insert_success = $sth->execute();
+			if (defined($insert_success)){
+				push @$rows_inserted, $shelfmark;
+				## if we have a filepath, download the thumbnail to local
+				if (defined($data->{'filepath'})){
+					my $local_filepath = $data->{'filepath'} . "/" . $year . '/thumbnails';
+					my $local_filename =  "${shelfmark}.jpg";
+					my $http_response = getstore($image_url, $local_filepath . '/' . $local_filename);
+					if (!is_error($http_response)){
+						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark, $local_filename);
+						if (!defined($local_thumbnail_code)){
+							warn "Some sort of error setting the local thumbnail";
+						}
+					} else {
+						warn "Some sort of error in downloading the image for " . $shelfmark;
+						warn $http_response;
+					}
+				}
+			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
+				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
+			}
+		}
+		# do the low-quality ones
+		$sth->bind_param(3, 0, SQL_INTEGER);
+		$sth->bind_param(4,undef, SQL_VARCHAR);
+		for my $shelfmark (@{$data->{'low-quality'}}){
+			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
+			my $insert_success = $sth->execute();
+			if (defined($insert_success)){
+				push @$rows_inserted, $shelfmark;
+			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
+				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
+			}
+		}
+		## we're done
+		$dbh->disconnect();
+		return $rows_inserted;
+	}
+}
+sub create_temp_database{
+	my $vatican_db = shift;
+	my $dbh = $vatican_db->get_insert_dbh();
+	my $sth = $dbh->prepare($create_temp_stmt) or die "Cannot prepare to create the temp DB " . $dbh->errstr();
+	$sth->execute() or die "Cannot create temp table " . $sth->errstr();
+}
+sub update_temp_database{
+	my $vatican_db = shift;
+	my $data = shift;
+	my $fond = shift;
+	if (!defined($data) || (ref($data) ne "HASH")){
+		warn "update_database needs an argument of a hashref";
+		return undef;
+	} else {
+		## get configs
+		my $config = new Vatican::Config();
+		my $ms_table = $config->ms_table();
+		my $year = get_time("%Y");
+		## connect to a DB
+		my $dbh = $vatican_db->get_insert_dbh();
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
 		## do the good ones 
@@ -248,6 +334,10 @@ $ms_base_url = $config->ms_base_url();
 my $fonds = Vatican::Fonds->new();
 $fonds->load_fonds();
 @collections = @{$fonds->get_fond_codes()};
+## create a long-lived DB session
+
+my $vatican_db = new Vatican::DB();
+create_temp_database($vatican_db);
 print "Starting for ". ($#collections+1) . " collections on $today_timestamp\n";
 my $shelfmarks_inserted = [];
 for my $collection (@collections){
@@ -257,7 +347,7 @@ for my $collection (@collections){
 		if (defined($item_hash)){
 			## add in the filepath
 			$item_hash->{'filepath'} = $filepath;
-			my $collection_rows_imported = update_database($item_hash, $collection);
+			my $collection_rows_imported = update_database($vatican_db, $item_hash, $collection);
 			print $#{$collection_rows_imported}+1 . "  inserted for $collection \n";
 			push @$shelfmarks_inserted, @$collection_rows_imported;
 		} else {

@@ -51,20 +51,30 @@ sub get_generate_dbh{
     return $dbh;
 }
 
+## return the stored handle.  if there is no stored handle, generate one and then return it
 sub get_insert_dbh{
 	my $this = shift;
-	my $config = $this->config();
-	## connect to a DB
+	if (!defined($this->{'_insert_dbh'})) {
+		$this->{'_insert_dbh'} = $this->_generate_insert_dbh();
+	}
+	return $this->{'_insert_dbh'};
+}
 
+## generate a DB handle 
+sub _generate_insert_dbh($){
+	my $this = shift;
+    my $config = $this->config();
+## connect to a DB
 	my $dbh=DBI->connect_cached ("dbi:mysql:database=" . $config->db_name() .
-		":host=" . $config->db_host(). ":port=3306'",
-		$config->insert_database()->{'username'}, $config->insert_database()->{'password'}, 
-		{RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8mb4 => 1 }) 
+	       ":host=" . $config->db_host(). ":port=3306'",
+	       $config->insert_database()->{'username'}, $config->insert_database()->{'password'}, 
+	       {RaiseError => 0, PrintError => 0, AutoCommit => 1, mysql_enable_utf8mb4 => 1 }) 
 	or die "Can't connect to the MySQL " . $config->db_host() . '-' . $config->db_name() .": $DBI::errstr\n";
     $dbh->{LongTruncOk} = 0;
     $dbh->do("SET OPTION SQL_BIG_TABLES = 1");
-   	return $dbh;
+    return $dbh;
 }
+
 
 sub set_local_thumbnail {
 	my $this = shift;
