@@ -21,6 +21,7 @@ done
 ./generate_index.pl --filepath=${FILEPATH}
 
 ./adhoc_reports.pl --filepath=${FILEPATH}
+./fond_pages.pl --filepath=${FILEPATH}]
 
 ## Make sure to sync up CSS
 cp css/* ${FILEPATH}vatican/css/
