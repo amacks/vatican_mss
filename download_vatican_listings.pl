@@ -55,13 +55,15 @@ my $create_temp_stmt = "create temporary table __TEMP_TABLE__ (
   `sort_shelfmark` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
   `fond_code` varchar(64) DEFAULT NULL,
   `high_quality` int(1) DEFAULT NULL,
+  `thumbnail_url` varchar(256) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`id`))";
-my $temp_insert_stmt = "insert into __TEMP_TABLE__ (shelfmark, sort_shelfmark, high_quality, date_added, fond_code) values (?, ?, ?, now(), ?)";
-my $select_new_temp_rows_stmt = "select c.id
+my $temp_insert_stmt = "insert into __TEMP_TABLE__ (shelfmark, sort_shelfmark, high_quality, thumbnail_url, date_added, fond_code) values (?, ?, ?, ?, now(), ?)";
+my $select_new_temp_rows_stmt = "select c.id as new_id, c.shelfmark as new_shelfmark
 from __TEMP_TABLE__ as c left outer join __MS_TABLE__ as m
 on c.shelfmark=m.shelfmark and c.high_quality=m.high_quality
 where m.shelfmark is null";
-my $insert_from_temp_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, date_added, fond_code, thumbnail_url) select shelfmark, sort_shelfmark, high_quality, date_added, fond_code, ? from __TEMP_TABLE__ where id=?";
+my $insert_from_temp_stmt = "insert into __MS_TABLE__ (shelfmark, sort_shelfmark, high_quality, date_added, fond_code, thumbnail_url) select shelfmark, sort_shelfmark, high_quality, date_added, fond_code, thumbnail_url from __TEMP_TABLE__ where id=?";
+my $select_temp_size = 'select count(*) from __TEMP_TABLE__';
 warn $today_timestamp;
 
 sub get_listing_html{
@@ -163,15 +165,23 @@ sub update_database{
 			}
 		}
 		## we're done
-		$dbh->disconnect();
 		return $rows_inserted;
 	}
 }
 sub create_temp_database{
 	my $vatican_db = shift;
 	my $dbh = $vatican_db->get_insert_dbh();
+	$create_temp_stmt =~ s/__TEMP_TABLE__/$temp_table/g;
 	my $sth = $dbh->prepare($create_temp_stmt) or die "Cannot prepare to create the temp DB " . $dbh->errstr();
 	$sth->execute() or die "Cannot create temp table " . $sth->errstr();
+}
+sub get_temp_database_size{
+	my $vatican_db = shift;
+	my $dbh = $vatican_db->get_insert_dbh();
+	$select_temp_size =~ s/__TEMP_TABLE__/$temp_table/g;
+	my $sth = $dbh->prepare($select_temp_size) or die "Cannot prepare to create the temp DB " . $dbh->errstr();
+	$sth->execute() or die "Cannot create temp table " . $sth->errstr();
+	return $sth->fetchrow_hashref();
 }
 sub update_temp_database{
 	my $vatican_db = shift;
@@ -182,17 +192,20 @@ sub update_temp_database{
 		return undef;
 	} else {
 		## get configs
+		warn "Starting insert for $fond";
 		my $config = new Vatican::Config();
 		my $ms_table = $config->ms_table();
 		my $year = get_time("%Y");
 		## connect to a DB
 		my $dbh = $vatican_db->get_insert_dbh();
-		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
-		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
+		$temp_insert_stmt =~ s/__TEMP_TABLE__/$temp_table/g;
+		my $sth = $dbh->prepare($temp_insert_stmt) or die "cannot prepare to insert to temp statement: ". $dbh->errstr();
 		## do the good ones 
 		my $rows_inserted = [];
 		$sth->bind_param(3, 1, SQL_INTEGER);
 		$sth->bind_param(5, $fond, SQL_VARCHAR);
+		## test data
+		push @{$data->{'high-quality'}}, $fond . ".kitten";
 		for my $shelfmark (@{$data->{'high-quality'}}){
 			my $image_url = "https://digi.vatlib.it/pub/digit/MSS_". $shelfmark . "/cover/cover.jpg";
 			$sth->bind_param(1, $shelfmark, SQL_VARCHAR);
@@ -200,23 +213,9 @@ sub update_temp_database{
 			$sth->bind_param(4, $image_url, SQL_VARCHAR);
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
+				## we don't really do anything since it is a temp table
 				push @$rows_inserted, $shelfmark;
-				## if we have a filepath, download the thumbnail to local
-				if (defined($data->{'filepath'})){
-					my $local_filepath = $data->{'filepath'} . "/" . $year . '/thumbnails';
-					my $local_filename =  "${shelfmark}.jpg";
-					my $http_response = getstore($image_url, $local_filepath . '/' . $local_filename);
-					if (!is_error($http_response)){
-						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark, $local_filename);
-						if (!defined($local_thumbnail_code)){
-							warn "Some sort of error setting the local thumbnail";
-						}
-					} else {
-						warn "Some sort of error in downloading the image for " . $shelfmark;
-						warn $http_response;
-					}
-				}
-			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
+			} else {
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
 		}
@@ -228,13 +227,20 @@ sub update_temp_database{
 			my $insert_success = $sth->execute();
 			if (defined($insert_success)){
 				push @$rows_inserted, $shelfmark;
-			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
+			} else {
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
 		}
-		## we're done
-		$dbh->disconnect();
-		return $rows_inserted;
+		## we're done, we have a complete temp table, now we count
+		$select_new_temp_rows_stmt =~ s/__TEMP_TABLE__/$temp_table/g;
+		$select_new_temp_rows_stmt =~ s/__MS_TABLE__/$ms_table/g;
+		my $sth_new_temp_rows = $dbh->prepare($select_new_temp_rows_stmt) or die "Cannot prepare statement to get new rows ". $dbh->errstr();
+		$sth_new_temp_rows->execute() or die "Cannot execute select to find new rows ". $sth_new_temp_rows->errstr();
+		$rows_inserted = [];
+		while (my $row=$sth_new_temp_rows->fetchrow_hashref()){
+			push @{$rows_inserted}, $row->{'new_shelfmark'};
+		}
+		warn Dumper($rows_inserted);
 	}
 }
 
@@ -346,9 +352,11 @@ for my $collection (@collections){
 		if (defined($item_hash)){
 			## add in the filepath
 			$item_hash->{'filepath'} = $filepath;
-			my $collection_rows_imported = update_database($vatican_db, $item_hash, $collection);
-			print $#{$collection_rows_imported}+1 . "  inserted for $collection \n";
-			push @$shelfmarks_inserted, @$collection_rows_imported;
+			## run the new code as a test
+			my $collection_rows_imported = update_temp_database($vatican_db, $item_hash, $collection);
+			#my $collection_rows_imported = update_database($vatican_db, $item_hash, $collection);
+			#print $#{$collection_rows_imported}+1 . "  inserted for $collection \n";
+			#push @$shelfmarks_inserted, @$collection_rows_imported;
 		} else {
 			warn "No items found in $collection"
 		}
@@ -356,9 +364,10 @@ for my $collection (@collections){
 		warn "Failure downloading HTML for $collection";
 	}
 }
+warn Dumper(get_temp_database_size($vatican_db));
 print "Done with " . ($#{$shelfmarks_inserted}+1) . " inserted. \n";
 print "\t";
 print join(" ", @$shelfmarks_inserted);
 print "\n";
-post_import_update();
+#post_import_update();
 
