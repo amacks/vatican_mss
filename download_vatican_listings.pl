@@ -116,7 +116,6 @@ sub update_database{
 		my $ms_table = $config->ms_table();
 		my $year = get_time("%Y");
 		## connect to a DB
-		my $vatican_db = new Vatican::DB();
 		my $dbh=$vatican_db->get_insert_dbh();## now prepare a handle for the statement
 		$insert_stmt =~ s/__MS_TABLE__/$ms_table/g;
 		my $sth = $dbh->prepare($insert_stmt) or die "cannot prepare statement: ". $dbh->errstr();
