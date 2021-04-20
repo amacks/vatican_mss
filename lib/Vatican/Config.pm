@@ -38,6 +38,8 @@ has 'base_url' => (is => 'ro',
                   isa => 'String');
 has 'ms_base_url' => (is => 'ro', 
                   isa => 'String');
+has 'detail_base_url' => (is => 'ro', 
+                  isa => 'String');
 
 has 'generate_database' =>(traits    => ['Hash'],
     is        => 'ro',
