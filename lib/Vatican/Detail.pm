@@ -34,6 +34,10 @@ has 'description_html' => (
 	is => 'rw',
 	isa => 'Maybe[Str]'
 );
+has 'detail_page' => (
+	is => 'rw',
+	isa => 'Bool'
+	);
 
 has 'bib_entries' => (
 	is => 'rw',
@@ -59,27 +63,35 @@ sub process_description_html($){
 	my $this = shift;
 	## sometimes there are just self links.  Those are ignorable.
 	my $tree = HTML::TreeBuilder::XPath->new_from_content( $this->description_html() );
-	## HTML is not well formed. Need to get a list of all details and then subtract the bibliography
-		## each entry looks like
-	## <div class="row-title"><a href="/mss/detail/192068"><div class="row-mss-title">
-	## <div class="order">5)</div><div class="title">Ghilardi, Massimiliano 
-	## «Non fuimus et fuimus». Gaetano Marini e le reliquie, In Gaetano Marini 
-	## (1742-1815) protagonista della cultura europea: scritti per il bicentenario 
-	## della morte: II, a cura di Marco Buonocore (Studi e testi, 493), 2015
-	##</div></div></a>
-	my @all_entries = $tree->findvalues('//div[ @class="row-title" ]');
-	## section for bibliography begins <div class="bibliographic_ref_label">
-	my @bib_entries = $tree->findvalues('//div[ @class="bibliographic_ref_label" ]/following::div[ @class="row-title" ]');
-	## now add the bibliography entries to the ignore list
-	@ignore_entries = (@ignore_entries, @bib_entries);
-	my $lc = List::Compare->new( {
-    	lists    => [\@all_entries, \@ignore_entries]
-    	});
-	my @detail_entries = $lc->get_unique();
-	## now set some values, if they exist
-	$this->bib_entries(\@bib_entries);
-	$this->detail_entries(\@detail_entries);
-	return 1;
+	## first check if we got the "no page" page
+	if ($tree->exists("//span[ contains(text(), 'No record match') ]")){
+		$this->detail_page(undef);
+		warn "no recrods";
+		return undef;
+	} else {
+		$this->detail_page(1);
+		## HTML is not well formed. Need to get a list of all details and then subtract the bibliography
+			## each entry looks like
+		## <div class="row-title"><a href="/mss/detail/192068"><div class="row-mss-title">
+		## <div class="order">5)</div><div class="title">Ghilardi, Massimiliano 
+		## «Non fuimus et fuimus». Gaetano Marini e le reliquie, In Gaetano Marini 
+		## (1742-1815) protagonista della cultura europea: scritti per il bicentenario 
+		## della morte: II, a cura di Marco Buonocore (Studi e testi, 493), 2015
+		##</div></div></a>
+		my @all_entries = $tree->findvalues('//div[ @class="row-title" ]');
+		## section for bibliography begins <div class="bibliographic_ref_label">
+		my @bib_entries = $tree->findvalues('//div[ @class="bibliographic_ref_label" ]/following::div[ @class="row-title" ]');
+		## now add the bibliography entries to the ignore list
+		@ignore_entries = (@ignore_entries, @bib_entries);
+		my $lc = List::Compare->new( {
+	    	lists    => [\@all_entries, \@ignore_entries]
+	    	});
+		my @detail_entries = $lc->get_unique();
+		## now set some values, if they exist
+		$this->bib_entries(\@bib_entries);
+		$this->detail_entries(\@detail_entries);
+		return 1;
+	}
 }
 
 ## gets the detail page and processes it.  Needs three arguments inside a hash
@@ -113,6 +125,10 @@ sub get_detail_count($){
 	return 1+$#{$this->detail_entries()};
 }
 
+sub detail_page_exists($){
+	my $this = shift;
+	return $this->detail_page();
+}
 
 ## Static functions
 ## just a simple get of a url
