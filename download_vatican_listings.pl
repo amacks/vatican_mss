@@ -10,7 +10,6 @@ use Mozilla::CA;
 use LWP::UserAgent;
 use LWP::Simple;
 use Getopt::Long;
-use List::Compare;
 
 use HTML::TreeBuilder::XPath;
 use Data::Dumper;
@@ -26,6 +25,7 @@ use lib dirname($0) . "/lib/";
 use Vatican::Config;
 use Vatican::DB;
 use Vatican::Fonds;
+use Vatican::Detail;
 
 ## timestamp formatting from 
 ##https://stackoverflow.com/questions/2149532/how-can-i-format-a-timestamp-in-perl
@@ -128,54 +128,6 @@ sub download_link_thumbnail($){
 	}
 }
 
-## gets the detail page and processes it.  Needs three arguments inside a hash
-## shelfmark
-## vatican_db handle for updating the record
-## base of the detail url from the config 
-sub get_catalogue_data($){
-	my $options = shift;
-	if (!defined($options->{'shelfmark'}) || !defined($options->{'vatican_db'}) || 
-		!defined($options->{'detail_base_url'})){
-		warn "Insufficient options passed to get_catalogue_data, three needed";
-		warn Dumper($options);
-		return undef;
-	} else {
-		## we have enough arguments to do a thing
-		my $description_html = get_url_content($options->{'detail_base_url'} . $options->{'shelfmark'});
-		if (defined($description_html)){
-			warn "we got a description page";
-			my ($description_count, $bibliography_count) = process_description_html($description_html);
-		} else {
-			warn "no description in BAV";
-		}
-	}
-}
-
-## takes the complete HTML of a description page and parses it to count the number of description items and the number 
-## of bibiligraphy entries
-sub process_description_html($){
-	my $html = shift;
-	my $tree = HTML::TreeBuilder::XPath->new_from_content( $html );
-	## HTML is not well formed. Need to get a list of all details and then subtract the bibliography
-		## each entry looks like
-	## <div class="row-title"><a href="/mss/detail/192068"><div class="row-mss-title">
-	## <div class="order">5)</div><div class="title">Ghilardi, Massimiliano 
-	## «Non fuimus et fuimus». Gaetano Marini e le reliquie, In Gaetano Marini 
-	## (1742-1815) protagonista della cultura europea: scritti per il bicentenario 
-	## della morte: II, a cura di Marco Buonocore (Studi e testi, 493), 2015
-	##</div></div></a>
-	my @all_entries = $tree->findvalues('//div[ @class="row-title" ]');
-	## section for bibliography begins <div class="bibliographic_ref_label">
-	my @bib_entries = $tree->findvalues('//div[ @class="bibliographic_ref_label" ]/following::div[ @class="row-title" ]');
-	#warn Dumper(\@bib_entries);
-	my $lc = List::Compare->new( {
-    	lists    => [\@all_entries, \@bib_entries]
-    	});
-	my @detail_entries = $lc->get_unique();
-	#warn Dumper(\@detail_entries);
-	return ($#detail_entries+1, $#bib_entries+1); ## plus 1 because array is 0 indexed
-}
-
 ## takes an argument, a hashref of the data
 sub update_database{
 	my $data = shift;
@@ -213,11 +165,11 @@ sub update_database{
 					vatican_db => $vatican_db,
 					year => $year
 					});
-				get_catalogue_data({
-					shelfmark => $shelfmark,
-					vatican_db => $vatican_db,
-					detail_base_url => $config->detail_base_url(),
-					});
+				# get_catalogue_data({
+				# 	shelfmark => $shelfmark,
+				# 	vatican_db => $vatican_db,
+				# 	detail_base_url => $config->detail_base_url(),
+				# 	});
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
