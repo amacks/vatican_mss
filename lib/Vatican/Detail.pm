@@ -14,14 +14,19 @@ use LWP;
 use LWP::UserAgent;
 use HTML::TreeBuilder::XPath;
 use List::Compare;
+use DBI;
+use DBI qw(:sql_types);
 
 use File::Basename;
 use lib dirname($0) . "/lib/";
 use Vatican::Config;
+use Vatican::DB;
 
 ## Constants
 my @ignore_entries = ( '1)(Shelfmark Only)'); ## array of meaningless entries to ignore
 my $DEBUG = undef;
+my $update_descriptions_stmt = "update __MS_TABLE__ set details_page=?, details_count=?, bibliography_count=?
+where shelfmark=?";
 
 ## Moose class variables
 
@@ -128,6 +133,27 @@ sub get_detail_count($){
 sub detail_page_exists($){
 	my $this = shift;
 	return $this->detail_page();
+}
+
+## takes 4 arguments, shelfmark and three values
+
+sub store_details($) {
+	my $this = shift;
+	my $config = new Vatican::Config();
+	my $ms_table = $config->ms_table();
+	my $vatican_db = new Vatican::DB(config => $config);
+
+	## update the master statement, this is per class 
+	$update_descriptions_stmt =~ s/__MS_TABLE__/${ms_table}_copy/g;
+	## set the full thumbnail_url
+	my $dbh = $vatican_db->get_insert_dbh();
+	my $update_sth = $dbh->prepare($update_descriptions_stmt) or warn "Cannot prepare statement: " . $dbh->errstr();
+	$update_sth->bind_param(1, $this->detail_page(), SQL_INTEGER);
+	$update_sth->bind_param(2, $this->get_detail_count(), SQL_INTEGER);
+	$update_sth->bind_param(3, $this->get_bib_count(), SQL_INTEGER);
+	$update_sth->bind_param(4, $this->shelfmark(), SQL_VARCHAR);
+	$update_sth->execute() and return 1;
+	warn "Issue executing " . $update_sth->errstr();
 }
 
 ## Static functions
