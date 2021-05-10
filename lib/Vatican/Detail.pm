@@ -71,7 +71,7 @@ sub process_description_html($){
 	## first check if we got the "no page" page
 	if ($tree->exists("//span[ contains(text(), 'No record match') ]")){
 		$this->detail_page(undef);
-		warn "no recrods";
+		warn "no records";
 		return undef;
 	} else {
 		$this->detail_page(1);
@@ -144,7 +144,7 @@ sub store_details($) {
 	my $vatican_db = new Vatican::DB(config => $config);
 
 	## update the master statement, this is per class 
-	$update_descriptions_stmt =~ s/__MS_TABLE__/${ms_table}_copy/g;
+	$update_descriptions_stmt =~ s/__MS_TABLE__/${ms_table}/g;
 	## set the full thumbnail_url
 	my $dbh = $vatican_db->get_insert_dbh();
 	my $update_sth = $dbh->prepare($update_descriptions_stmt) or warn "Cannot prepare statement: " . $dbh->errstr();
