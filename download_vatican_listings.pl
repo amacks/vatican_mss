@@ -165,11 +165,12 @@ sub update_database{
 					vatican_db => $vatican_db,
 					year => $year
 					});
-				# get_catalogue_data({
-				# 	shelfmark => $shelfmark,
-				# 	vatican_db => $vatican_db,
-				# 	detail_base_url => $config->detail_base_url(),
-				# 	});
+				## now get the details
+				my $detail = new Vatican::Detail(shelfmark => $shelfmark);
+				$detail->process_description_html();
+				if (defined($detail->detail_page_exists())){
+					$detail->store_details();
+				}	
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
