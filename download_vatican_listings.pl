@@ -25,6 +25,7 @@ use lib dirname($0) . "/lib/";
 use Vatican::Config;
 use Vatican::DB;
 use Vatican::Fonds;
+use Vatican::Detail;
 
 ## timestamp formatting from 
 ##https://stackoverflow.com/questions/2149532/how-can-i-format-a-timestamp-in-perl
@@ -52,16 +53,23 @@ warn $today_timestamp;
 sub get_listing_html{
 	my $collection = shift || return undef;
 	my $collection_url = $base_url . '/' . $collection;
-	my $html_content;
 	warn " Preparing to retrieve $collection_url" if ($DEBUG);
+	return get_url_content($collection_url);
+}
+
+## just a simple get of a url
+sub get_url_content($){
+	my $url = shift;
+	my $html_content;
+
 	my $ua=new LWP::UserAgent;
     $ua->timeout(35);
     
-    my $request = new HTTP::Request('GET', $collection_url); 
+    my $request = new HTTP::Request('GET', $url); 
     my $response = $ua->request($request); 
     
     if ($response->is_error){
-        warn "Unable to retrieve URL $collection_url: ". $response->status_line;
+        warn "Unable to retrieve URL $url: ". $response->status_line;
         return undef;
     } else {
         warn " Page retrieved" if ($DEBUG);
@@ -85,6 +93,39 @@ sub get_items{
 		'high-quality' => \@good_data,
 		'low-quality' => \@lq_data
 	};
+}
+## Takes 5 arguments in a blind hash:
+## shelfmark
+## image_url
+## filepath to store the images, the base value
+## year
+## db object
+sub download_link_thumbnail($){
+	my $options = shift;
+
+	my $image_url = $options->{'image_url'};
+	my $filepath = $options->{'filepath'};
+	my $year = $options->{'year'};
+	my $vatican_db = $options->{'vatican_db'};
+	my $shelfmark = $options->{'shelfmark'};
+	if (defined($filepath)){
+		my $local_filepath = $filepath . "/" . $year . '/thumbnails';
+		my $local_filename =  "${shelfmark}.jpg";
+		my $http_response = getstore($image_url, $local_filepath . '/' . $local_filename);
+		if (!is_error($http_response)){
+			my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark, $local_filename);
+			if (!defined($local_thumbnail_code)){
+				warn "Some sort of error setting the local thumbnail";
+				return undef;
+			} else {
+				return 1; ## no errors
+			}
+		} else {
+			warn "Some sort of error in downloading the image for " . $shelfmark;
+			warn $http_response;
+			return undef;
+		}
+	}
 }
 
 ## takes an argument, a hashref of the data
@@ -117,20 +158,19 @@ sub update_database{
 			if (defined($insert_success)){
 				push @$rows_inserted, $shelfmark;
 				## if we have a filepath, download the thumbnail to local
-				if (defined($data->{'filepath'})){
-					my $local_filepath = $data->{'filepath'} . "/" . $year . '/thumbnails';
-					my $local_filename =  "${shelfmark}.jpg";
-					my $http_response = getstore($image_url, $local_filepath . '/' . $local_filename);
-					if (!is_error($http_response)){
-						my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark, $local_filename);
-						if (!defined($local_thumbnail_code)){
-							warn "Some sort of error setting the local thumbnail";
-						}
-					} else {
-						warn "Some sort of error in downloading the image for " . $shelfmark;
-						warn $http_response;
-					}
-				}
+				download_link_thumbnail({
+					filepath => $data->{'filepath'},
+					image_url => $image_url,
+					shelfmark => $shelfmark,
+					vatican_db => $vatican_db,
+					year => $year
+					});
+				## now get the details
+				my $detail = new Vatican::Detail(shelfmark => $shelfmark);
+				$detail->process_description_html();
+				if (defined($detail->detail_page_exists())){
+					$detail->store_details();
+				}	
 			} elsif ($sth->err() != 1062) {## 1062 is code for "duplicate key", we use that to handle only adding new values, so ignore those errors
 				warn "Insert failure: ". $sth->errstr() . ' ' . $sth->err();
 			}
@@ -174,12 +214,12 @@ sub post_import_update(){
 		join iter_italicum_sources as ii 
 		on m.shelfmark=ii.shelfmark
 		set m.notes = concat("See [Iter liturgicum italicum](", url, ")")
-		where notes is null',
+		where notes is null or notes not like "%Iter liturgicum italicum%"',
 	diamm => 'update manuscripts as m 
 		join diamm_sources as diamm 
 		on m.shelfmark=diamm.shelfmark
 		set m.notes = concat("See [DIAMM](", url, ")"), m.date=diamm.date, m.title=diamm.title
-		where notes is null',
+		where notes is null or notes not like "%DIAMM%"',
 	dbbe => 'update manuscripts as m 
 		join dbbe_sources as dbbe 
 		on m.shelfmark=dbbe.shelfmark

@@ -38,6 +38,8 @@ has 'base_url' => (is => 'ro',
                   isa => 'String');
 has 'ms_base_url' => (is => 'ro', 
                   isa => 'String');
+has 'detail_base_url' => (is => 'ro', 
+                  isa => 'String');
 
 has 'generate_database' =>(traits    => ['Hash'],
     is        => 'ro',
@@ -80,6 +82,7 @@ sub BUILD {
   $this->{'prefix'} = $config_file->param("GLOBAL.PREFIX");
   $this->{'base_url'} = $config_file->param("GLOBAL.BASE_URL");
   $this->{'ms_base_url'} = $config_file->param("GLOBAL.MS_BASE_URL");
+  $this->{'detail_base_url'} = $config_file->param("GLOBAL.DETAIL_BASE_URL");
 	## hashes for sub configs
 	my $generate = {
 		'username' => $config_file->param("GENERATE_DATABASE.USERNAME"),

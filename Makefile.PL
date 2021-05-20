@@ -20,6 +20,7 @@ WriteMakefile(
 		'Getopt::Long' => 0,
 		"Roman" => 0,
 		"LWP::Protocol::https" => 0,
+		"List::Compare" => 0,
     },
     test => {TESTS => 't/*.t'}
 );

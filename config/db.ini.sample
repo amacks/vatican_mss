@@ -9,6 +9,7 @@ DATABASE=<>
 PREFIX="/vatican"
 BASE_URL="https://digi.vatlib.it/mss"
 MS_BASE_URL="https://digi.vatlib.it/view/MSS_"
+DETAIL_BASE_URL="https://digi.vatlib.it/mss/detail/"
 
 
 [GENERATE_DATABASE]
