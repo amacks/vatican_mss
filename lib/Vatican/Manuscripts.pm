@@ -60,22 +60,23 @@ has 'mss_stmt' => (
 	high_quality, date, fond_code
 from
 (select 
- ms1.shelfmark as shelfmark, 
- ms1.high_quality as high_quality, 
- ms1.date_added as date_added, 
- ms2.date_added as lq_date_added,
- ms1.title as title,
- ms1.author as author,
- ms1.incipit as incipit,
- ms1.notes as notes,
- ms1.thumbnail_url as thumbnail_url,
- ms1.date as date,
- ms1.sort_shelfmark,
- ms1.ignore,
- ms1.fond_code
+ max(ms1.shelfmark) as shelfmark, 
+ max(ms1.high_quality) as high_quality, 
+ max(ms1.date_added) as date_added, 
+ max(ms2.date_added) as lq_date_added,
+ max(ms1.title) as title,
+ max(ms1.author) as author,
+ max(ms1.incipit) as incipit,
+ max(ms1.notes) as notes,
+ max(ms1.thumbnail_url) as thumbnail_url,
+ max(ms1.date) as date,
+ max(ms1.sort_shelfmark) as sort_shelfmark,
+ max(ms1.ignore) as `ignore`,
+ max(ms1.fond_code) as fond_code
  from
 __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
-on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id) as hq_lq
+on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id
+group by ms1.shelfmark) as hq_lq
  where
 (__WHERE__) AND
 hq_lq.ignore is false
