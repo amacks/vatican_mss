@@ -52,6 +52,12 @@ has 'DEBUG' => (
 	is => 'rw'
 );
 
+has 'order' => (
+	isa => 'Str',
+	is => 'ro',
+	default => 'sort_shelfmark asc'
+	);
+
 #initial SQL statement
 has 'mss_stmt' => (
 	default => "select shelfmark, 
@@ -60,7 +66,7 @@ has 'mss_stmt' => (
 	high_quality, date, fond_code
 from
 (select 
- max(ms1.shelfmark) as shelfmark, 
+ coalesce(ms1.shelfmark) as shelfmark, 
  max(ms1.high_quality) as high_quality, 
  max(ms1.date_added) as date_added, 
  max(ms2.date_added) as lq_date_added,
@@ -80,7 +86,7 @@ group by ms1.shelfmark) as hq_lq
  where
 (__WHERE__) AND
 hq_lq.ignore is false
-ORDER by sort_shelfmark asc",
+ORDER by __ORDER__",
 	isa => 'Str',
 	is => 'rw'
 );
@@ -113,6 +119,8 @@ sub load_manuscripts($){
 			return undef;
 		}
 	}
+	## install an order statement
+	$this->sql_stmt_replace('__ORDER__', $this->order());
 	## we now have a raw SQL defined, let's build a statement
 	my $raw_sql = $this->raw_sql();
 	$this->sql_stmt_replace('__WHERE__', "($raw_sql)");
