@@ -58,6 +58,11 @@ has 'order' => (
 	default => 'sort_shelfmark asc'
 	);
 
+has 'limit' => (
+	isa => 'Maybe[Str]',
+	is => 'ro'
+	);
+
 #initial SQL statement
 has 'mss_stmt' => (
 	default => "select shelfmark, 
@@ -86,7 +91,8 @@ group by ms1.shelfmark) as hq_lq
  where
 (__WHERE__) AND
 hq_lq.ignore is false
-ORDER by __ORDER__",
+ORDER by __ORDER__
+__LIMIT__",
 	isa => 'Str',
 	is => 'rw'
 );
@@ -121,6 +127,12 @@ sub load_manuscripts($){
 	}
 	## install an order statement
 	$this->sql_stmt_replace('__ORDER__', $this->order());
+	## put in limit if desired
+	my $limit_stmt='';
+	if (defined($this->limit())){
+		$limit_stmt = "limit " . $this->limit();
+	}
+	$this->sql_stmt_replace('__LIMIT__', $limit_stmt);
 	## we now have a raw SQL defined, let's build a statement
 	my $raw_sql = $this->raw_sql();
 	$this->sql_stmt_replace('__WHERE__', "($raw_sql)");

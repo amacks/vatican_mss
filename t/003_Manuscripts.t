@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 16;
+use Test::More tests => 20;
 use JSON;
 use Data::Dumper;
 
@@ -61,4 +61,18 @@ ok (
 ok (
 	$order_test->mss_list->[0]->{'shelfmark'} eq "Vat.turc.99", "first manuscript is the right one"
 	);
-#warn Dumper($order_test->mss_list->[0]);
+my $limit_test;
+isa_ok (
+	$limit_test = Vatican::Manuscripts->new(week=>4, year=>2018, order=>"shelfmark asc", limit=>20, DEBUG=>0),
+	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark asc, limit 20"
+	);
+ok (
+	$limit_test->load_manuscripts() == 19, "20 manuscripts loaded per limit"
+	);
+ok (
+	$limit_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
+	);
+ok (
+	$limit_test->mss_list->[19]->{'shelfmark'} eq "Barb.gr.114", "last manuscript is the right one"
+	);
+#warn Dumper($limit_test->mss_list->[0]);
