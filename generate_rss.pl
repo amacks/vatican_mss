@@ -87,15 +87,18 @@ my $base_url = $config->url_hostname() ;
 for my $manuscript (@{$recent_mss->mss_list()}) {
 	## build the description
 	my $description = '';
-	for my $field ("author", "title", "incipit", "notes"){
+	for my $field ("author", "title", "incipit"){
 		if (defined($manuscript->{$field})){
 			$description .= ucfirst($field) . ": ". $manuscript->{$field} . " ";
 		}
 	}
+	if (defined($manuscript->{'notes_html'})){
+		$description .= "Notes: ". $manuscript->{'notes_html'}
+	}
 
 	$mss_rss->add_item(title => $manuscript->{'shelfmark'},
 	    # creates a guid field with permaLink=true
-	    link  => $base_url . $config->prefix . "/" . $manuscript->{'entry_url'},
+	    link  => $base_url . $manuscript->{'entry_url'},
 	    # alternately creates a guid field with permaLink=false
 	    permaLink => undef,
 	    guid     =>  $manuscript->{'shelfmark'},
