@@ -23,3 +23,5 @@ ok (
 ok (
 	$config->get_generate_db('username') eq "vatican_ro", "sub value of generate_database is available"
 	);
+
+#warn Dumper($config);
