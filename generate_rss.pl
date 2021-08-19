@@ -6,6 +6,8 @@ use POSIX qw(strftime);
 use Text::Markdown;
 use Getopt::Long;
 use DateTime;
+use DateTime::Format::MySQL;
+use Date::Calc qw( :all );
 use XML::RSS;
 
 use Data::Dumper;
@@ -78,20 +80,44 @@ sub generate_mss_feed($$$$){
 		if (defined($manuscript->{'notes_html'})){
 			$description .= "Notes: ". $manuscript->{'notes_html'}
 		}
-
+		## URL
+		my $complete_url = $base_url . $manuscript->{'entry_url'};
+		## now include the image and link
+		$description = build_description($description, $complete_url, 
+			$manuscript->{'thumbnail_url'}, $manuscript->{'year'}, $manuscript->{'week'}
+			);
+		##generate a date
+		my $mss_dt = DateTime::Format::MySQL->parse_datetime( $manuscript->{'date_added'} );
 		$mss_rss->add_item(title => $manuscript->{'shelfmark'},
 		    # creates a guid field with permaLink=true
-		    link  => $base_url . $manuscript->{'entry_url'},
+		    link  => $complete_url,
 		    # alternately creates a guid field with permaLink=false
 		    permaLink => undef,
 		    guid     =>  $manuscript->{'shelfmark'},
 		    description => $description,
-		    enclosure => {url=>$base_url . $manuscript->{'thumbnail_url'}, type => 'image/jpeg'}
+		    ##enclosure => {url=>$base_url . $manuscript->{'thumbnail_url'}, type => 'image/jpeg'},
+		    pubDate => DateTime::Format::Mail->format_datetime($mss_dt)
 		);
 	}
 
-	print $mss_rss->save($filepath . $mss_filename);
+	$mss_rss->save($filepath . $mss_filename);
 	warn "done generating MSS Feed" if ($verbose);
+}
+
+## build a description for a weekly feed takes five args
+## main text as html, url for the entry, image url, year and week ##
+sub build_description($$$$$){
+	my ($text_html, $url, $image_url, $year, $week) = @_;
+	my $image_boilerplate = '<img alt="Entry Image" src="__URL__">';
+	my $link_boilerplate = '<p>See all of the manuscripts for <a href="__URL__>Week __WEEK__ of __YEAR__</a>.</p>';
+	## now assemble those boilerplates
+	my $image_html = $image_boilerplate;
+	$image_html =~ s/__URL__/$image_url/g;
+	my $link_html = $link_boilerplate;
+	$link_html =~ s/__URL__/$url/g;
+	$link_html =~ s/__WEEK__/$week/g;
+	$link_html =~ s/__YEAR__/$year/g;
+	return $image_html . $text_html . $link_html;
 }
 
 ## generate a feed of recent weekly entries.  Takes 3 paremeters
@@ -145,16 +171,23 @@ sub generate_weekly_feed($$$$){
 			$row->{'entry_url'} = $config->get_filename('',$row->{'year'} ,$row->{'week_number'} );
 			## make an image url
 			$row->{'image_url'} = $base_url . $config->prefix() . '/' . $row->{'year'} . '/' . $row->{'image_filename'};
+			## assemble the HTML for the description
+			my $description = build_description($row->{'header_text_html'}, 
+				$row->{'entry_url'}, $row->{'image_url'}, $row->{'year'}, $row->{'week_number'});
+			## figure out the right date
+			my @friday_date = Add_Delta_Days(Monday_of_Week($row->{'week_number'}, $row->{'year'}),4);
+			my $weekly_dt = DateTime->new( year => $friday_date[0], month => $friday_date[1], day => $friday_date[2] );
 			$weekly_rss->add_item(title => $row->{'title'},
 			    # creates a guid field with permaLink=true
 			    permaLink  => $base_url . $row->{'entry_url'},
 			    # alternately creates a guid field with permaLink=false
-			    description => $row->{'header_text_html'},
-			    enclosure => {url=>$row->{'image_url'}, type => 'image/jpeg'}
+			    description => $description,
+			    ##enclosure => {url=>$row->{'image_url'}, type => 'image/jpeg'},
+			    pubDate => DateTime::Format::Mail->format_datetime($weekly_dt)
 			);
 		}
 	}
-	print $weekly_rss->save($filepath . $weekly_filename);
+	$weekly_rss->save($filepath . $weekly_filename);
 	warn "Done generating weekly feed" if ($verbose);
 }
 
