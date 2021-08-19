@@ -75,4 +75,4 @@ ok (
 ok (
 	$limit_test->mss_list->[19]->{'shelfmark'} eq "Barb.gr.114", "last manuscript is the right one"
 	);
-warn Dumper($limit_test->mss_list->[0]);
+#warn Dumper($limit_test->mss_list->[0]);
