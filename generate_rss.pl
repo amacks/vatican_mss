@@ -100,7 +100,7 @@ sub generate_mss_feed($$$$){
 		);
 	}
 
-	$mss_rss->save($filepath . $mss_filename);
+	$mss_rss->save($filepath . $config->prefix() . '/' . $mss_filename);
 	warn "done generating MSS Feed" if ($verbose);
 }
 
@@ -187,7 +187,7 @@ sub generate_weekly_feed($$$$){
 			);
 		}
 	}
-	$weekly_rss->save($filepath . $weekly_filename);
+	$weekly_rss->save($filepath . $config->prefix() . '/'. $weekly_filename);
 	warn "Done generating weekly feed" if ($verbose);
 }
 
