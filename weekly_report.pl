@@ -17,6 +17,7 @@ use lib dirname($0) . "/lib/";
 use Vatican::Config;
 use Vatican::DB;
 use Vatican::Manuscripts;
+use Vatican::Entry;
 
 ## for the storage engine
 use DBD::mysql;
@@ -52,18 +53,6 @@ my $header = "";
 my $footer = "";
 my $url_prefix;
 
-my $header_stmt = "select header_text,
-image_filename, 
-boundry_image_filename, 
-previous_week_id, 
-previous_week_week_number,
-previous_week_year,
-next_week_id,
-next_week_week_number,
-next_week_year
-from __NOTES_TABLE__ 
-where  year=? and week_number=? ";
-
 
 ### handle arguments to set the offset values and decide if we're output to console or note
 my $week_number;
@@ -97,26 +86,8 @@ sub get_mss_interval{
 sub get_header_data{
 	my $week_number = shift;
 	my $year = shift;
-	## get the DB configs
-	my $notes_table = $config->notes_linked_table();
-	## connect to a DB
-	my $vatican_db = new Vatican::DB();
-	my $dbh=$vatican_db->get_generate_dbh();
-## now prepare a handle for the statement
-	$header_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
-
-	my $sth = $dbh->prepare($header_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
-	$sth->bind_param(1,$year, SQL_INTEGER);
-	$sth->bind_param(2,$week_number, SQL_INTEGER);
-	## now do the query
-	$sth->execute() or die "cannot run report: " . $sth->errstr();
-	my $header_data= $sth->fetchrow_hashref();
-	## now markdown it
-	my $m = Text::Markdown->new;
-	$header_data->{'header_text_html'} = $m->markdown($header_data->{'header_text'});
-	$sth->finish();
-	$dbh->disconnect();
-
+	my $entry = Vatican::Entry->new(week_number=>$week_number, year=>$year);
+	my $header_data = $entry->entry_data();
 	## figure out the previous and next links
 	if (defined($header_data->{'previous_week_id'})){
 		$header_data->{'previous_link'} = $config->get_filename("", $header_data->{'previous_week_year'}, $header_data->{'previous_week_week_number'});
