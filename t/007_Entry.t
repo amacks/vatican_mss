@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 18;
+use Test::More tests => 19;
 use JSON;
 use Data::Dumper;
 
@@ -68,3 +68,9 @@ is_deeply(
 ok(
     Vatican::Entry::get_fieldnames() =~ /^([a-z_]+,\s?)+([a-z_]+)$/, "get_fieldnames returns a proper string"
     );
+
+## testing the markdown
+my $md = Vatican::Entry->new(entry_data=>{header_text => 'Hello, _hello_'});
+ok (
+    $md->entry_data()->{'header_text_html'} =~ qr(^<p>Hello, <em>hello</em></p>), 
+    "Header text is markdown processed");

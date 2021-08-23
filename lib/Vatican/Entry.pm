@@ -13,6 +13,7 @@ use DBI qw(:sql_types);
 use Encode;
 use Moose;
 use utf8;
+use Text::Markdown;
 
 use File::Basename;
 use lib dirname($0) . "/";
@@ -46,7 +47,7 @@ has 'raw_sql' => (
 	is => 'rw'
 	);
 has 'entry_data' => (
-	isa => 'HashRef',
+	isa => 'Maybe[HashRef]',
 	'is' => 'rw'
 	);
 has 'where_values' => (
@@ -100,17 +101,26 @@ sub BUILD {
 		## pickup the field names
 		$this->sql_stmt_replace('__FIELDS__', join(',', @{$field_names}));
 		my $db = Vatican::DB->new();
-		$this->entry_data($db->get_one_row($this->select_stmt(), $this->where_values()));
+		my $db_entry = $db->get_one_row($this->select_stmt(), $this->where_values());
+		if (defined($db_entry)){
+			$this->entry_data($db_entry);
+		}
 	} else {
 		## data was passed to us already. That's nice
 	}
 	## make sure the named fields are properly stored
-	for my $field ('year', 'week_number', 'id' ){
-		if (!defined($this->{$field})){
-			$this->{$field} = $this->entry_data()->{$field};
+	if (defined($this->entry_data())){
+		for my $field ('year', 'week_number', 'id' ){
+			if (!defined($this->{$field})){
+				$this->{$field} = $this->entry_data()->{$field};
+			}
 		}
+		#markdown the header
+		my $m = Text::Markdown->new;
+		$this->entry_data()->{'header_text_html'} = $m->markdown($this->entry_data()->{'header_text'});
+	} else {
+		warn "No entry in DB";
 	}
-
 }
 
 
