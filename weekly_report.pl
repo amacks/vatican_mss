@@ -52,7 +52,7 @@ my $header = "";
 my $footer = "";
 my $url_prefix;
 
-my $header_stmt = "select header_text, 
+my $header_stmt = "select header_text,
 image_filename, 
 boundry_image_filename, 
 previous_week_id, 
@@ -63,7 +63,6 @@ next_week_week_number,
 next_week_year
 from __NOTES_TABLE__ 
 where  year=? and week_number=? ";
-my $links_stmt = "select year, week_number from __NOTES_TABLE__ where id=?  ";
 
 
 ### handle arguments to set the offset values and decide if we're output to console or note
@@ -105,7 +104,6 @@ sub get_header_data{
 	my $dbh=$vatican_db->get_generate_dbh();
 ## now prepare a handle for the statement
 	$header_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
-	$links_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
 
 	my $sth = $dbh->prepare($header_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
 	$sth->bind_param(1,$year, SQL_INTEGER);

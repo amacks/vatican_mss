@@ -89,6 +89,31 @@ sub set_local_thumbnail {
 	return $update_sth->execute();
 }
 
+## useful class to get a single row from a complete SQL statement
+## Takes 2 arguments in addition to the class
+## the SQL statement and an optional array of values to bind
+sub get_one_row{
+	my $this = shift;
+	my $sql = shift;
+	my $values = shift;
+	my $dbh = $this->get_generate_dbh();
+	my $sth = $dbh->prepare($sql) or die "Cannot prepare the statement $sql " . $dbh->errstr();
+	## bind if needed
+	if (defined($values)){
+		## fixup a single value
+		if (!defined(ref($values))){
+			$values = [$values];
+		}
+		for (my $i=0;$i<=$#{$values}; $i++){
+			$sth->bind_param($i+1, $values->[$i]);
+		}
+	}
+	$sth->execute() or die "Cannot execute $sql: " . $sth->errstr();
+	my $row = $sth->fetchrow_hashref();
+	$sth->finish();
+	return $row;
+}
+
 
 ## statics
 sub get_time 
