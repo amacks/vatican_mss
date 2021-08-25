@@ -111,7 +111,7 @@ sub build_description($$$$$){
 	my $image_boilerplate = '<img alt="Entry Image" src="__URL__">';
 	my $link_boilerplate = '<p>See all of the manuscripts for <a href="__URL__>Week __WEEK__ of __YEAR__</a>.</p>';
 	## now assemble those boilerplates
-	my $image_html;
+	my $image_html ='';
 	if (defined($image_url)){
 		$image_html = $image_boilerplate;
 		$image_html =~ s/__URL__/$image_url/g;		
