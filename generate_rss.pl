@@ -173,7 +173,9 @@ sub generate_weekly_feed($$$$){
 			## make a url
 			$row->{'entry_url'} = $config->get_filename('',$row->{'year'} ,$row->{'week_number'} );
 			## make an image url
-			$row->{'image_url'} = $base_url . $config->prefix() . '/' . $row->{'year'} . '/' . $row->{'image_filename'};
+			if (defined($row->{'image_filename'})){
+				$row->{'image_url'} = $base_url . $config->prefix() . '/' . $row->{'year'} . '/' . $row->{'image_filename'};
+			}
 			## assemble the HTML for the description
 			my $description = build_description($row->{'header_text_html'}, 
 				$row->{'entry_url'}, $row->{'image_url'}, $row->{'year'}, $row->{'week_number'});
