@@ -58,7 +58,7 @@ has 'where_fields' => (
 	isa => 'ArrayRef',
 	is => 'rw'
 	);
-has 'select_stmt' => (
+has '_select_stmt' => (
 	isa => 'Str',
 	is => 'rw',
 	default => $entry_boilerplate
@@ -101,7 +101,7 @@ sub BUILD {
 		## pickup the field names
 		$this->sql_stmt_replace('__FIELDS__', join(',', @{$field_names}));
 		my $db = Vatican::DB->new();
-		my $db_entry = $db->get_one_row($this->select_stmt(), $this->where_values());
+		my $db_entry = $db->get_one_row($this->_select_stmt(), $this->where_values());
 		if (defined($db_entry)){
 			$this->entry_data($db_entry);
 		}
@@ -129,9 +129,9 @@ sub BUILD {
 sub sql_stmt_replace($$$){
 	my $this = shift;
 	my ($macro, $string) = @_;
-	my $select_stmt = $this->select_stmt();
+	my $select_stmt = $this->_select_stmt();
 	$select_stmt =~ s/$macro/$string/g;
-	$this->select_stmt($select_stmt);
+	$this->_select_stmt($select_stmt);
 }
 
 ## static functions
