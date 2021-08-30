@@ -63,7 +63,7 @@ sub generate_mss_feed($$$$){
 	               description    => 'The most recently digitized manuscripts from the Vatican Library',
 	               ##pubDate        => 'Thu, 23 Aug 1999 07:00:00 GMT',
 	               lastBuildDate  => $timestamp_str,
-	               docs           => 'http://www.blahblah.org/fm.cdf',
+	               docs           => 'http://www.rssboard.org/rss-specification',
 	               managingEditor => 'vatican@wiglaf.org (Aaron Macks)',
 	               webMaster      => 'vatican@wiglaf.org (Aaron Macks)'
 	               );
@@ -151,7 +151,7 @@ sub generate_weekly_feed($$$$){
 	           description    => 'Weekly reports on the most recently digitized manuscripts from the BAV',
 	           ##pubDate        => 'Thu, 23 Aug 1999 07:00:00 GMT',
 	           lastBuildDate  => $timestamp_str,
-	           docs           => 'http://www.blahblah.org/fm.cdf',
+	           docs           => 'http://www.rssboard.org/rss-specification',
 	           managingEditor => 'vatican@wiglaf.org (Aaron Macks)',
 	           webMaster      => 'vatican@wiglaf.org (Aaron Macks)'
 	           );
