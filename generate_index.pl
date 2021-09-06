@@ -48,7 +48,6 @@ my $year_template_filename = "year_index.tt";
 my $filepath_suffix = "vatican/";
 
 ## for the database
-my $db_stmt_master = "select year, week_number, header_text, image_filename from __WEEK_TABLE__ __WHERE__ order by year desc, week_number desc __LIMIT__";
 my $years_stmt = "select year, header_text from __YEAR_TABLE__";
 
 ## sql subroutines
@@ -112,6 +111,8 @@ sub get_notes{
 	} elsif ($options->{'mode'} eq 'year'){
 		$entries = Vatican::Entries->new(order => 'year desc, week_number desc',
 			where_fields => ['year'], where_values => [$options->{'year'}]);
+	} else {
+		die "unknown mode";
 	}
 	## extract the entries data
 	my $all_notes;
