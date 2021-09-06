@@ -23,7 +23,7 @@ use Vatican::Entry;
 has 'verbose' => (
 	isa => 'Bool',
 	is => 'ro',
-	default => 1
+	default => 0
 	);
 has 'limit' => (
 	isa => 'Maybe[Int]',
