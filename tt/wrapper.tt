@@ -48,6 +48,10 @@
 		This project is <em>not</em> an official project of the 
 		<a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.</p>
 	</div>
+	<div class="grid-x">
+	<a href="/manuscripts.rss"><i class="fi-rss"></i>Manuscripts RSS Feed</a>
+	<a href="/weekly.rss"><i class="fi-rss"></i>Weekly Entry RSS Feed</a>
+	</div>
 </div>
 <script>
   \$(document).foundation();
