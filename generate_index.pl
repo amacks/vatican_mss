@@ -25,6 +25,7 @@ use File::Basename;
 use lib dirname($0) . "/lib";
 use Vatican::Config;
 use Vatican::DB;
+use Vatican::Entries;
 my $url_prefix;
 
 
@@ -104,38 +105,20 @@ sub get_notes{
 		## default year is this year
 		$options->{'year'} = get_time('%Y');
 	}
-	my $db_stmt = $db_stmt_master;
-	## do some config reading
-	my $config = new Vatican::Config();
-	my $db_table = $config->notes_table();
-	## connect to a DB
-
-	my $dbh=Vatican::DB->new()->get_generate_dbh();
-    ## regex to swap in the table name
-    $db_stmt = sql_replace($db_stmt, 'week_table', $db_table);
-    if ($options->{'mode'} eq 'year') {
-    	$db_stmt = sql_replace($db_stmt, 'where', "where year=$options->{'year'}");
-    }
-    if ($options->{'mode'} eq 'top') {
-    	$db_stmt = sql_replace($db_stmt, 'limit', "limit 7");
-    }
-    $db_stmt = sql_cleanup($db_stmt);
-    warn $db_stmt;
-## now prepare a handle for the statement
-	my $sth = $dbh->prepare($db_stmt) or die "cannot prepare report statement: ". $dbh->errstr();
-	## now do the query
-	$sth->execute() or die "cannot run query: " . $sth->errstr();
-	my $weeks_notes = [];
-	my $m = Text::Markdown->new;
-	while (my $row = $sth->fetchrow_hashref()){
-	    for my $field ("header_text"){
-		$row->{$field . "_html"} = $m->markdown($row->{$field});
-	    }
-	    push @$weeks_notes, $row;
+	my $entries;
+	if ($options->{'mode'} eq 'top' ){
+		$entries = Vatican::Entries->new(order => 'year desc, week_number desc',
+			limit => 7);
+	} elsif ($options->{'mode'} eq 'year'){
+		$entries = Vatican::Entries->new(order => 'year desc, week_number desc',
+			where_fields => ['year'], where_values => [$options->{'year'}]);
 	}
-	$sth->finish();
-	$dbh->disconnect();
-	return $weeks_notes;
+	## extract the entries data
+	my $all_notes;
+	for my $entry (@{$entries->entries_data()}){
+		push @{$all_notes}, $entry->entry_data();
+	}
+	return $all_notes;
 }
 
 sub format_page{
