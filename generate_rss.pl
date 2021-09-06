@@ -3,7 +3,6 @@
 use strict;
 use POSIX;
 use POSIX qw(strftime);
-use Text::Markdown;
 use Getopt::Long;
 use DateTime;
 use DateTime::Format::MySQL;
@@ -21,6 +20,7 @@ use lib dirname($0) . "/lib";
 use Vatican::Config;
 use Vatican::DB;
 use Vatican::Manuscripts;
+use Vatican::Entries;
 my $url_prefix;
 
 ## basic usage information
@@ -129,17 +129,9 @@ sub generate_weekly_feed($$$$){
 	my ($filepath, $weekly_filename, $entry_count, $verbose) = @_;
 	warn "Starting to generate weekly feed" if ($verbose);
 	my $config = new Vatican::Config();
-	my $m = Text::Markdown->new;
-	my $header_stmt = "select header_text, 
-		image_filename, 
-		boundry_image_filename,
-		week_number,
-		year
-		from __NOTES_TABLE__ 
-		where header_text not like ''
-		order by year desc, week_number desc
-		limit __LIMIT__ ";
-	 # create an RSS 2.0 file
+	my $entries = Vatican::Entries->new(order=>'year desc, week_number desc',
+		limit => $entry_count, verbose=>$verbose);
+    # create an RSS 2.0 file
 	my $weekly_rss = XML::RSS->new (version => '2.0');
 	my $base_url = $config->url_hostname() ;
 	## get timestamp
@@ -156,19 +148,10 @@ sub generate_weekly_feed($$$$){
 	           webMaster      => 'vatican@wiglaf.org (Aaron Macks)'
 	           );
 
-	$header_stmt =~ s/__LIMIT__/$entry_count/g;
-	my $notes_table = $config->notes_table();
-	$header_stmt =~ s/__NOTES_TABLE__/$notes_table/g;
-	warn " SQL Statement created" if ($verbose);
-	my $vatican_db = Vatican::DB->new();
-	my $dbh = $vatican_db->get_generate_dbh();
-	my $sth = $dbh->prepare($header_stmt) or die "Cannot prepare statement to select notes " .$dbh->errstr();
-	$sth->execute() or die "Cannot execute statement: " . $sth->errstr();
-	warn " SQL executed" if ($verbose);
-	while (my $row = $sth->fetchrow_hashref()){
+
+	for my $entry (@{$entries->entries_data()}){
+		my $row = $entry->entry_data();
 		if (defined($row->{'header_text'}) and ($row->{'header_text'} ne '')){
-			## cleanup Markdown
-			$row->{'header_text_html'} = $m->markdown($row->{'header_text'});
 			$row->{'title'} = "Week " . $row->{'week_number'} . " of " . $row->{'year'};
 			## make a url
 			$row->{'entry_url'} = $config->get_filename('',$row->{'year'} ,$row->{'week_number'} );
