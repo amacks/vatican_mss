@@ -48,9 +48,13 @@
 		This project is <em>not</em> an official project of the 
 		<a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>.</p>
 	</div>
-	<div class="grid-x">
-	<a href="[%- url_prefix -%]/manuscripts.rss"><i class="fi-rss"></i>Manuscripts RSS Feed</a>
-	<a href="[%- url_prefix -%]/weekly.rss"><i class="fi-rss"></i>Weekly Entry RSS Feed</a>
+	<div class="grid-x grid-padding-x">
+	 <div class="cell medium-4">
+	  <a href="[%- url_prefix -%]/manuscripts.rss"><i class="fi-rss"></i>Manuscripts RSS Feed</a>
+	 </div>
+	 <div class="cell medium-4">
+	  <a href="[%- url_prefix -%]/weekly.rss"><i class="fi-rss"></i>Weekly Entry RSS Feed</a>
+	 </div>
 	</div>
 </div>
 <script>
