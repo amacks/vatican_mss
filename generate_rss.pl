@@ -171,7 +171,8 @@ sub generate_weekly_feed($$$$){
 			    # alternately creates a guid field with permaLink=false
 			    description => $description,
 			    ##enclosure => {url=>$row->{'image_url'}, type => 'image/jpeg'},
-			    pubDate => DateTime::Format::Mail->format_datetime($weekly_dt)
+			    pubDate => DateTime::Format::Mail->format_datetime(
+					DateTime::Format::MySQL->parse_datetime($row->{'last_updated'}))
 			);
 		}
 	}

@@ -23,7 +23,7 @@ use Vatican::Config;
 my $field_names = ['id','year','week_number', 'header_text',
 	'image_filename', 'boundry_image_filename', 'previous_week_id',
 	'previous_week_year', 'previous_week_week_number', 'next_week_id',
-	'next_week_year', 'next_week_week_number'];
+	'next_week_year', 'next_week_week_number', 'last_updated'];
 my $entry_boilerplate = "select __FIELDS__
 from __TABLE__ 
 where (__WHERE_CLAUSE__)";
