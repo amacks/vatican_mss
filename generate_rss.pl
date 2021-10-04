@@ -80,7 +80,8 @@ sub generate_mss_feed($$$$){
 		if (defined($manuscript->{'notes_html'})){
 			$description .= "Notes: ". $manuscript->{'notes_html'}
 		}
-		## URL
+		## URLs
+		my $manuscript_url = $config->ms_base_url() . $manuscript->{'shelfmark'};
 		my $complete_url = $base_url . $manuscript->{'entry_url'};
 		## now include the image and link
 		$description = build_description($description, $complete_url, 
@@ -109,7 +110,7 @@ sub generate_mss_feed($$$$){
 sub build_description($$$$$){
 	my ($text_html, $url, $image_url, $year, $week) = @_;
 	my $image_boilerplate = '<img alt="Entry Image" src="__URL__">';
-	my $link_boilerplate = '<p>See all of the manuscripts for <a href="__URL__>Week __WEEK__ of __YEAR__</a>.</p>';
+	my $link_boilerplate = '<p>See all of the manuscripts for <a href="__URL__">Week __WEEK__ of __YEAR__</a>.</p>';
 	## now assemble those boilerplates
 	my $image_html ='';
 	if (defined($image_url)){
