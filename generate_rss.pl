@@ -72,7 +72,7 @@ sub generate_mss_feed($$$$){
 	for my $manuscript (@{$recent_mss->mss_list()}) {
 		## build the description
 		my $description = '';
-		for my $field ("author", "title", "incipit"){
+		for my $field ("author", "title", "date", "incipit"){
 			if (defined($manuscript->{$field})){
 				$description .= ucfirst($field) . ": ". $manuscript->{$field} . " ";
 			}
