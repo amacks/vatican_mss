@@ -131,7 +131,7 @@ sub generate_weekly_feed($$$$){
 	warn "Starting to generate weekly feed" if ($verbose);
 	my $config = new Vatican::Config();
 	my $entries = Vatican::Entries->new(order=>'year desc, week_number desc',
-		limit => $entry_count, verbose=>$verbose);
+		limit => $entry_count, verbose=>$verbose, raw_sql=>'published is true');
     # create an RSS 2.0 file
 	my $weekly_rss = XML::RSS->new (version => '2.0');
 	my $base_url = $config->url_hostname() ;
