@@ -52,15 +52,26 @@ has 'DEBUG' => (
 	is => 'rw'
 );
 
+has 'order' => (
+	isa => 'Str',
+	is => 'ro',
+	default => 'sort_shelfmark asc'
+	);
+
+has 'limit' => (
+	isa => 'Maybe[Str]',
+	is => 'ro'
+	);
+
 #initial SQL statement
 has 'mss_stmt' => (
 	default => "select shelfmark, 
 	title, author, incipit, notes, 
 	thumbnail_url, date_added, lq_date_added, 
-	high_quality, date, fond_code
+	high_quality, date, fond_code, week, year
 from
 (select 
- max(ms1.shelfmark) as shelfmark, 
+ coalesce(ms1.shelfmark) as shelfmark, 
  max(ms1.high_quality) as high_quality, 
  max(ms1.date_added) as date_added, 
  max(ms2.date_added) as lq_date_added,
@@ -72,7 +83,9 @@ from
  max(ms1.date) as date,
  max(ms1.sort_shelfmark) as sort_shelfmark,
  max(ms1.ignore) as `ignore`,
- max(ms1.fond_code) as fond_code
+ max(ms1.fond_code) as fond_code,
+ year(coalesce(max(ms1.date_added), max(ms2.date_added))) as year,
+ week(coalesce(max(ms1.date_added), max(ms2.date_added)), 4) as week
  from
 __MS_TABLE__ as ms1 left join __MS_TABLE__ as ms2
 on ms1.shelfmark=ms2.shelfmark AND ms1.id>ms2.id
@@ -80,7 +93,8 @@ group by ms1.shelfmark) as hq_lq
  where
 (__WHERE__) AND
 hq_lq.ignore is false
-ORDER by sort_shelfmark asc",
+ORDER by __ORDER__
+__LIMIT__",
 	isa => 'Str',
 	is => 'rw'
 );
@@ -113,6 +127,14 @@ sub load_manuscripts($){
 			return undef;
 		}
 	}
+	## install an order statement
+	$this->sql_stmt_replace('__ORDER__', $this->order());
+	## put in limit if desired
+	my $limit_stmt='';
+	if (defined($this->limit())){
+		$limit_stmt = "limit " . $this->limit();
+	}
+	$this->sql_stmt_replace('__LIMIT__', $limit_stmt);
 	## we now have a raw SQL defined, let's build a statement
 	my $raw_sql = $this->raw_sql();
 	$this->sql_stmt_replace('__WHERE__', "($raw_sql)");
@@ -132,10 +154,11 @@ sub load_manuscripts($){
 	return $#{$this->mss_list()};
 }
 
-## process the notes for markdown
+## process the notes for markdown and url
 sub post_process_manuscripts($){
 	my $this = shift;
 	my $m = Text::Markdown->new;
+	my $config = new Vatican::Config();
 	my $field_count=0; ## the number of fields with markdown processed. 
 	##equals # of fields per MS with defined values * MS Count
 	for (my $i=0;$i<=$#{$this->mss_list}; $i++){
@@ -144,7 +167,9 @@ sub post_process_manuscripts($){
 				$this->mss_list()->[$i]->{$field . "_html"} = $m->markdown($this->mss_list()->[$i]->{$field});
 				$field_count++;
 	    	}
-	    } 
+	    }
+	    ## now generate the proper URL for the entry with this manuscript
+ 		$this->mss_list()->[$i]->{'entry_url'} = $config->get_filename('',$this->mss_list()->[$i]->{'year'} ,$this->mss_list()->[$i]->{'week'} );
 	}
 	return $field_count;
 }

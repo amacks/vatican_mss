@@ -203,7 +203,7 @@ sub post_import_update(){
 	on bav.shelfmark=pal.shelfmark
 	set 
 	bav.author= pal.author, bav.title=pal.title, bav.notes=pal.notes
-	where bav.author is null and bav.title is null and bav.notes is null',
+	where (bav.author is null and bav.title is null and bav.notes is null) and bav.high_quality',
 	jordanus => 'update vatican_mss_jordanus as j
 		join manuscripts as v 
 		on j.shelfmark=v.shelfmark 
@@ -214,29 +214,29 @@ sub post_import_update(){
 		join iter_italicum_sources as ii 
 		on m.shelfmark=ii.shelfmark
 		set m.notes = concat("See [Iter liturgicum italicum](", url, ")")
-		where notes is null or notes not like "%Iter liturgicum italicum%"',
+		where (notes is null or notes not like "%Iter liturgicum italicum%") and m.high_quality',
 	diamm => 'update manuscripts as m 
 		join diamm_sources as diamm 
 		on m.shelfmark=diamm.shelfmark
 		set m.notes = concat("See [DIAMM](", url, ")"), m.date=diamm.date, m.title=diamm.title
-		where notes is null or notes not like "%DIAMM%"',
+		where (notes is null or notes not like "%DIAMM%") and m.high_quality',
 	dbbe => 'update manuscripts as m 
 		join dbbe_sources as dbbe 
 		on m.shelfmark=dbbe.shelfmark
 		set m.notes = concat("See [Database of Byzantine Book Epigrams](", url, ")"), m.date=dbbe.date, m.title=dbbe.title
-		where notes is null',
+		where (notes is null) and m.high_quality',
 	cla => 'update manuscripts as m join
 		cla_sources as cla on cla.shelfmark like m.shelfmark
 		set m.date = concat(cla.date_start, "-", cla.date_end),
 		m.notes = concat("CLA# [", cla.cla_volume, ".", cla.cla_number, "](", cla.url, "), Script: ",cla.script, " ", cla.provenance, " ", cla.comments),
 		m.title = cla.contents
-	where m.author is null and m.title is null and m.notes is null',
+	where (m.author is null and m.title is null and m.notes is null) and m.high_quality',
 	pal_lat => 'update  manuscripts as m join pal_lat_gr_sources as pl on m.shelfmark=pl.shelfmark
 		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Codices Palatini Entry](", pl.url, "), ", pl.description)
-		where m.notes is NULL or m.notes not like "%Codices Palatini Entry%"',
+		where (m.notes is NULL or m.notes not like "%Codices Palatini Entry%") and m.high_quality',
 	pinakes => 'update  manuscripts as m join pinakes_sources as p on m.shelfmark=p.shelfmark
 		set m.notes=concat(coalesce(concat(m.notes, ", "), ""), "[Pinakes Entry](", p.url, "), ")
-		where m.notes is NULL or m.notes not like "%Pinakes%"',
+		where (m.notes is NULL or m.notes not like "%Pinakes%") and m.high_quality',
 	bannister => 'update manuscripts as m join
 (select
 		b.shelfmark as shelfmark,
@@ -251,7 +251,7 @@ sub post_import_update(){
 		coalesce(concat(", Notation: ", b.notation),""),
 		"]")) as notes
 		from manuscripts as m join bannister_sources as b on m.shelfmark=b.shelfmark
-		where m.notes is NULL or m.notes not like "%Bannister%"
+		where (m.notes is NULL or m.notes not like "%Bannister%") and m.high_quality
 		group by b.shelfmark)
  as inner_table on
 m.shelfmark=inner_table.shelfmark

@@ -18,28 +18,30 @@ my $config_file = "config/db.ini";
 
 ## Moose variables
 has 'db_name' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'db_host' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'notes_table' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'notes_previous_table' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'notes_linked_table' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'year_notes_table' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'ms_table' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'prefix' => (isa => 'Str',
                   is => 'ro',
                   default => '/vatican');
 has 'base_url' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'ms_base_url' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
 has 'detail_base_url' => (is => 'ro', 
-                  isa => 'String');
+                  isa => 'Str');
+has 'url_hostname' => (is => 'ro',
+                       isa => 'Str');
 
 has 'generate_database' =>(traits    => ['Hash'],
     is        => 'ro',
@@ -83,6 +85,7 @@ sub BUILD {
   $this->{'base_url'} = $config_file->param("GLOBAL.BASE_URL");
   $this->{'ms_base_url'} = $config_file->param("GLOBAL.MS_BASE_URL");
   $this->{'detail_base_url'} = $config_file->param("GLOBAL.DETAIL_BASE_URL");
+  $this->{'url_hostname'} = $config_file->param("GLOBAL.URL_HOSTNAME");
 	## hashes for sub configs
 	my $generate = {
 		'username' => $config_file->param("GENERATE_DATABASE.USERNAME"),

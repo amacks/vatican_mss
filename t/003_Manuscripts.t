@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 8;
+use Test::More tests => 20;
 use JSON;
 use Data::Dumper;
 
@@ -34,4 +34,45 @@ ok ($b->load_manuscripts() == 46, "47 manuscripts for week 1 of 2021"
 	);
 ok ($b->post_process_manuscripts() == 35, "35 manuscripts have markdown processed" 
 	);
-#warn Dumper($b);
+my $order_test;
+isa_ok (
+	$order_test = Vatican::Manuscripts->new(week=>4, year=>2018, order=>"shelfmark asc", DEBUG=>0),
+	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark asc"
+	);
+ok (
+	$order_test->load_manuscripts() == 14092, "14092 manuscripts loaded for the initial block"
+	);
+ok (
+	$order_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
+	);
+ok (
+	$order_test->mss_list->[0]->{'shelfmark'} eq "Autogr.Paolo.VI.27.pt.bis", "first manuscript is the right one"
+	);
+isa_ok (
+	$order_test = Vatican::Manuscripts->new(week=>4, year=>2018, order=>"shelfmark desc", DEBUG=>0),
+	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark desc"
+	);
+ok (
+	$order_test->load_manuscripts() == 14092, "14092 manuscripts loaded for the initial block"
+	);
+ok (
+	$order_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
+	);
+ok (
+	$order_test->mss_list->[0]->{'shelfmark'} eq "Vat.turc.99", "first manuscript is the right one"
+	);
+my $limit_test;
+isa_ok (
+	$limit_test = Vatican::Manuscripts->new(week=>4, year=>2018, order=>"shelfmark asc", limit=>20, DEBUG=>0),
+	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark asc, limit 20"
+	);
+ok (
+	$limit_test->load_manuscripts() == 19, "20 manuscripts loaded per limit"
+	);
+ok (
+	$limit_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
+	);
+ok (
+	$limit_test->mss_list->[19]->{'shelfmark'} eq "Barb.gr.114", "last manuscript is the right one"
+	);
+#warn Dumper($limit_test->mss_list->[0]);
