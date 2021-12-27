@@ -77,10 +77,14 @@ div.index-list-old {
 	}
 }
 
-h1, h2, h3 {
+h1, h2 {
 	font-family: 'Raleway', sans-serif !important;
 	padding-bottom: 2rem !important;
 	padding-top: 1rem !important;
+}
+
+h3, h4 {
+	font-family: 'Raleway', sans-serif !important;
 }
 
 .boundry-image img {
