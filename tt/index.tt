@@ -1,3 +1,4 @@
+[% USE date %]
 [%- WRAPPER "wrapper.tt"
  title="Recently Digitized Manuscripts from the BAV"
  -%]
@@ -15,10 +16,9 @@ information about any manuscripts is invited to contact me there and I'll add it
 <p>Please note that this page only lists the most recent seven entries.  For older entries, please look in the yearly archive files:
 </p>
 <ul>
-<li> <a href="2018">2018</a> </li>
-<li> <a href="2019">2019</a> </li>
-<li> <a href="2020">2020</a> </li>
-<li> <a href="2021">2021</a> </li>
+[%- FOREACH year IN [ 2018 .. date.format(date.now, '%Y') ] %]
+	<li> <a href="${year}">${year}</a> </li>
+[%- END %]
 </ul>
 <p>Manuscripts are browsable by <a href="/vatican/fonds/">Fond</a>, the term for collection, in much the same way that they are on the official BAV website. The listing 
 here provides all high-quality digitized manuscripts, that is those not from scanned microfilm, along with the same metadata one would find in the weekly listings and a thumbnail. 
