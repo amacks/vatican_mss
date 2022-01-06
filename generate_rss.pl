@@ -164,8 +164,9 @@ sub generate_weekly_feed($$$$){
 			my $description = build_description($row->{'header_text_html'}, 
 				$row->{'entry_url'}, $row->{'image_url'}, $row->{'year'}, $row->{'week_number'});
 			## figure out the right date
-			my @friday_date = Add_Delta_Days(Monday_of_Week($row->{'week_number'}, $row->{'year'}),4);
-			my $weekly_dt = DateTime->new( year => $friday_date[0], month => $friday_date[1], day => $friday_date[2] );
+			## as of 1-2022 this code is no longer used, use the last updated in the DB
+			#my @friday_date = Add_Delta_Days(Monday_of_Week($row->{'week_number'}, $row->{'year'}),4);
+			#my $weekly_dt = DateTime->new( year => $friday_date[0], month => $friday_date[1], day => $friday_date[2] );
 			$weekly_rss->add_item(title => $row->{'title'},
 			    # creates a guid field with permaLink=true
 			    permaLink  => $base_url . $row->{'entry_url'},
