@@ -257,7 +257,7 @@ sub post_import_update(){
 m.shelfmark=inner_table.shelfmark
 set m.notes = inner_table.notes',
 	linked_data => 'update manuscripts as m join linked_sources as l on m.shelfmark=l.shelfmark 
-	set notes=concat("See [", link_name,"](", url, "), ", coalesce(notes, ""))
+	set notes=concat(coalesce(notes, "")," ", group_concat(concat("See [", link_name,"](", url, "), "), " "))
     where date(date_added) = date(now())'
 	);
 	## now loop through the SQL and execute it
