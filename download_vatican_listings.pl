@@ -256,9 +256,11 @@ sub post_import_update(){
  as inner_table on
 m.shelfmark=inner_table.shelfmark
 set m.notes = inner_table.notes',
-	linked_data => 'update manuscripts as m join linked_sources as l on m.shelfmark=l.shelfmark 
-	set notes=concat(coalesce(notes, "")," ", group_concat(concat("See [", link_name,"](", url, "), "), " "))
-    where date(date_added) = date(now()) group by m.id'
+	linked_data => 'update manuscripts as m join (select m.id as id, concat(coalesce(notes, "")," ", group_concat(concat("See [", link_name,"](", url, "), "), " ")) as new_notes 
+ from manuscripts as m join linked_sources as l on m.shelfmark=l.shelfmark 
+    group by m.id) as notes_table on m.id=notes_table.id
+    set notes=notes_table.new_notes
+    where date(date_added) = date(now())'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Vatican::Config();
