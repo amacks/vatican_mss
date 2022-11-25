@@ -258,7 +258,7 @@ m.shelfmark=inner_table.shelfmark
 set m.notes = inner_table.notes',
 	linked_data => 'update manuscripts as m join linked_sources as l on m.shelfmark=l.shelfmark 
 	set notes=concat(coalesce(notes, "")," ", group_concat(concat("See [", link_name,"](", url, "), "), " "))
-    where date(date_added) = date(now())'
+    where date(date_added) = date(now()) group by m.id'
 	);
 	## now loop through the SQL and execute it
 	my $config = new Vatican::Config();
