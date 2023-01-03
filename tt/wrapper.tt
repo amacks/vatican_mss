@@ -50,7 +50,7 @@
 		<p>Copyright Aaron Macks, 2019-[%- date.format(date.now, '%Y') -%]. 
 		This project is <em>not</em> an official project of the 
 		<a href="https://digi.vatlib.it/" target="_blank">Biblioteca Apostolica Vaticana</a>. </p>
-		<p>Follow updates on <span class="fab fa-mastodon"><a rel="me" href="https://mastodon.cc/@aaronm">Mastodon</a></span> and <a href="https://twitter.com/gundormr"><span class="fi-social-twitter">Twitter</span></a></p>
+		<p>Follow updates on <a rel="me" href="https://mastodon.cc/@aaronm"><i class="fab fa-mastodon"></i>Mastodon</a> and <a href="https://twitter.com/gundormr"><span class="fi-social-twitter">Twitter</span></a></p>
 	</div>
 	<div class="grid-x grid-padding-x">
 	 <div class="cell medium-4 large-offset-2">
