@@ -30,11 +30,13 @@
 		</div>
 
 		</div><!--end of text area-->
+		[% IF header_data.image_filename.defined() %]
 		<div class="cell medium-4 small-12">
 			<div class="right-image" >
 				<a href="${header_data.image_filename}"><img src="${header_data.image_filename}"></a>
 			</div>
 		</div>
+		[% END -%]
 	</div>
 </div>
 <div class="grid-container">
