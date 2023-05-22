@@ -1,6 +1,7 @@
 
 [%- WRAPPER "wrapper.tt"
  title="Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}"
+ description=header_data.header_text_html
  -%]
 
 <div class="grid-container">
@@ -10,7 +11,7 @@
 		</div>
 	</div>
 	<div class="grid-x grid-margin-x">
-		<div class="cell medium-8 small-12"><!--Start of Text Area-->
+		<div class="cell auto"><!--Start of Text Area-->
 		<div class="cell normal-text">
 			${header_data.header_text_html}
 		</div>
