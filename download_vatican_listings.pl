@@ -241,7 +241,7 @@ sub post_import_update(){
 (select
 		b.shelfmark as shelfmark,
 		concat(coalesce(concat(m.notes, ", "), ""), group_concat(
-		"See Bannister, H. M. [Monumenti vaticani di paleografia musicale latina](https://www-app.uni-regensburg.de/Fakultaeten/PKGG/Musikwissenschaft/Cantus/Bannister/index.htm) ID# ", b.bannister_id,
+		"See Bannister, H. M. [Monumenti vaticani di paleografia musicale latina](https://www.cantusplanus.de/databases/Bannister/searchmanuscript.html) ID# ", b.bannister_id,
 		"[",
 		coalesce(concat(" Title: ", b.title),""),
 		coalesce(concat(", Folio: ", b.folio),""),
