@@ -1,5 +1,6 @@
 [%- WRAPPER "wrapper.tt"
  title="Recently Digitized Manuscripts from the BAV: ${year}"
+ description=year_notes
  -%]
 <div class="grid-container fluid">
 	<div class="grid-x grid-margin-x">

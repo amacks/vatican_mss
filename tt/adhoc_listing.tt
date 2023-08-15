@@ -1,6 +1,7 @@
 
 [%- WRAPPER "wrapper.tt"
  title="Vatican Manuscripts: ${header_data.short_title}"
+ description=header_data.header_text_html
  -%]
 
 <div class="grid-container">

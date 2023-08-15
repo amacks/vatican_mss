@@ -1,5 +1,6 @@
 [%- WRAPPER "wrapper.tt"
  title="Special Reports on BAV Manuscripts"
+ description="This is a collection of special purpose reports relating to manuscripts held at the BAV."
  -%]
 <div class="grid-container fluid">
 	<div class="grid-x grid-margin-x">
