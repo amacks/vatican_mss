@@ -2,6 +2,7 @@
 [%- WRAPPER "wrapper.tt"
  title="Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}"
  description=header_data.header_text_html
+ image=header_data.image_filename
  -%]
 
 <div class="grid-container">
