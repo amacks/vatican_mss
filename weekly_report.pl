@@ -95,6 +95,10 @@ sub get_header_data{
 	if (defined($header_data->{'next_week_id'})){
 		$header_data->{'next_link'} = $config->get_filename("", $header_data->{'next_week_year'}, $header_data->{'next_week_week_number'});
 	}
+	## calculate the complete url for the image.
+	if (defined($header_data->{'image_filename'})){
+		$header_data->{'image_complete_url'} = $config->url_hostname . $config->prefix() . $year . $header_data->{'image_filename'};
+	}
 	##warn Dumper($header_data);
 	return $header_data;
 }
