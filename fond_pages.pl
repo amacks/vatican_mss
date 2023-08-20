@@ -115,7 +115,7 @@ if (!defined($filepath)){
 		warn "\tbuilding fond ". $fond->{'code'} . " at $filename";
 		## make a complete url for the image
 		if (defined($fond->{'image_filename'})){
-			$fond->{'image_complete_url'} = $config->url_hostname . $config->prefix() . '/' . $fond->{'code'} .'/' . $fond->{'image_filename'};
+			$fond->{'image_complete_url'} = $config->url_hostname . $config->prefix() . '/' . 'fonds' .'/' . $fond->{'image_filename'};
 		}
 
 		my $formatted_html = format_mss_list(get_mss_listing($fond->{'code'}), $fond);
