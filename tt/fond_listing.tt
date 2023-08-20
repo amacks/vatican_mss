@@ -2,6 +2,7 @@
 [%- WRAPPER "wrapper.tt"
  title="Vatican Manuscripts from the ${header_data.code} Fond"
  description=header_data.header_text_html
+ image=header_data.complete_image_url
  -%]
 
 <div class="grid-container">
