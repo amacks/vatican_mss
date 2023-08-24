@@ -3,6 +3,7 @@
  title="Vatican Manuscripts from the ${header_data.code} Fond"
  description=header_data.header_text_html
  image=header_data.image_complete_url
+ url=url
  -%]
 
 <div class="grid-container">

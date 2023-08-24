@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Vatican Manuscript Tracking" />
 <meta property="og:title" content="[%- title -%]" />
 <meta property="og:description" content="[%- description | remove("<[^>]*?>") | truncate(360) -%]" />
-<meta property="og:url" content="" />
+<meta property="og:url" content="[%- url -%]" />
 [% IF image.defined() %]
 <meta property="og:image" content="[%- image -%]" />
 [% END %]
