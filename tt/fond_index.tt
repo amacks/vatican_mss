@@ -1,5 +1,8 @@
 [%- WRAPPER "wrapper.tt"
  title="BAV Manuscripts By Fond"
+ description="The digitized manuscripts of the Vatican Library, organized by fond.  
+			Fond is a term for the subcollections by which the library is organized. Some, such as the Rossiani, 
+			are from collections donated to, or bought by, the library."
  -%]
 <div class="grid-container fluid">
 	<div class="grid-x grid-margin-x">

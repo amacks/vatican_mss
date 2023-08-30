@@ -113,7 +113,12 @@ if (!defined($filepath)){
 		my $filename = $filepath . '/' . $uri;
 		$fond->{'uri'} = $uri;
 		warn "\tbuilding fond ". $fond->{'code'} . " at $filename";
-
+		## make a complete url for the image
+		if (defined($fond->{'image_filename'})){
+			$fond->{'image_complete_url'} = $config->url_hostname . '/' . $subdirectory .'/' . $fond->{'image_filename'};
+		}
+		## Make a url for the page
+		$fond->{'url'} = $config->url_hostname . '/' . $fond->{'uri'};
 		my $formatted_html = format_mss_list(get_mss_listing($fond->{'code'}), $fond);
 
 		open(OUTPUT_FILE, ">:utf8", $filename) or die "Could not open file '$filename'. $!";

@@ -1,6 +1,9 @@
 
 [%- WRAPPER "wrapper.tt"
  title="Vatican Manuscripts Added Week ${datestamp_parts.week} of ${datestamp_parts.year}"
+ description=header_data.header_text_html
+ image=header_data.image_complete_url
+ url=header_data.url
  -%]
 
 <div class="grid-container">
@@ -10,7 +13,7 @@
 		</div>
 	</div>
 	<div class="grid-x grid-margin-x">
-		<div class="cell medium-8 small-12"><!--Start of Text Area-->
+		<div class="cell auto"><!--Start of Text Area-->
 		<div class="cell normal-text">
 			${header_data.header_text_html}
 		</div>
@@ -29,11 +32,13 @@
 		</div>
 
 		</div><!--end of text area-->
+		[% IF header_data.image_filename.defined() %]
 		<div class="cell medium-4 small-12">
 			<div class="right-image" >
 				<a href="${header_data.image_filename}"><img src="${header_data.image_filename}"></a>
 			</div>
 		</div>
+		[% END -%]
 	</div>
 </div>
 <div class="grid-container">
