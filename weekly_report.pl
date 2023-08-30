@@ -99,7 +99,7 @@ sub get_header_data{
 	if (defined($header_data->{'image_filename'})){
 		$header_data->{'image_complete_url'} = $config->url_hostname . $config->prefix() . '/' . $year .'/' . $header_data->{'image_filename'};
 	}
-	$header_data->{'url'} = $config->url_hostname . $config->prefix() . '/' . $year . '/' . $week_number . '.html';
+	$header_data->{'url'} = $config->url_hostname . $config->prefix() . '/' . $year . '/' . 'week' . $week_number . '.html';
 	##warn Dumper($header_data);
 	return $header_data;
 }
