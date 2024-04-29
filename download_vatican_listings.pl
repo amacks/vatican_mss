@@ -63,7 +63,7 @@ sub get_url_content($){
 	my $html_content;
 
 	my $ua=new LWP::UserAgent;
-    $ua->timeout(35);
+    $ua->timeout(95);
     
     my $request = new HTTP::Request('GET', $url); 
     my $response = $ua->request($request); 
@@ -108,9 +108,11 @@ sub download_link_thumbnail($){
 	my $year = $options->{'year'};
 	my $vatican_db = $options->{'vatican_db'};
 	my $shelfmark = $options->{'shelfmark'};
+	warn "To Download: " . $image_url;
 	if (defined($filepath)){
 		my $local_filepath = $filepath . "/" . $year . '/thumbnails';
 		my $local_filename =  "${shelfmark}.jpg";
+		warn "\t" . $local_filepath . '/' . $local_filename;
 		my $http_response = getstore($image_url, $local_filepath . '/' . $local_filename);
 		if (!is_error($http_response)){
 			my $local_thumbnail_code = $vatican_db->set_local_thumbnail($shelfmark, $local_filename);
