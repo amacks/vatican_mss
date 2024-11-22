@@ -23,7 +23,9 @@
 
 <meta property="article:published_time" content="{{ dates.created_at }}" />
 <meta property="article:modified_time" content="[%- date.format(date.now) -%]" />
-<meta property="og:updated_time" content="[%- date.format(date.now) -%]" />
+<meta property="og:updated_time" content="[%- date.format(date.now) -%]" />\
+
+<meta name="fediverse:creator" content="@aaronm@mastodon.cc" />	
 
 <link href="[%- url_prefix -%]/css/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
 <!-- Compressed CSS -->
