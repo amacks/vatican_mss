@@ -35,12 +35,20 @@ sub get_time
 }
 
 sub get_week_and_year(){
-	my $offset_date = DateTime->now();
-	my ($week_year, $week_number) = $offset_date->week;
-	return (
-		$week_year,
-		$week_number,
-	);
+	## I hate that we have to do this via SQL, but the different systems are just weirdly different in calculating
+	## the week of the year and I've given up trying to make them dance
+	my $vatican_db = new Vatican::DB();
+	my $dbh=$vatican_db->get_generate_dbh();
+	my $sth = $dbh->prepare("select year(now()) as year, week(now(), 4) as week") or die "Cannot prepare year/week statement";
+	$sth->execute() or die "Cannot execute week year select";
+	if (my $row = $sth->fetchrow_hashref()){
+		my $year = $row->{'year'};
+		my $week = $row->{'week'};
+		$sth->finish();
+		return ($year,$week);
+	} else {
+		die "could not fetch year and week";
+	}
 }
 ## constants
 my $today_timestamp = get_time('%Y_%m_%d');
