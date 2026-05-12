@@ -33,7 +33,7 @@ CREATE TABLE `fonds` (
   `image_filename` varchar(128) DEFAULT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  KEY `code_idx` (`code`)
+  UNIQUE KEY `code_idx` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `fonds` WRITE;
