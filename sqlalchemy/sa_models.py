@@ -54,6 +54,9 @@ class Fonds(Base):
 
     manuscripts = relationship("Manuscripts", back_populates="fond", foreign_keys="Manuscripts.fond_code")
 
+    def __str__(self):
+        return f"{self.code}"
+
 
 class LinkedSources(Base):
     __tablename__ = "linked_sources"
@@ -107,6 +110,8 @@ class Manuscripts(Base):
         Index("fond_code_idx", "fond_code"),
     )
 
+    def __str__(self):
+        return f"{self.shelfmark}"
 
 class WeeklyNotes(Base):
     __tablename__ = "weekly_notes"
