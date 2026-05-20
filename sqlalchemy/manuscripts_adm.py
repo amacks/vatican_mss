@@ -26,9 +26,7 @@ class ManuscriptsAdmin(ModelView, model=Manuscripts):
         ForeignKeyFilter(Manuscripts.fond_code, Fonds.code)
     ]
     column_details_list = [Manuscripts.id, Manuscripts.shelfmark, Manuscripts.author, Manuscripts.title, Manuscripts.incipit, Manuscripts.date, Manuscripts.notes, Manuscripts.fond_code, Manuscripts.sort_shelfmark]
-    column_formatters = {
-        "fond_code": lambda obj, _: obj.fond_code
-    }
+
 
 
 class FondsAdmin(ModelView, model=Fonds):
