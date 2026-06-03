@@ -52,8 +52,6 @@ class Fonds(Base):
     volume_count = Column(Integer, nullable=True)
     enabled = Column(Boolean, nullable=False, default=True)
 
-    manuscripts = relationship("Manuscripts", back_populates="fond", foreign_keys="Manuscripts.fond_code")
-
     def __str__(self):
         return f"{self.code}"
 
@@ -102,8 +100,6 @@ class Manuscripts(Base):
         nullable=True,
     )
     ignore = Column(Boolean, nullable=True, default=False)
-
-    fond = relationship("Fonds", back_populates="manuscripts", foreign_keys=[fond_code])
 
     __table_args__ = (
         UniqueConstraint("shelfmark", "high_quality", name="shelfmark_quality"),
