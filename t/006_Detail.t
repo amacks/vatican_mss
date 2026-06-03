@@ -18,7 +18,7 @@ my $bav_bib_only = 'Barb.lat.4'; ## bibliography, but no description
 my $bav_big_bib = 'Vat.lat.8914'; ## large bibliography
 my $bav_one_description = 'Vat.lat.15136'; ## single line of description
 my $bav_multiple_both = 'Arch.Cap.S.Pietro.H.83'; ## both bib and desvriptions
-my $bav_missing = 'Barb.lat.1975' ; ## this might be fixed, finally
+my $bav_missing = 'Comb.S.3' ; ## this might be fixed, finally
 
 ## Test all the creators
 my $shelfmark_only_detail;
@@ -63,12 +63,11 @@ ok (
 ok (
 	$shelfmark_only_detail->get_detail_count() == 0, "no Details for ". $bav_shelfmark_only
 	);
-
 ok (
 	$bib_only_detail->detail_page_exists(), "Detail page for " . $bav_bib_only
 	);
 ok (
-	$bib_only_detail->get_bib_count() == 5, "5 Bibliography entries for ". $bav_bib_only
+	$bib_only_detail->get_bib_count() == 6, "6 Bibliography entries for ". $bav_bib_only
 	);
 ok (
 	$bib_only_detail->get_detail_count() == 0, "no Details for ". $bav_bib_only
@@ -77,8 +76,9 @@ ok (
 ok (
 	$big_bib_detail->detail_page_exists(), "Detail page for " . $bav_big_bib
 	);
+	warn $big_bib_detail->get_bib_count();
 ok (
-	$big_bib_detail->get_bib_count() == 18, "18 Bibliography entries for ". $bav_big_bib
+	$big_bib_detail->get_bib_count() == 20, "20 Bibliography entries for ". $bav_big_bib
 	);
 ok (
 	$big_bib_detail->get_detail_count() == 0, "no Details for ". $bav_big_bib

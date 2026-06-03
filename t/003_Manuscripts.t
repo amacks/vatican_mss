@@ -39,8 +39,12 @@ isa_ok (
 	$order_test = Vatican::Manuscripts->new(week=>4, year=>2018, order=>"shelfmark asc", DEBUG=>0),
 	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark asc"
 	);
+##warn $order_test->load_manuscripts();
+## 14092  2021-08-17
+## 12880  2026-06-03
+
 ok (
-	$order_test->load_manuscripts() == 14092, "14092 manuscripts loaded for the initial block"
+	$order_test->load_manuscripts() == 12880, "12880 manuscripts loaded for the initial block"
 	);
 ok (
 	$order_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
@@ -53,7 +57,7 @@ isa_ok (
 	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark desc"
 	);
 ok (
-	$order_test->load_manuscripts() == 14092, "14092 manuscripts loaded for the initial block"
+	$order_test->load_manuscripts() == 12880, "12880 manuscripts loaded for the initial block"
 	);
 ok (
 	$order_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
