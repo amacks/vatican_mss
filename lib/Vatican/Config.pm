@@ -42,6 +42,10 @@ has 'detail_base_url' => (is => 'ro',
                   isa => 'Str');
 has 'url_hostname' => (is => 'ro',
                        isa => 'Str');
+has 'mss_path' => (is => 'ro',
+                   isa => 'Str');
+has 'iiif_base_url' => (is => 'ro',
+                       isa => 'Str');
 
 has 'generate_database' =>(traits    => ['Hash'],
     is        => 'ro',
@@ -82,8 +86,10 @@ sub BUILD {
   $this->{'year_notes_table'} = $config_file->param("GLOBAL.YEAR_TABLE");
   $this->{'ms_table'} = $config_file->param("GLOBAL.MS_TABLE");
   $this->{'prefix'} = $config_file->param("GLOBAL.PREFIX");
+  $this->{'mss_path'} = $config_file->param("GLOBAL.MSS_PATH");
   $this->{'base_url'} = $config_file->param("GLOBAL.BASE_URL");
   $this->{'ms_base_url'} = $config_file->param("GLOBAL.MS_BASE_URL");
+  $this->{'iiif_base_url'} = $config_file->param("GLOBAL.IIIF_BASE_URL");
   $this->{'detail_base_url'} = $config_file->param("GLOBAL.DETAIL_BASE_URL");
   $this->{'url_hostname'} = $config_file->param("GLOBAL.URL_HOSTNAME");
 	## hashes for sub configs
