@@ -20,16 +20,26 @@
 			<dl data-pagefind-body>
 				<dt>Shelfmark</dt>
 				<dd><a class="icon" target="_blank" href="${ms_base_url}${shelfmark}">${shelfmark}</a> (<a target="_blank" class="icon" href="${details_url}">details</a>)</dd>
+				[%- IF author.defined() -%]
 				<dt>Author</dt>
 				<dd>${author}</dd>
+				[%- END -%]
+				[%- IF title.defined() -%]
 				<dt>Title</dt>
 				<dd>${title}</dd>
+				[%- END -%]
+				[%- IF date.defined() -%]
 				<dt>Date</dt>
 				<dd>${date}</dd>
+				[%- END -%]
+				[%- IF incipit.defined() -%]
 				<dt>Incipit</dt>
 				<dd>${incipit}</dd>
+				[%- END -%]
+				[%- IF notes_html.defined() -%]
 				<dt>Notes</dt>
 				<dd>${notes_html}</dd>
+				[%- END -%]
 			</dl>
 		</div>
 	</div>
