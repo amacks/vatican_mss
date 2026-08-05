@@ -52,9 +52,8 @@ $fonds->load_fonds();
 my $fond_listings = $fonds->get_fond_codes();
 foreach my $fond (@{${fond_listings}}) {
 	INFO "Checking directory for ". $fond;
-	my $uri = $config->mss_path() . '/' .$fond;
 
-	my $dir_path = $filepath .  $uri;
+	my $dir_path = $filepath . $config->prefix() . $config->mss_path() . '/' .$fond;
 	if ( ! -d $dir_path){
 		INFO " Making directory for ". $fond;
 		mkdir($dir_path) or ERROR "Cannot create directory ". $dir_path;

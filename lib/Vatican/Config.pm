@@ -118,7 +118,7 @@ sub get_single_ms_filename($$$$){
   my $filepath = shift;
   my $fond_code = shift;
   my $shelfmark = shift;
-  return $filepath . $this->mss_path() . '/' .$fond_code. '/'. $shelfmark . ".html";
+  return $filepath . $this->prefix . $this->mss_path() . '/' .$fond_code. '/'. $shelfmark . ".html";
 
 }
 
