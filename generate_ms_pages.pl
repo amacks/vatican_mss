@@ -43,6 +43,8 @@ GetOptions(
 if ($DEBUG_MODE){
 	Log::Log4perl->easy_init($INFO);
 }
+print "Generating single MS pages for the last $days_ago_interval days\n";
+
 INFO "Writing to location ". $filepath;
 my $config = new Vatican::Config();
 
@@ -91,6 +93,7 @@ my $tt = Template->new({
     ENCODING     => 'utf8',
 }) || die "$Template::ERROR\n";
 ## loop through the list of manuscripts, write an HTML file for each
+my $ms_count=0;
 for my $ms (@{$mss->mss_list()}){
 	my $ms_filepath = $filepath . $config->get_single_ms_uri($ms->{'fond_code'}, $ms->{'shelfmark'});
 	## make a full description
@@ -111,4 +114,6 @@ for my $ms (@{$mss->mss_list()}){
 	open(OUTPUT_FILE, ">:utf8", $ms_filepath ) or die "Could not open file '${ms_filepath}.html'. $!";
 	print OUTPUT_FILE $output;
 	close(OUTPUT_FILE);
+	$mss_count++;
 }
+print "A total of $mss_count pages were generated\n";
