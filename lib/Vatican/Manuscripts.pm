@@ -176,7 +176,15 @@ sub post_process_manuscripts($){
  		$this->mss_list()->[$i]->{'iiif_url'} = $config->iiif_base_url() . $this->mss_list()->[$i]->{'shelfmark'}. "/manifest.json";
  		## generate details page url
  		$this->mss_list()->[$i]->{'details_url'} = $config->detail_base_url() . $this->mss_list()->[$i]->{'shelfmark'};
-
+ 		## uri is just the path inside the server, url is the whole thing from https...
+ 		$this->mss_list()->[$i]->{'ms_page_uri'} = $config->get_single_ms_uri($this->mss_list()->[$i]->{'fond_code'}, $this->mss_list()->[$i]->{'shelfmark'});
+		$this->mss_list()->[$i]->{'ms_page_url'} = $config->url_hostname() . $this->mss_list()->[$i]->{'ms_page_uri'};
+		## if the thumbnail url is already a complete url (http...) then just store it as complete.  if it's a relative, prepend hostname
+		if ($this->mss_list()->[$i]->{'thumbnail_url'} =~ /^http/m){
+			$this->mss_list()->[$i]->{'complete_ thumbnail_url'}=$this->mss_list()->[$i]->{'thumbnail_url'};
+		} else {
+			$this->mss_list()->[$i]->{'complete_thumbnail_url'} = $config->url_hostname() . $this->mss_list()->[$i]->{'thumbnail_url'};
+		}
 	}
 	return $field_count;
 }

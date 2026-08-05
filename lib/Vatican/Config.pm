@@ -113,12 +113,11 @@ sub get_filename($$$$){
 }
 
 
-sub get_single_ms_filename($$$$){
+sub get_single_ms_uri($$$){
   my $this = shift;
-  my $filepath = shift;
   my $fond_code = shift;
   my $shelfmark = shift;
-  return $filepath . $this->prefix . $this->mss_path() . '/' .$fond_code. '/'. $shelfmark . ".html";
+  return $this->prefix . $this->mss_path() . '/' .$fond_code. '/'. $shelfmark . ".html";
 
 }
 

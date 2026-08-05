@@ -1,8 +1,8 @@
 [%- WRAPPER "wrapper.tt"
  title="Vatican: ${shelfmark}"
  description="${full_description}"
- url="${url}"
- image="${thumbnail_url}"
+ url="${ms_page_url}"
+ image="${complete_thumbnail_url}"
  url_prefix="${url_prefix}"
  -%]
 
