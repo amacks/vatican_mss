@@ -53,7 +53,7 @@ new Tify({
 					<nav aria-label="You are here:" role="navigation">
 					<ul class="breadcrumbs">
 					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-					  <li><a href="/vatican/fonds/${fond_code}">${fond_code}</a></li>
+					  <li><a href="/vatican/fonds/${fond_code}.html">${fond_code}</a></li>
 					  <li>${shelfmark}</li>
 					</ul>
 					</nav>
