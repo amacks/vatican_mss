@@ -3,6 +3,7 @@
  description="${full_description}"
  url="${url}"
  image="${thumbnail_url"
+ url_prefix="${url_prefix}"
  -%]
 
 <div class="grid-container">
@@ -25,7 +26,7 @@
 				<dd>${title}</dd>
 				<dt>Date</dt>
 				<dd>${date}</dd>
-				<dt>Incipit</td>
+				<dt>Incipit</dt>
 				<dd>${incipit}</dd>
 				<dt>Notes</dt>
 				<dd>${notes_html}</dd>

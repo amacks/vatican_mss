@@ -100,6 +100,7 @@ for my $ms (@{$mss->mss_list()}){
 	$ms->{'full_description'} .= "Date: ". $ms->{'date'}. " " if defined($ms->{'date'});
 	## add base url in the data elements
 	$ms->{'ms_base_url'} = $config->ms_base_url();
+	$ms->{'url_prefix'} = $config->prefix();
 
 	INFO "Generating for ". $ms->{'shelfmark'};
 	my $output;
