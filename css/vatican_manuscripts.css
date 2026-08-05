@@ -149,3 +149,10 @@ img.fond-index-image {
 		max-width: 10rem;
 	}
 }
+## add the little icon
+.newWindow {
+     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==)
+          no-repeat center;
+     width: 1em;
+     height: 1em;
+}
