@@ -92,7 +92,7 @@ my $tt = Template->new({
 }) || die "$Template::ERROR\n";
 ## loop through the list of manuscripts, write an HTML file for each
 for my $ms (@{$mss->mss_list()}){
-	my $ms_filepath = $config->get_single_ms_filename($filepath, $ms->{'fond_code'}, $ms->{'shelfmark'});
+	my $ms_filepath = $filepath . $config->get_single_ms_uri($ms->{'fond_code'}, $ms->{'shelfmark'});
 	## make a full description
 	$ms->{'full_description'} = "Vatican MS: ". $ms->{'shelfmark'}. " ";
 	$ms->{'full_description'} .= "Author: ". $ms->{'author'}. " " if defined($ms->{'author'});
