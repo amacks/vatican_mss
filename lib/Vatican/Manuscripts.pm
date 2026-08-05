@@ -74,7 +74,9 @@ from
  coalesce(ms1.shelfmark) as shelfmark, 
  max(ms1.high_quality) as high_quality, 
  max(ms1.date_added) as date_added, 
+ max(ms1.date_updated) as date_updated,
  max(ms2.date_added) as lq_date_added,
+ max(ms2.date_updated) as lq_date_updated,
  max(ms1.title) as title,
  max(ms1.author) as author,
  max(ms1.incipit) as incipit,
@@ -170,6 +172,11 @@ sub post_process_manuscripts($){
 	    }
 	    ## now generate the proper URL for the entry with this manuscript
  		$this->mss_list()->[$i]->{'entry_url'} = $config->get_filename('',$this->mss_list()->[$i]->{'year'} ,$this->mss_list()->[$i]->{'week'} );
+ 		## generate the IIIF url
+ 		$this->mss_list()->[$i]->{'iiif_url'} = $config->iiif_base_url() . $this->mss_list()->[$i]->{'shelfmark'}. "/manifest.json";
+ 		## generate details page url
+ 		$this->mss_list()->[$i]->{'details_url'} = $config->detail_base_url() . $this->mss_list()->[$i]->{'shelfmark'};
+
 	}
 	return $field_count;
 }
