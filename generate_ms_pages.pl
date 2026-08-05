@@ -93,7 +93,7 @@ my $tt = Template->new({
 }) || die "$Template::ERROR\n";
 ## loop through the list of manuscripts, write an HTML file for each
 for my $ms (@{$mss->mss_list()}){
-	my $ms_filepath = $filepath . $config->mss_path() . '/' .$ms->{'fond_code'}. '/'. $ms->{'shelfmark'};
+	my $ms_filepath = $config->get_single_ms_filename($filepath, $ms->{'fond_code'}, $ms->{'shelfmark'});
 	## make a full description
 	$ms->{'full_description'} = "Vatican MS: ". $ms->{'shelfmark'}. " ";
 	$ms->{'full_description'} .= "Author: ". $ms->{'author'}. " " if defined($ms->{'author'});
@@ -107,8 +107,8 @@ for my $ms (@{$mss->mss_list()}){
 	$tt->process("single_ms_page.tt",
 		$ms, \$output, {binmode => ':utf8'}
 		)|| die $tt->error(), "\n";
-	INFO "writing to ". $ms_filepath . ".html";
-	open(OUTPUT_FILE, ">:utf8", $ms_filepath . ".html") or die "Could not open file '${ms_filepath}.html'. $!";
+	INFO "writing to ". $ms_filepath;
+	open(OUTPUT_FILE, ">:utf8", $ms_filepath ) or die "Could not open file '${ms_filepath}.html'. $!";
 	print OUTPUT_FILE $output;
 	close(OUTPUT_FILE);
 }
