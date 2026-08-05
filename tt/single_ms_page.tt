@@ -19,7 +19,7 @@
 		<div class="cell small-6 medium-8 large-10">
 			<dl data-pagefind-body>
 				<dt>Shelfmark</dt>
-				<dd><a target="_blank" href="${ms_base_url}${shelfmark}">${shelfmark}</a> (<a target="_blank" href="${details_url}">details</a>)</dd>
+				<dd><a class="icon" target="_blank" href="${ms_base_url}${shelfmark}">${shelfmark}</a> (<a target="_blank" class="icon" href="${details_url}">details</a>)</dd>
 				<dt>Author</dt>
 				<dd>${author}</dd>
 				<dt>Title</dt>
