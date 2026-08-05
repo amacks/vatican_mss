@@ -23,6 +23,7 @@ done
 ./adhoc_reports.pl --filepath=${FILEPATH}
 ./fond_pages.pl --filepath=${FILEPATH}
 ./generate_rss.pl --filepath=${FILEPATH} --mss-limit=100
+./generate_ms_pages.pl --filepath=${FILEPATH} --days=0
 
 ## Make sure to sync up CSS
 cp css/* ${FILEPATH}vatican/css/
