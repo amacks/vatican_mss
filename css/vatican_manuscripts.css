@@ -196,8 +196,10 @@ dt {
 }
 dd {
     width:70%;
-    padding-left:1em;
+    padding-left:1rem;
     clear:right;
+    margin-bottom: 4.8px;
+    padding-top: 8px;
 }
 dd + dd {
     float:right;
