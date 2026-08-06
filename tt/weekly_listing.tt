@@ -14,7 +14,7 @@
 	</div>
 	<div class="grid-x grid-margin-x">
 		<div class="cell auto"><!--Start of Text Area-->
-		<div class="cell normal-text">
+		<div data-pagefind-body class="cell normal-text">
 			${header_data.header_text_html}
 		</div>
 		[%- IF header_data.boundry_image_filename.defined() -%]
