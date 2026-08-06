@@ -7,7 +7,7 @@
 <link href="/vatican/pagefind/pagefind-component-ui.css" rel="stylesheet">
 <script src="/vatican/pagefind/pagefind-component-ui.js" type="module"></script>
 
-
+<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
 <pagefind-searchbox></pagefind-searchbox>
 
 [% END %]
