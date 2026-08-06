@@ -9,3 +9,5 @@
 
 
 <pagefind-searchbox></pagefind-searchbox>
+
+[% END %]
