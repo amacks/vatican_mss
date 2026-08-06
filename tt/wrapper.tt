@@ -12,6 +12,10 @@
   gtag('config', 'UA-12888747-3');
 </script>
 <link rel="icon" type="image/x-icon" href="[%- url_prefix -%]/css/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="[%- url_prefix -%]/css/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="[%- url_prefix -%]/css/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="[%- url_prefix -%]/css/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="Vatican Manuscript Tracking" />
