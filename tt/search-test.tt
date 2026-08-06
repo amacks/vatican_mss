@@ -1,7 +1,7 @@
 
 [%- WRAPPER "wrapper.tt"
  title="Searching for manuscripts"
- url=/vatican/search-test.tt
+ url="/vatican/search-test.tt"
  -%]
 
 <link href="/vatican/pagefind/pagefind-component-ui.css" rel="stylesheet">
