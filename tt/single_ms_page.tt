@@ -9,7 +9,7 @@
 <div class="grid-container">
 	<div class="grid-x grid-margin-x">
 		<div class="header cell">
-			<h2>${shelfmark}</h2>
+			<h1>${shelfmark}</h1>
 		</div>
 	</div>
 	<div class="grid-x grid-margin-x">
