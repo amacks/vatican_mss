@@ -155,9 +155,8 @@ a.icon[target="_blank"]::after {
   margin: 0 3px 0 5px;
 }
 
-/* formatting for a nicer definition list */
+/* formatting for a nicer definition list. does not work
 dl {
-	border: 3px double #ccc;
 	padding: 0.5em;
 }
 dt {
@@ -173,4 +172,52 @@ dd {
 	margin: 0 0 0 110px;
 	padding: 0 0 0.5em 0;
 }
+*/
 
+/* formatting a nicer DL, take 2 
+https://clicknathan.com/web-design/styling-html-5-description-lists-formerly-known-as-definition-lists-properly/
+*/
+dl:after {content:"";display:table;clear:both;}
+dd {
+    padding:.5em 0;
+}
+dl {
+    width:100%;
+}
+dt, dd {
+    display:inline-block;
+    width:30%;
+}
+dt {
+    text-align:right;
+    font-weight:bold;
+    clear:left;
+    float:left;
+}
+dd {
+    width:70%;
+    padding-left:1em;
+    clear:right;
+}
+dd + dd {
+    float:right;
+    clear:both;
+}
+dt:first-child {
+    padding-top:.5em;
+}
+dd + dt {
+   clear:both;
+    padding-top:.5em;
+}
+dt + dt {
+    width: 100%;
+    float: none;
+    padding: 0 70% 0 0;
+}
+dt + dt + dd {
+    margin-top: -2em;
+}
+dt + dt + dd + dt {
+    margin-top: 2em;
+}
