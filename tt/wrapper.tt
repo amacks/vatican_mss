@@ -11,6 +11,7 @@
   gtag('js', new Date());
   gtag('config', 'UA-12888747-3');
 </script>
+<link rel="icon" type="image/x-icon" href="[%- url_prefix -%]/css/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="Vatican Manuscript Tracking" />
