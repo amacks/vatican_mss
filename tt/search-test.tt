@@ -1,0 +1,11 @@
+
+[%- WRAPPER "wrapper.tt"
+ title="Searching for manuscripts"
+ url=/vatican/search-test.tt
+ -%]
+
+<link href="/vatican/pagefind/pagefind-component-ui.css" rel="stylesheet">
+<script src="/vatican/pagefind/pagefind-component-ui.js" type="module"></script>
+
+
+<pagefind-searchbox></pagefind-searchbox>
