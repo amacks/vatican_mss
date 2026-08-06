@@ -17,7 +17,7 @@
 			<img src="${thumbnail_url}">
 		</div>
 		<div class="cell small-6 medium-8 large-10">
-			<dl data-pagefind-body>
+			<dl data-pagefind-body style="font-size: larger">
 				<dt>Shelfmark</dt>
 				<dd><a class="icon" target="_blank" href="${ms_base_url}${shelfmark}">${shelfmark}</a> (<a target="_blank" class="icon" href="${details_url}">details</a>)</dd>
 				[%- IF author.defined() -%]
