@@ -181,7 +181,7 @@ sub post_process_manuscripts($){
 		$this->mss_list()->[$i]->{'ms_page_url'} = $config->url_hostname() . $this->mss_list()->[$i]->{'ms_page_uri'};
 		## if the thumbnail url is already a complete url (http...) then just store it as complete.  if it's a relative, prepend hostname
 		if ($this->mss_list()->[$i]->{'thumbnail_url'} =~ /^http/m){
-			$this->mss_list()->[$i]->{'complete_ thumbnail_url'}=$this->mss_list()->[$i]->{'thumbnail_url'};
+			$this->mss_list()->[$i]->{'complete_thumbnail_url'}=$this->mss_list()->[$i]->{'thumbnail_url'};
 		} else {
 			$this->mss_list()->[$i]->{'complete_thumbnail_url'} = $config->url_hostname() . $this->mss_list()->[$i]->{'thumbnail_url'};
 		}
@@ -195,6 +195,7 @@ sub sql_stmt_replace($$$){
 	my $this = shift;
 	my ($key, $value) = @_;
 	my $temp_stmt = $this->mss_stmt();
+	$key = quotemeta $key; ## Make sure any embedded metacharacters in the key are not interpolated in the regex
 	$temp_stmt =~ s/$key/$value/g;
 	$this->mss_stmt($temp_stmt);
 	warn " $temp_stmt" if ($this->DEBUG());
