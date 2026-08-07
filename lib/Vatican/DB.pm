@@ -101,7 +101,7 @@ sub get_one_row{
 	## bind if needed
 	if (defined($values)){
 		## fixup a single value
-		if (!defined(ref($values))){
+		if (!ref($values)){
 			$values = [$values];
 		}
 		for (my $i=0;$i<=$#{$values}; $i++){
