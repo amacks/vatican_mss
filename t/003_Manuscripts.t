@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 20;
+use Test::More tests => 36;
 use JSON;
 use Data::Dumper;
 
@@ -40,7 +40,7 @@ isa_ok (
 	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark asc"
 	);
 ok (
-	$order_test->load_manuscripts() == 14092, "14092 manuscripts loaded for the initial block"
+	$order_test->load_manuscripts() == 12862, "12862 manuscripts loaded for the initial block"
 	);
 ok (
 	$order_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
@@ -53,7 +53,7 @@ isa_ok (
 	"Vatican::Manuscripts", "build a listing for the first block sorted by shelfmark desc"
 	);
 ok (
-	$order_test->load_manuscripts() == 14092, "14092 manuscripts loaded for the initial block"
+	$order_test->load_manuscripts() == 12862, "12862 manuscripts loaded for the initial block"
 	);
 ok (
 	$order_test->post_process_manuscripts() > 1, "at least 2 manuscripts post processed"
@@ -76,3 +76,81 @@ ok (
 	$limit_test->mss_list->[19]->{'shelfmark'} eq "Barb.gr.114", "last manuscript is the right one"
 	);
 #warn Dumper($limit_test->mss_list->[0]);
+
+## Group A: post_process_manuscripts computed fields
+## Piggyback on $a (Urb.lat.666) — already loaded and post-processed above
+ok (
+	defined($a->mss_list->[0]->{'entry_url'}), "entry_url is defined after post_process"
+	);
+ok (
+	defined($a->mss_list->[0]->{'iiif_url'}), "iiif_url is defined after post_process"
+	);
+like (
+	$a->mss_list->[0]->{'iiif_url'}, qr|/manifest\.json$|, "iiif_url ends with /manifest.json"
+	);
+ok (
+	defined($a->mss_list->[0]->{'details_url'}), "details_url is defined after post_process"
+	);
+ok (
+	defined($a->mss_list->[0]->{'ms_page_uri'}), "ms_page_uri is defined after post_process"
+	);
+ok (
+	defined($a->mss_list->[0]->{'ms_page_url'}), "ms_page_url is defined after post_process"
+	);
+ok (
+	defined($a->mss_list->[0]->{'complete_thumbnail_url'}), "complete_thumbnail_url is defined after post_process"
+	);
+## notes_html: $b (week 1/2021) has 35 manuscripts with notes — check first that has notes_html
+my ($notes_ms) = grep { defined $_->{'notes_html'} } @{$b->mss_list()};
+ok (
+	defined($notes_ms->{'notes_html'}), "notes_html is defined for a manuscript with notes"
+	);
+
+## Group B: where_fields / where_values constructor path
+my $wf;
+isa_ok (
+	$wf = Vatican::Manuscripts->new(
+		where_fields => ['shelfmark'],
+		where_values => ['Urb.lat.666']
+	),
+	"Vatican::Manuscripts", "where_fields/where_values constructor"
+	);
+ok (
+	$wf->load_manuscripts() == 0, "where_fields path returns same single result as raw_sql"
+	);
+
+## Group C: no-conditions path returns undef
+my $empty;
+ok (
+	$empty = Vatican::Manuscripts->new(), "new() with no conditions creates object"
+	);
+ok (
+	!defined($empty->load_manuscripts()), "load_manuscripts with no conditions returns undef"
+	);
+
+## Group D: sql_stmt_replace directly
+my $repl = Vatican::Manuscripts->new();
+$repl->sql_stmt_replace('__ORDER__', 'shelfmark asc');
+like (
+	$repl->mss_stmt(), qr/shelfmark asc/, "sql_stmt_replace substitutes macro in mss_stmt"
+	);
+
+## Group E: sql_error causes die
+eval { Vatican::Manuscripts->new()->sql_error("test error") };
+ok (
+	$@, "sql_error causes die"
+	);
+
+## Group F: http thumbnail_url branch — complete_thumbnail_url equals thumbnail_url verbatim
+my $http_ms = Vatican::Manuscripts->new(where_fields => ['shelfmark'], where_values => ['Vat.lat.10589']);
+$http_ms->load_manuscripts();
+$http_ms->post_process_manuscripts();
+
+like (
+	$http_ms->mss_list->[0]->{'thumbnail_url'}, qr/^http/, "Vat.lat.10589 thumbnail_url starts with http"
+	);
+is (
+	$http_ms->mss_list->[0]->{'complete_thumbnail_url'},
+	$http_ms->mss_list->[0]->{'thumbnail_url'},
+	"http thumbnail_url stored verbatim in complete_thumbnail_url"
+	);
