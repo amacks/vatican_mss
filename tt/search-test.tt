@@ -6,8 +6,14 @@
 
 <link href="/vatican/pagefind/pagefind-component-ui.css" rel="stylesheet">
 <script src="/vatican/pagefind/pagefind-component-ui.js" type="module"></script>
+<div class="grid-container">
 
-<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
-<pagefind-searchbox></pagefind-searchbox>
-
+	<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
+	<div>
+		<pagefind-input></pagefind-input>
+	</div>
+	<div>
+		<pagefind-results show-images="true" link-target="_blank"></pagefind-results>
+	</div
+</div>
 [% END %]
