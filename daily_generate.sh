@@ -9,3 +9,6 @@ FILEPATH=/apps/apache/htdocs/
 
 ## Make sure to sync up CSS
 cp css/* ${FILEPATH}vatican/css/
+
+## now index it
+pagefind --site=${FILEPATH}vatican
