@@ -8,7 +8,7 @@
 <script src="/vatican/pagefind/pagefind-component-ui.js" type="module"></script>
 <div class="grid-y">
 
-	<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
+	<pagefind-config bundle-path="/vatican/adhoc/pagefind/"></pagefind-config>
 	<div class="cell small-1">
 		<pagefind-input></pagefind-input>
 	</div>
