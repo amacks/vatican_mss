@@ -81,7 +81,6 @@ sub generate_mss_feed($$$$){
 			$description .= "Notes: ". $manuscript->{'notes_html'}
 		}
 		## URLs
-			my $ms_filepath = $filepath . 
 		my $complete_url = $base_url . $config->get_single_ms_uri($manuscript->{'fond_code'}, $manuscript->{'shelfmark'});
 
 		## now include the image and link
