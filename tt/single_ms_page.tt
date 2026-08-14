@@ -40,7 +40,7 @@
 				<dt>Notes</dt>
 				<dd>${notes_html}</dd>
 				[%- END -%]
-				<dt>Digitized on</dt>
+				<dt>Digitized</dt>
 				<dd><a href="${entry_url}"> ${week}<sup>${ordinal_suffix}</sup> week of ${year}</a></dd>
 			</dl>
 		</div>
