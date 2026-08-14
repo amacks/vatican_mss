@@ -40,6 +40,8 @@
 				<dt>Notes</dt>
 				<dd>${notes_html}</dd>
 				[%- END -%]
+				<dt>Digitized on</dt>
+				<dd><a href="${entry_url}"> ${week}<sup>${ordinal_suffix}</sup> week of ${year}</a></dd>
 			</dl>
 		</div>
 	</div>
@@ -61,16 +63,15 @@ new Tify({
 			<div class="grid-container">
 				<div class="grid-x align-center">
 					<nav aria-label="You are here:" role="navigation">
-					<ul class="breadcrumbs">
-					  <li><a href="/vatican/">Vatican Manuscripts</a></li>
-					  <li><a href="/vatican/fonds/${fond_code}.html">${fond_code}</a></li>
-					  <li>${shelfmark}</li>
-					</ul>
+						<ul class="breadcrumbs">
+						  <li><a href="${url_prefix}/">Vatican Manuscripts</a></li>
+						  <li><a href="${url_prefix}/fonds/${fond_code}.html">${fond_code}</a></li>
+						  <li>${shelfmark}</li>
+						</ul>
 					</nav>
 				</div>
 			</div>
 		</div>
-	</div>
 	<hr>
 </div>
 
