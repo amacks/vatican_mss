@@ -81,8 +81,9 @@ sub generate_mss_feed($$$$){
 			$description .= "Notes: ". $manuscript->{'notes_html'}
 		}
 		## URLs
-		my $manuscript_url = $config->ms_base_url() . $manuscript->{'shelfmark'};
-		my $complete_url = $base_url . $manuscript->{'entry_url'};
+			my $ms_filepath = $filepath . 
+		my $complete_url = $base_url . $config->get_single_ms_uri($ms->{'fond_code'}, $ms->{'shelfmark'});
+
 		## now include the image and link
 		$description = build_description($description, $complete_url, 
 			$manuscript->{'thumbnail_url'}, $manuscript->{'year'}, $manuscript->{'week'}
