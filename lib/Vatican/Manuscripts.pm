@@ -185,6 +185,7 @@ sub post_process_manuscripts($){
 		} else {
 			$this->mss_list()->[$i]->{'complete_thumbnail_url'} = $config->url_hostname() . $this->mss_list()->[$i]->{'thumbnail_url'};
 		}
+		$this->mss_list()->[$i]->{'ordinal_suffix'} = ordinal($this->mss_list()->[$i]->{'week'})
 	}
 	return $field_count;
 }
@@ -207,6 +208,12 @@ sub sql_error($$){
 	my $errstr = shift;
 	warn " SQL ERROR " . $errstr;
 	die;
+}
+
+## generate an ordinal suffix
+sub ordinal($) {
+	my $number = shift;
+	return (qw/th st nd rd/)[/(?<!1)([123])$/ ? $1 : 0] for int $number;
 }
 
 1;

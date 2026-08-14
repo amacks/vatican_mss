@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 36;
+use Test::More tests => 46;
 use JSON;
 use Data::Dumper;
 
@@ -23,7 +23,7 @@ ok (
 	$a->load_manuscripts() == 0, "one manuscript matches Urb.lat.666"
 	);
 $a->post_process_manuscripts();
-#warn Dumper($a);
+##warn Dumper($a); 
 ## do week/year selection
 my $b;
 isa_ok ( 
@@ -154,3 +154,19 @@ is (
 	$http_ms->mss_list->[0]->{'thumbnail_url'},
 	"http thumbnail_url stored verbatim in complete_thumbnail_url"
 	);
+
+## Validate the ordinal suffixes
+ok (
+	Vatican::Manuscripts::ordinal(1) eq "st", "1 has a st"
+);
+ok (
+	Vatican::Manuscripts::ordinal(2) eq "nd", "2 has a nd"
+);
+ok (
+	Vatican::Manuscripts::ordinal(3) eq "rd", "3 has a rd"
+);
+for (my $i=4;$i<=10;$i++){
+	ok (
+		Vatican::Manuscripts::ordinal($i) eq "th", "$i has a th"
+	);
+}
