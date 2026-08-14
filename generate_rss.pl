@@ -82,7 +82,7 @@ sub generate_mss_feed($$$$){
 		}
 		## URLs
 			my $ms_filepath = $filepath . 
-		my $complete_url = $base_url . $config->get_single_ms_uri($ms->{'fond_code'}, $ms->{'shelfmark'});
+		my $complete_url = $base_url . $config->get_single_ms_uri($manuscript->{'fond_code'}, $manuscript->{'shelfmark'});
 
 		## now include the image and link
 		$description = build_description($description, $complete_url, 
