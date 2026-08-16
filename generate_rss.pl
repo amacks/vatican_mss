@@ -84,9 +84,8 @@ sub generate_mss_feed($$$$){
 		my $complete_url = $base_url . $config->get_single_ms_uri($manuscript->{'fond_code'}, $manuscript->{'shelfmark'});
 
 		## now include the image and link
-		$description = build_description($description, $complete_url, 
-			$manuscript->{'thumbnail_url'}, $manuscript->{'year'}, $manuscript->{'week'}
-			);
+		$description = build_ms_description($description, $complete_url, 
+			$manuscript->{'thumbnail_url'}, $manuscript->{'shelfmark'} );
 		##generate a date
 		my $mss_dt = DateTime::Format::MySQL->parse_datetime( $manuscript->{'date_added'} );
 		$mss_rss->add_item(title => $manuscript->{'shelfmark'},
@@ -110,7 +109,7 @@ sub generate_mss_feed($$$$){
 sub build_description($$$$$){
 	my ($text_html, $url, $image_url, $year, $week) = @_;
 	my $image_boilerplate = '<img alt="Entry Image" src="__URL__">';
-	my $link_boilerplate = '<p>See all of the manuscripts for <a href="__URL__">Week __WEEK__ of __YEAR__</a>.</p>';
+    my $link_boilerplate = '<p>See all of the manuscripts for <a href="__URL__">Week __WEEK__ of __YEAR__</a>.</p>';
 	## now assemble those boilerplates
 	my $image_html ='';
 	if (defined($image_url)){
@@ -119,8 +118,24 @@ sub build_description($$$$$){
 	}
 	my $link_html = $link_boilerplate;
 	$link_html =~ s/__URL__/$url/g;
-	$link_html =~ s/__WEEK__/$week/g;
-	$link_html =~ s/__YEAR__/$year/g;
+    $link_html =~ s/__WEEK__/$week/g;
+    $link_html =~ s/__YEAR__/$year/g;
+	return $image_html . $text_html . $link_html;
+}
+
+sub build_ms_description($$$$){
+	my ($text_html, $url, $image_url, $shelfmark) = @_;
+	my $image_boilerplate = '<img alt="Entry Image" src="__URL__">';
+	my $link_boilerplate = '<p>Images and more details of <a href="__URL__">__SHELFMARK__</a>.</p>';
+	## now assemble those boilerplates
+	my $image_html ='';
+	if (defined($image_url)){
+		$image_html = $image_boilerplate;
+		$image_html =~ s/__URL__/$image_url/g;		
+	}
+	my $link_html = $link_boilerplate;
+	$link_html =~ s/__URL__/$url/g;
+	$link_html =~ s/__SHELFMARK__/$shelfmark/g;
 	return $image_html . $text_html . $link_html;
 }
 
