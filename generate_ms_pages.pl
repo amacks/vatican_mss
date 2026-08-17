@@ -93,7 +93,7 @@ my $tt = Template->new({
     ENCODING     => 'utf8',
 }) || die "$Template::ERROR\n";
 ## loop through the list of manuscripts, write an HTML file for each
-my $mss_count=0;
+$mss_count=0;
 for my $ms (@{$mss->mss_list()}){
 	my $ms_filepath = $filepath . $config->get_single_ms_uri($ms->{'fond_code'}, $ms->{'shelfmark'});
 	## make a full description
