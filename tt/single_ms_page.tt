@@ -13,10 +13,10 @@
 		</div>
 	</div>
 	<div class="grid-x grid-margin-x">
-		<div class="cell small-6 medium-4 large-2">
+		<div class="cell small-12 medium-4 large-2">
 			<img src="${thumbnail_url}">
 		</div>
-		<div class="cell small-6 medium-8 large-10">
+		<div class="cell small-12 medium-8 large-10">
 			<dl data-pagefind-body style="font-size: larger">
 				<dt>Shelfmark</dt>
 				<dd><a class="icon" target="_blank" href="${ms_base_url}${shelfmark}">${shelfmark}</a> <span data-pagefind-ignore>(<a target="_blank" class="icon" href="${details_url}">details</a>)</span></dd>
