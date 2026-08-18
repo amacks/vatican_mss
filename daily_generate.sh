@@ -10,5 +10,8 @@ FILEPATH=/apps/apache/htdocs/
 ## Make sure to sync up CSS
 cp css/* ${FILEPATH}vatican/css/
 
+## generate static pages
+tpage --include_path=tt tt/search-test.tt > ${FILEPATH}vatican/search-test.html
+
 ## now index it
 pagefind --site=${FILEPATH}vatican
