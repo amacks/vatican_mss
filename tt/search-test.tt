@@ -6,15 +6,18 @@
 
 <link href="/vatican/pagefind/pagefind-component-ui.css" rel="stylesheet">
 <script src="/vatican/pagefind/pagefind-component-ui.js" type="module"></script>
-<div class="grid-y">
+<div class="grid-container">
+	<div class="grid-x grid-margin-x">
 
-	<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
-	<div class="cell small-1">
-		<pagefind-input></pagefind-input>
+		<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
+		<div class="cell small-6 medium-offset-3">
+			<pagefind-input></pagefind-input>
+		</div>
 	</div>
-	<div class="cell small-10">
-		<pagefind-results show-images="true" link-target="_blank"></pagefind-results>
+	<div class="grid-x grid-margin-x">
+		<div class="cell small-10">
+			<pagefind-results show-images="true" link-target="_blank"></pagefind-results>
+		</div>
 	</div>
 </div>
-
 [% END %]
