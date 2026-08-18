@@ -11,7 +11,7 @@ FILEPATH=/apps/apache/htdocs/
 cp css/* ${FILEPATH}vatican/css/
 
 ## generate static pages
-tpage --include_path=tt  --define url_prefix="/vatican" tt/search-test.tt > ${FILEPATH}vatican/search-test.html
+tpage --include_path=tt  --interpolate --define url_prefix="/vatican" tt/search-test.tt > ${FILEPATH}vatican/search-test.html
 
 ## now index it
 pagefind --site=${FILEPATH}vatican
