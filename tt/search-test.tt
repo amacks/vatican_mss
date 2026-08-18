@@ -2,11 +2,17 @@
 [%- WRAPPER "wrapper.tt"
  title="Searching for manuscripts"
  url="/vatican/search-test.tt"
+ hide_search=1
  -%]
 
 <link href="/vatican/pagefind/pagefind-component-ui.css" rel="stylesheet">
 <script src="/vatican/pagefind/pagefind-component-ui.js" type="module"></script>
 <div class="grid-container">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h1>Searching for Manuscripts</h1>
+		</div>
+	</div>
 	<div class="grid-x grid-margin-x">
 
 		<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>

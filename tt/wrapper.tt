@@ -48,12 +48,13 @@
 [% content -%]
 
 <div class="wrapper-footer grid-container">
+[% IF !hide_search.defined() or hide_search=0 %]
 		<div class="grid-x search-box align-center">
 	    	<div class="cell small-1 medium-1 large-1">
 	    		<h3><a href="[% url_prefix %]/search-test.html">Search</a></h3>
 			</div>
 		</div>
-
+[% END %]
 
 	<div class="copyright grid-x">
 		<p>Copyright Aaron Macks, 2019-[%- date.format(date.now, '%Y') -%]. 
