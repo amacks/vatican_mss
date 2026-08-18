@@ -18,7 +18,7 @@
 	<div class="grid-x grid-margin-x">
 
 		<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
-		<div class="cell small-8 medium-offset-2">
+		<div class="cell small-12 medium-8 medium-offset-2">
 			<pagefind-input></pagefind-input>
 		</div>
 	</div>
