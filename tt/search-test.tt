@@ -27,5 +27,19 @@
 			<pagefind-results show-images="true" link-target="_blank"></pagefind-results>
 		</div>
 	</div>
+		<hr>
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+						<ul class="breadcrumbs">
+						  <li><a href="${url_prefix}/">Vatican Manuscripts</a></li>
+						  <li>Search</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	<hr>
 </div>
 [% END %]
