@@ -1,7 +1,7 @@
 
 [%- WRAPPER "wrapper.tt"
  title="Searching for manuscripts"
- url="/vatican/search-test.tt"
+ url="${url_prefix}search-test.html"
  hide_search=1
  url_prefix="${url_prefix}"
 
