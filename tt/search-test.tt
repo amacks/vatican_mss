@@ -10,12 +10,12 @@
 	<div class="grid-x grid-margin-x">
 
 		<pagefind-config bundle-path="/vatican/pagefind/"></pagefind-config>
-		<div class="cell small-6 medium-offset-3">
+		<div class="cell small-8 medium-offset-2">
 			<pagefind-input></pagefind-input>
 		</div>
 	</div>
 	<div class="grid-x grid-margin-x">
-		<div class="cell small-10">
+		<div class="cell small-12">
 			<pagefind-results show-images="true" link-target="_blank"></pagefind-results>
 		</div>
 	</div>
