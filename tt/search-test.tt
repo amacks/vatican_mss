@@ -3,6 +3,8 @@
  title="Searching for manuscripts"
  url="/vatican/search-test.tt"
  hide_search=1
+ url_prefix="${url_prefix}"
+
  -%]
 
 <link href="/vatican/pagefind/pagefind-component-ui.css" rel="stylesheet">
