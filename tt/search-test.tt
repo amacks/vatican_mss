@@ -32,7 +32,7 @@
 			<div class="grid-container">
 				<div class="grid-x align-center">
 					<nav aria-label="You are here:" role="navigation">
-						<ul class="breadcrumbs">
+						<ul class="breadcrumbs" style="margin-bottom: 0;">
 						  <li><a href="${url_prefix}/">Vatican Manuscripts</a></li>
 						  <li>Search</li>
 						</ul>
