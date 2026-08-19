@@ -14,4 +14,4 @@ cp css/* ${FILEPATH}vatican/css/
 tpage --include_path=tt  --interpolate --define url_prefix="/vatican" tt/search-test.tt > ${FILEPATH}vatican/search-test.html
 
 ## now index it
-pagefind --site=${FILEPATH}vatican
+pagefind -q --site=${FILEPATH}vatican
