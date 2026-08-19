@@ -62,7 +62,7 @@ foreach my $fond (@{${fond_listings}}) {
 	}
 	## make an empty index page
 	open(OUTPUT_FILE, ">:utf8", $dir_path . "/index.html") or die "Could not open file '${dir_path}/index.html'. $!";
-	print OUTPUT_FILE "<title>No</title>";
+	print OUTPUT_FILE "<html><title>No</title></html>";
 	close(OUTPUT_FILE);
 }
 
