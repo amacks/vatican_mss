@@ -86,6 +86,7 @@ from
  max(ms1.sort_shelfmark) as sort_shelfmark,
  max(ms1.ignore) as `ignore`,
  max(ms1.fond_code) as fond_code,
+ ms1.details_page as details_page,
  year(coalesce(max(ms1.date_added), max(ms2.date_added))) as year,
  week(coalesce(max(ms1.date_added), max(ms2.date_added)), 4) as week
  from
