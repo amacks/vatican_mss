@@ -1,9 +1,9 @@
 <div class="mss_list">
 [% FOREACH ms IN mss_list %]
 	<div class="mss_row grid-x">
-	<div class="cell small-2 medium-1"><a target="_blank" href="${ms_base_url}${ms.shelfmark}"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></a></div>
+	<div class="cell small-2 medium-1"><a target="_blank" href="${ms.ms_page_uri}"><img src="${ms.thumbnail_url}" class="ms_thumbnail"></a></div>
 	<div class="cell small-10 medium-5">
-		<a target="_blank" href="${ms_base_url}${ms.shelfmark}">${ms.shelfmark}</a>
+		<a target="_blank" href="${ms.ms_page_uri}">${ms.shelfmark}</a>
 		[%- " (Low Quality)" IF ms.high_quality == 0 -%]
 		[%- " (Upgraded to HQ)" IF ms.lq_date_added.defined -%]
 		[%- "," IF ms.author.defined OR ms.title.defined OR ms.date.defined -%]

@@ -29,7 +29,7 @@
 <div class="grid-container">
 	<hr>
 	<div class="grid-x align-middle">
-		<div class="cell small-6">
+		<div class="cell small-8">
 			<div class="grid-container">
 				<div class="grid-x align-center">
 					<nav aria-label="You are here:" role="navigation">
