@@ -68,7 +68,7 @@ has 'mss_stmt' => (
 	default => "select shelfmark, 
 	title, author, incipit, notes, 
 	thumbnail_url, date_added, lq_date_added, 
-	high_quality, date, fond_code, week, year
+	high_quality, date, fond_code, details_page, week, year
 from
 (select 
  coalesce(ms1.shelfmark) as shelfmark, 
