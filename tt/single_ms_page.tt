@@ -1,0 +1,82 @@
+[%- WRAPPER "wrapper.tt"
+ title="Vatican: ${shelfmark}"
+ description="${full_description}"
+ url="${ms_page_url}"
+ image="${complete_thumbnail_url}"
+ url_prefix="${url_prefix}"
+ -%]
+
+<div class="grid-container">
+	<div class="grid-x grid-margin-x">
+		<div class="header cell">
+			<h1>${shelfmark}</h1>
+		</div>
+	</div>
+	<div class="grid-x grid-margin-x">
+		<div class="cell small-12 medium-4 large-2">
+			<img src="${thumbnail_url}">
+		</div>
+		<div class="cell small-12 medium-8 large-10">
+			<dl data-pagefind-body style="font-size: larger">
+				<dt>Shelfmark</dt>
+				<dd><a class="icon" target="_blank" href="${ms_base_url}${shelfmark}">${shelfmark}</a> 
+				[%- IF details_page.defined() -%]
+				<span data-pagefind-ignore>(<a target="_blank" class="icon" href="${details_url}">details</a>)</span>
+				[%- END -%]
+				</dd>
+				[%- IF author.defined() -%]
+				<dt>Author</dt>
+				<dd>${author}</dd>
+				[%- END -%]
+				[%- IF title.defined() -%]
+				<dt>Title</dt>
+				<dd>${title}</dd>
+				[%- END -%]
+				[%- IF date.defined() -%]
+				<dt>Date</dt>
+				<dd>${date}</dd>
+				[%- END -%]
+				[%- IF incipit.defined() -%]
+				<dt>Incipit</dt>
+				<dd>${incipit}</dd>
+				[%- END -%]
+				[%- IF notes_html.defined() -%]
+				<dt>Notes</dt>
+				<dd>${notes_html}</dd>
+				[%- END -%]
+				<dt>Digitized</dt>
+				<dd><a href="${entry_url}"> ${week}<sup>${ordinal_suffix}</sup> week of ${year}</a></dd>
+			</dl>
+		</div>
+	</div>
+<hr>
+		<!-- IIIF Browser for ${iiif_url} -->		
+<script type="module">
+import Tify from 'https://cdn.jsdelivr.net/npm/tify@0.35.0/dist/tify.js'
+
+new Tify({
+  container: '#tify',
+  manifestUrl: '${iiif_url}',
+})
+</script>
+		<div class="cell small-12" id="tify" style="height: 640px;"></div>
+</div>
+<div class="grid-container">
+	<hr>
+		<div class="cell small-6">
+			<div class="grid-container">
+				<div class="grid-x align-center">
+					<nav aria-label="You are here:" role="navigation">
+						<ul class="breadcrumbs">
+						  <li><a href="${url_prefix}/">Vatican Manuscripts</a></li>
+						  <li><a href="${url_prefix}/fonds/${fond_code}.html">${fond_code}</a></li>
+						  <li>${shelfmark}</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	<hr>
+</div>
+
+[% END %]

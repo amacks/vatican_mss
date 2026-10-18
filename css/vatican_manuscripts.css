@@ -149,3 +149,78 @@ img.fond-index-image {
 		max-width: 10rem;
 	}
 }
+/* add the icon class to a link that opens in a new window to add the icon */
+a.icon[target="_blank"]::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0 3px 0 5px;
+}
+
+/* formatting for a nicer definition list. does not work */
+dl {
+	padding: 0.5em;
+}
+dt {
+	float: left;
+	clear: left;
+	width: 100px;
+	text-align: right;
+}
+dt::after {
+	content: ":";
+}
+dd {
+	margin: 0 0 0 110px !important;
+	padding: 0 0 0.5em 0 !important;
+}
+
+
+/* formatting a nicer DL, take 2 
+https://clicknathan.com/web-design/styling-html-5-description-lists-formerly-known-as-definition-lists-properly/
+
+dl:after {content:"";display:table;clear:both;}
+dd {
+    padding:.5em 0;
+}
+dl {
+    width:100%;
+}
+dt, dd {
+    display:inline-block;
+    width:30%;
+}
+dt {
+    text-align:right;
+    font-weight:bold;
+    clear:left;
+    float:left;
+}
+dd {
+    width:70%;
+    padding-left:1rem;
+    clear:right;
+    margin-bottom: 4.8px;
+    padding-top: 8px;
+}
+dd + dd {
+    float:right;
+    clear:both;
+}
+dt:first-child {
+    padding-top:.5em;
+}
+dd + dt {
+   clear:both;
+    padding-top:.5em;
+}
+dt + dt {
+    width: 100%;
+    float: none;
+    padding: 0 70% 0 0;
+}
+dt + dt + dd {
+    margin-top: -2em;
+}
+dt + dt + dd + dt {
+    margin-top: 2em;
+}
+*/

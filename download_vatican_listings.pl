@@ -63,7 +63,7 @@ sub get_url_content($){
 	my $html_content;
 
 	my $ua=new LWP::UserAgent;
-    $ua->timeout(95);
+    $ua->timeout(180);
     
     my $request = new HTTP::Request('GET', $url); 
     my $response = $ua->request($request); 

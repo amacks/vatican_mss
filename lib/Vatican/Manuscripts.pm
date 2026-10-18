@@ -68,13 +68,15 @@ has 'mss_stmt' => (
 	default => "select shelfmark, 
 	title, author, incipit, notes, 
 	thumbnail_url, date_added, lq_date_added, 
-	high_quality, date, fond_code, week, year
+	high_quality, date, fond_code, details_page, week, year
 from
 (select 
  coalesce(ms1.shelfmark) as shelfmark, 
  max(ms1.high_quality) as high_quality, 
  max(ms1.date_added) as date_added, 
+ max(ms1.date_updated) as date_updated,
  max(ms2.date_added) as lq_date_added,
+ max(ms2.date_updated) as lq_date_updated,
  max(ms1.title) as title,
  max(ms1.author) as author,
  max(ms1.incipit) as incipit,
@@ -84,6 +86,7 @@ from
  max(ms1.sort_shelfmark) as sort_shelfmark,
  max(ms1.ignore) as `ignore`,
  max(ms1.fond_code) as fond_code,
+ ms1.details_page as details_page,
  year(coalesce(max(ms1.date_added), max(ms2.date_added))) as year,
  week(coalesce(max(ms1.date_added), max(ms2.date_added)), 4) as week
  from
@@ -170,6 +173,20 @@ sub post_process_manuscripts($){
 	    }
 	    ## now generate the proper URL for the entry with this manuscript
  		$this->mss_list()->[$i]->{'entry_url'} = $config->get_filename('',$this->mss_list()->[$i]->{'year'} ,$this->mss_list()->[$i]->{'week'} );
+ 		## generate the IIIF url
+ 		$this->mss_list()->[$i]->{'iiif_url'} = $config->iiif_base_url() . $this->mss_list()->[$i]->{'shelfmark'}. "/manifest.json";
+ 		## generate details page url
+ 		$this->mss_list()->[$i]->{'details_url'} = $config->detail_base_url() . $this->mss_list()->[$i]->{'shelfmark'};
+ 		## uri is just the path inside the server, url is the whole thing from https...
+ 		$this->mss_list()->[$i]->{'ms_page_uri'} = $config->get_single_ms_uri($this->mss_list()->[$i]->{'fond_code'}, $this->mss_list()->[$i]->{'shelfmark'});
+		$this->mss_list()->[$i]->{'ms_page_url'} = $config->url_hostname() . $this->mss_list()->[$i]->{'ms_page_uri'};
+		## if the thumbnail url is already a complete url (http...) then just store it as complete.  if it's a relative, prepend hostname
+		if ($this->mss_list()->[$i]->{'thumbnail_url'} =~ /^http/m){
+			$this->mss_list()->[$i]->{'complete_thumbnail_url'}=$this->mss_list()->[$i]->{'thumbnail_url'};
+		} else {
+			$this->mss_list()->[$i]->{'complete_thumbnail_url'} = $config->url_hostname() . $this->mss_list()->[$i]->{'thumbnail_url'};
+		}
+		$this->mss_list()->[$i]->{'ordinal_suffix'} = ordinal($this->mss_list()->[$i]->{'week'})
 	}
 	return $field_count;
 }
@@ -180,6 +197,7 @@ sub sql_stmt_replace($$$){
 	my $this = shift;
 	my ($key, $value) = @_;
 	my $temp_stmt = $this->mss_stmt();
+	$key = quotemeta $key; ## Make sure any embedded metacharacters in the key are not interpolated in the regex
 	$temp_stmt =~ s/$key/$value/g;
 	$this->mss_stmt($temp_stmt);
 	warn " $temp_stmt" if ($this->DEBUG());
@@ -191,6 +209,12 @@ sub sql_error($$){
 	my $errstr = shift;
 	warn " SQL ERROR " . $errstr;
 	die;
+}
+
+## generate an ordinal suffix
+sub ordinal($) {
+	my $number = shift;
+	return (qw/th st nd rd/)[/(?<!1)([123])$/ ? $1 : 0] for int $number;
 }
 
 1;

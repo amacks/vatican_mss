@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 33;
+use Test::More tests => 47;
 use JSON;
 use Data::Dumper;
 
@@ -116,3 +116,57 @@ TODO: {
 		Vatican::DB::generate_sort_shelfmark("P.I.O.5"), "P.I.O.00005", "P.I.O collection"
 		);
 }
+
+## get_time static
+ok(
+	defined(Vatican::DB::get_time()), "get_time returns a defined value"
+	);
+ok(
+	length(Vatican::DB::get_time()) > 0, "get_time returns a non-empty string"
+	);
+like(
+	Vatican::DB::get_time('%Y'), qr/^\d{4}$/, "get_time with %Y returns a 4-digit year"
+	);
+like(
+	Vatican::DB::get_time('%Y-%m-%d'), qr/^\d{4}-\d{2}-\d{2}$/, "get_time with %Y-%m-%d returns a date-shaped string"
+	);
+
+## get_insert_dbh
+my $insert_dbh;
+ok(
+	$insert_dbh = $db->get_insert_dbh(), "get_insert_dbh runs"
+	);
+is(
+	ref($insert_dbh), "DBI::db", "insert_dbh is the proper type of object"
+	);
+ok(
+	$insert_dbh->disconnect(), "insert_dbh can be disconnected"
+	);
+
+## get_one_row — no bound params
+my $row;
+ok(
+	$row = $db->get_one_row("SELECT 1 AS val"), "get_one_row returns a value"
+	);
+is(
+	ref($row), "HASH", "get_one_row returns a hashref"
+	);
+is(
+	$row->{'val'}, 1, "get_one_row returns correct data without bound params"
+	);
+
+## get_one_row — arrayref params
+ok(
+	$row = $db->get_one_row("SELECT ? AS val", [42]), "get_one_row runs with arrayref params"
+	);
+is(
+	$row->{'val'}, 42, "get_one_row returns correct data with arrayref params"
+	);
+
+## get_one_row — scalar param (single-value fixup path)
+ok(
+	$row = $db->get_one_row("SELECT ? AS val", 99), "get_one_row runs with scalar param"
+	);
+is(
+	$row->{'val'}, 99, "get_one_row returns correct data with scalar param"
+	);

@@ -11,6 +11,11 @@
   gtag('js', new Date());
   gtag('config', 'UA-12888747-3');
 </script>
+<link rel="icon" type="image/x-icon" href="[%- url_prefix -%]/css/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="[%- url_prefix -%]/css/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="[%- url_prefix -%]/css/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="[%- url_prefix -%]/css/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="Vatican Manuscript Tracking" />
@@ -25,6 +30,7 @@
 <meta property="og:updated_time" content="[%- date.format(date.now) -%]" />
 <meta name="fediverse:creator" content="@aaronm@mastodon.cc" />	
 <link href="[%- url_prefix -%]/css/vatican_manuscripts.css" rel="stylesheet" type="text/css" media="all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tify@0.35.0/dist/tify.css">
 <!-- Compressed CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.9.0/dist/css/foundation.min.css" crossorigin="anonymous">
 
@@ -43,21 +49,13 @@
 [% content -%]
 
 <div class="wrapper-footer grid-container">
-	<form action="/vatican/search-results.html" method="GET">
+[% IF !hide_search.defined() or hide_search==0 %]
 		<div class="grid-x search-box align-center">
 	    	<div class="cell small-1 medium-1 large-1">
-	    		<!--label class="text-right middle" for="footer-search">Search  </label-->
-	    	</div>
-	    	<div class="cell small-8 medium-6 large-4">
-	    		<input type="text" name="q" id="footer-search">
-	    	</div>
-	    	<div class="cell small-3 medium-2">
-	    		<button type="submit" class="button submit" name="search_submit" value="Search">
-	    		<i class="fi-magnifying-glass"></i> Search</button>
+	    		<h3><a href="[% url_prefix %]/search-test.html">Search</a></h3>
 			</div>
 		</div>
-	</form>
-
+[% END %]
 
 	<div class="copyright grid-x">
 		<p>Copyright Aaron Macks, 2019-[%- date.format(date.now, '%Y') -%]. 
