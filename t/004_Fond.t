@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More tests => 14;
 use JSON;
 use Data::Dumper;
 
@@ -34,13 +34,26 @@ ok (
 	"Header is converted to html"
 	);
 #warn Dumper($fond->get_data());
-is_deeply($fond->get_data(),
-	{
-		id=>1, code=>'Vat.lat', full_name=>'Vaticani Latini', header_text => 'this _is_ markdown',
-		header_text_html => "<p>this <em>is</em> markdown</p>\n",
-		random_image_filename => undef
-
-	}, "get_data returns all the data"
+my $gotten_data = $fond->get_data();
+## do surgery, remove the random
+ok (
+    defined($gotten_data->{'random_image_filename'}), "There is a random image url defined"
+);
+ok (
+    $gotten_data->{'random_image_filename'} =~ m|^/vatican/\d{4}/thumbnails/Vat\.lat\.\d+.*\.jpg$|, "Random filename is a proper image uri"
+);
+delete($gotten_data->{'random_image_filename'});
+is_deeply($gotten_data,
+ {
+          'id' => 1,
+          'image_filename' => undef,
+          'header_text_html' => '<p>this <em>is</em> markdown</p>
+',
+          'code' => 'Vat.lat',
+          'full_name' => 'Vaticani Latini',
+          'header_text' => 'this _is_ markdown',
+        },
+        "get_data returns the right values, modulo the random image"
 	);
 my $rand_image_1 = $fond->get_random_image_url();
 my $rand_image_2 = $fond->get_random_image_url();

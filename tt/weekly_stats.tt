@@ -1,0 +1,65 @@
+[%- WRAPPER "wrapper.tt"
+ title="Vatican Manuscript Stats"
+ -%]
+
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+  google.charts.load('current', {packages: ['line', 'bar']});
+  google.charts.setOnLoadCallback(drawChart);
+   function drawChart() {
+      // Define the chart to be drawn.
+      var data = new google.visualization.DataTable(
+      	[% weekly_stats_json %]
+      	);
+
+      // Instantiate and draw the chart.
+      var chart = new google.charts.Line(document.getElementById('WeeklyStats'));
+
+	var oldOptions = {
+		title: 'Manuscripts Added by Calendar Week',
+		height: '800',
+		axisTitlesPosition: 'out',
+		hAxis: {
+			title: "Calendar Week"
+		},
+		vAxis: {
+			title: "Number of MSS",
+			maxValue: '150'
+		},
+		legend: { position: 'right' }
+	};
+	var materialOptions = {
+        chart: {
+            title: 'Manuscripts Added by Calendar Week',
+            //subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+        },
+        axes: {
+            y: {
+                all: {
+                    range: {
+                        max: 150,
+                        min: 0
+                    },
+                    label: "Number of MSS"
+                }
+            },
+            x: {
+            	all: {
+            		label: "Calendar Week"
+            	}
+            }
+        },
+        width: 1024,
+        height: 600,
+        legend: {
+        	position: 'right'
+        }
+    };
+      chart.draw(data, materialOptions);
+    }
+</script>
+  <!-- Identify where the chart should be drawn. -->
+  <div id="WeeklyStats">
+  </div>
+  <hr>
+[% END %]
