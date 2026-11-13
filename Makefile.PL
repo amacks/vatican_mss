@@ -22,6 +22,7 @@ WriteMakefile(
 		"LWP::Protocol::https" => 0,
 		"List::Compare" => 0,
 		"JSON" => 0,
+		"Moose" => 0,
     },
     test => {TESTS => 't/*.t'}
 );
