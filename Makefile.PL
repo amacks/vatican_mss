@@ -26,6 +26,7 @@ WriteMakefile(
 		"DateTime::Format::MySQL" => 0,
 		"Log::Log4perl" => 0,
 		"Date::Calc" => 0,
+		"XML::RSS" => 0,
     },
     test => {TESTS => 't/*.t'}
 );
