@@ -23,6 +23,8 @@ WriteMakefile(
 		"List::Compare" => 0,
 		"JSON" => 0,
 		"Moose" => 0,
+		"DateTime::Format::MySQL" => 0,
+		"Log::Log4perl" => 0,
     },
     test => {TESTS => 't/*.t'}
 );
