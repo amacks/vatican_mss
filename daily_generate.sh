@@ -15,3 +15,6 @@ cp css/* ${FILEPATH}vatican/css/
 
 ## now index it
 ~aaron.macks/bin/pagefind -q --site=${FILEPATH}vatican
+
+## copy to s3
+./s3_sync.sh

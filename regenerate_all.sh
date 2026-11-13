@@ -27,3 +27,7 @@ done
 
 ## Make sure to sync up CSS
 cp css/* ${FILEPATH}vatican/css/
+
+## sync to s3
+./s3_sync.sh
+
