@@ -25,6 +25,7 @@ WriteMakefile(
 		"Moose" => 0,
 		"DateTime::Format::MySQL" => 0,
 		"Log::Log4perl" => 0,
+		"Date::Calc" => 0,
     },
     test => {TESTS => 't/*.t'}
 );
