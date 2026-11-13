@@ -21,6 +21,7 @@ WriteMakefile(
 		"Roman" => 0,
 		"LWP::Protocol::https" => 0,
 		"List::Compare" => 0,
+		"JSON" => 0,
     },
     test => {TESTS => 't/*.t'}
 );
